@@ -567,10 +567,120 @@ Items for potential future phases:
 
 ---
 
+## 18. Design System
+
+### Design Philosophy
+**Selected**: CREATIVE | CONSISTENT
+
+**Rationale**: [Why this philosophy fits the product and target users]
+
+### Brand Personality
+| Trait | Description | Design Implication |
+|-------|-------------|-------------------|
+| [Trait 1] | [Description] | [How it affects design] |
+| [Trait 2] | [Description] | [How it affects design] |
+| [Trait 3] | [Description] | [How it affects design] |
+
+### Color Direction
+| Color | Purpose | Notes |
+|-------|---------|-------|
+| Primary | [Usage] | [Initial direction, e.g., "Blue tones for trust"] |
+| Accent | [Usage] | [Initial direction] |
+| Neutrals | [Usage] | [Light/dark mode preference] |
+
+### Typography Direction
+- **Heading Font**: [Preference or "TBD based on brand personality"]
+- **Body Font**: [Preference or "System-ui for performance"]
+- **Style**: [Modern, Classic, Playful, Professional]
+
+### Animation Tier
+**Selected**: MINIMAL | MODERATE | RICH
+
+**Expectations**:
+- Loading: [Description or "Standard spinners"]
+- Transitions: [Description or "Fade/slide defaults"]
+- Scroll: [If RICH: specific vision]
+
+### UI Framework
+**Selected**: [Tailwind + shadcn/ui | Material UI | Chakra UI | Bootstrap | Ant Design]
+
+**Rationale**: [Why this framework fits]
+
+---
+
+## 19. Brand Guidelines
+
+### Visual Identity
+| Element | Specification |
+|---------|---------------|
+| Logo Usage | [Requirements or "To be designed"] |
+| Color Palette | [Defined in design system or "To be defined"] |
+| Iconography | [Style: Outline/Solid/Duotone] |
+| Imagery | [Photography style, illustrations] |
+
+### Voice & Tone
+| Context | Tone | Example |
+|---------|------|---------|
+| Success Messages | [e.g., Encouraging] | [Example text] |
+| Error Messages | [e.g., Helpful, not blaming] | [Example text] |
+| Empty States | [e.g., Friendly, guiding] | [Example text] |
+| Marketing Copy | [e.g., Confident, clear] | [Example text] |
+
+### Behavioral Economics (If Enabled)
+**Enabled**: Yes | No
+
+**Approved Patterns** (ethical use only):
+- [ ] Social Proof (real testimonials, user counts)
+- [ ] Scarcity (genuine limited availability)
+- [ ] Authority (legitimate credentials, certifications)
+- [ ] Anchoring (transparent value comparisons)
+
+**Prohibited Patterns**:
+- Confirm-shaming
+- Hidden costs
+- Forced continuity without warning
+- Misdirection
+
+---
+
+## 20. UX Research Summary
+
+### Target Personas (High-Level)
+| Persona | Description | Primary Goal |
+|---------|-------------|--------------|
+| [Persona 1] | [Brief description] | [What they want to achieve] |
+| [Persona 2] | [Brief description] | [What they want to achieve] |
+
+### Key User Journeys
+1. **[Journey 1]**: [Brief description of the flow]
+2. **[Journey 2]**: [Brief description of the flow]
+
+### Competitive UX Insights
+| Competitor | Strength to Emulate | Weakness to Avoid |
+|------------|---------------------|-------------------|
+| [Competitor 1] | [What they do well] | [What to improve on] |
+| [Competitor 2] | [What they do well] | [What to improve on] |
+
+### Design Opportunities
+1. [Opportunity 1 based on competitive gaps]
+2. [Opportunity 2 based on user pain points]
+
+### Accessibility Requirements
+| Requirement | Level | Notes |
+|-------------|-------|-------|
+| WCAG Compliance | AA | [Or AAA if specified] |
+| Screen Reader | Required | [All content accessible] |
+| Keyboard Navigation | Required | [Full functionality] |
+| Color Contrast | 4.5:1 text | [3:1 large text/UI] |
+| Touch Targets | 44×44px min | [Mobile-friendly] |
+
+---
+
 ## Document Approval
 
 | Role | Name | Date | Signature |
 |------|------|------|-----------|
 | Product Owner | | | |
 | Technical Lead | | | |
+| Design Lead | | | |
 | Stakeholder | | | |

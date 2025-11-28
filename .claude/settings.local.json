@@ -17,7 +17,8 @@
       "Bash(findstr:*)",
       "Bash(cat:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\docs\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\docs\")"
     ],
     "deny": [],
     "ask": []

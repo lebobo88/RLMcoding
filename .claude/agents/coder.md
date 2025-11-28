@@ -133,3 +133,93 @@ When debugging:
 - Prefer existing project dependencies
 - Document any new dependencies needed
 - Avoid adding dependencies for trivial functionality
+
+## Design Token Usage Protocol (for UI Tasks)
+
+When implementing UI components:
+
+### 1. Load Design Context First
+```
+Read: RLM/specs/design/design-system.md
+Read: RLM/specs/design/tokens/tokens.json
+Read: RLM/specs/design/components/[component].md (if exists)
+```
+
+### 2. Use Design Tokens (Never Hardcode)
+```typescript
+// ❌ WRONG - Hardcoded values
+const styles = {
+  color: '#3b82f6',
+  padding: '16px',
+  borderRadius: '8px'
+};
+
+// ✅ CORRECT - Design tokens
+// Tailwind
+className="text-primary-500 p-4 rounded-md"
+
+// CSS Variables
+const styles = {
+  color: 'var(--color-primary-500)',
+  padding: 'var(--spacing-4)',
+  borderRadius: 'var(--radius-md)'
+};
+```
+
+### 3. Implement All 8 Component States
+Every interactive component MUST have:
+- **Default**: Resting state
+- **Hover**: Mouse over (`:hover`)
+- **Focus**: Keyboard focus (`:focus-visible`)
+- **Active**: Being pressed (`:active`)
+- **Disabled**: Non-interactive (`disabled`, `aria-disabled`)
+- **Loading**: Async operation in progress
+- **Error**: Validation or operation failure
+- **Empty**: No content/data state
+
+### 4. Accessibility Requirements
+```typescript
+// Every interactive element MUST have:
+<button
+  aria-label="Descriptive label"        // For icon-only buttons
+  aria-describedby="help-text"          // Additional context
+  disabled={isDisabled}                 // Native disabled
+  aria-busy={isLoading}                 // Loading state
+  tabIndex={0}                          // Keyboard focusable
+>
+
+// Focus indicators MUST be visible
+className="focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+```
+
+### 5. Animation Tier Compliance
+Check project constitution for animation tier:
+- **MINIMAL**: CSS transitions only (150-200ms)
+- **MODERATE**: Framer Motion micro-interactions (200-400ms)
+- **RICH**: GSAP scroll/loading animations (varies)
+
+Always support reduced motion:
+```css
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+### 6. Responsive Implementation
+Mobile-first approach with breakpoints:
+```typescript
+// Tailwind responsive classes
+className="px-4 md:px-6 lg:px-8"
+className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+```
+
+### 7. UI Test Requirements
+For UI components, tests MUST cover:
+- [ ] Renders all states correctly
+- [ ] Keyboard navigation works
+- [ ] ARIA attributes present
+- [ ] Responds to user interactions
+- [ ] Matches design spec dimensions/spacing

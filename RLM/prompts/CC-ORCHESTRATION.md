@@ -5,28 +5,28 @@ This document defines how the Primary Agent orchestrates sub-agents for context-
 ## Core Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     USER                                     │
-│                       │                                      │
-│                       ▼                                      │
-│              ┌────────────────┐                              │
-│              │  PRIMARY AGENT │                              │
-│              │  (Orchestrator)│                              │
-│              └───────┬────────┘                              │
-│                      │                                       │
-│         ┌────────────┼────────────┬──────────┐              │
-│         ▼            ▼            ▼          ▼              │
-│    ┌─────────┐ ┌──────────┐ ┌────────┐ ┌─────────┐         │
-│    │Research │ │Architect │ │ Coder  │ │ Tester  │ ...     │
-│    │Sub-Agent│ │Sub-Agent │ │Sub-Agt │ │Sub-Agent│         │
-│    └────┬────┘ └────┬─────┘ └───┬────┘ └────┬────┘         │
-│         │           │           │           │               │
-│         └───────────┴───────────┴───────────┘               │
-│                         │                                    │
-│                         ▼                                    │
-│                   [File System]                              │
-│              Results written to files                        │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                          USER                                        │
+│                            │                                         │
+│                            ▼                                         │
+│                   ┌────────────────┐                                 │
+│                   │  PRIMARY AGENT │                                 │
+│                   │  (Orchestrator)│                                 │
+│                   └───────┬────────┘                                 │
+│                           │                                          │
+│    ┌──────────┬───────────┼───────────┬──────────┬──────────┐       │
+│    ▼          ▼           ▼           ▼          ▼          ▼       │
+│ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐  │
+│ │Research│ │Architect│ │Designer│ │ Coder  │ │ Tester │ │Reviewer│  │
+│ │Sub-Agt │ │Sub-Agt │ │Sub-Agt │ │Sub-Agt │ │Sub-Agt │ │Sub-Agt │  │
+│ └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘  │
+│     │          │          │          │          │          │        │
+│     └──────────┴──────────┴──────────┴──────────┴──────────┘        │
+│                                │                                     │
+│                                ▼                                     │
+│                          [File System]                               │
+│                     Results written to files                         │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ## The Golden Rule
@@ -45,17 +45,20 @@ Information Flow:
 
 ### When to Delegate to Sub-Agents
 
-| Task Type | Delegate? | Reason |
-|-----------|-----------|--------|
-| Web research | YES | High token usage, isolated context |
-| Code generation | YES | Focused work, doesn't pollute primary |
-| Test writing | YES | Separate concern from implementation |
-| Code review | YES | Isolated analysis |
-| Architecture design | YES | Deep analysis without context pollution |
-| Simple file reads | NO | Faster to do directly |
-| User clarifications | NO | Primary Agent responsibility |
-| Progress reporting | NO | Primary Agent responsibility |
-| Final synthesis | NO | Primary Agent responsibility |
+| Task Type | Delegate? | Sub-Agent | Reason |
+|-----------|-----------|-----------|--------|
+| Web research | YES | Research | High token usage, isolated context |
+| Code generation | YES | Coder | Focused work, doesn't pollute primary |
+| Test writing | YES | Tester | Separate concern from implementation |
+| Code review | YES | Reviewer | Isolated analysis |
+| Architecture design | YES | Architect | Deep analysis without context pollution |
+| **Design system creation** | YES | **Designer** | UX research, visual design, tokens |
+| **Component specifications** | YES | **Designer** | Detailed state/accessibility specs |
+| **Design QA** | YES | **Designer** | Visual quality, accessibility audit |
+| Simple file reads | NO | - | Faster to do directly |
+| User clarifications | NO | - | Primary Agent responsibility |
+| Progress reporting | NO | - | Primary Agent responsibility |
+| Final synthesis | NO | - | Primary Agent responsibility |
 
 ### Delegation Decision Tree
 

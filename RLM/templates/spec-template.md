@@ -58,6 +58,71 @@ interface Resource {
 3. Store in database
 4. Return response
 
+## UI/UX Requirements
+
+### Component Requirements
+| Component | Variant | State Requirements | Notes |
+|-----------|---------|-------------------|-------|
+| [Component 1] | [variant] | All 8 states | [Usage context] |
+| [Component 2] | [variant] | All 8 states | [Usage context] |
+
+### User Flow
+```
+[Entry] → [Step 1] → [Step 2] → [Success State]
+              ↓
+         [Error Path] → [Recovery]
+```
+
+### Layout Description
+```
+┌─────────────────────────────────────────┐
+│  Header                                  │
+├──────────────┬──────────────────────────┤
+│              │                           │
+│  Sidebar     │      Main Content         │
+│  (optional)  │                           │
+│              │                           │
+├──────────────┴──────────────────────────┤
+│  Actions / Footer                        │
+└─────────────────────────────────────────┘
+```
+
+### Interaction Requirements
+| Action | User Trigger | System Response | Feedback |
+|--------|--------------|-----------------|----------|
+| [Action 1] | [Click/Submit/etc.] | [What happens] | [Visual feedback] |
+| [Action 2] | [Click/Submit/etc.] | [What happens] | [Visual feedback] |
+
+### Accessibility Requirements
+- [ ] All content keyboard accessible
+- [ ] Focus order logical
+- [ ] ARIA labels on interactive elements
+- [ ] Error messages announced to screen readers
+- [ ] Color contrast meets WCAG AA (4.5:1)
+
+### Responsive Behavior
+| Breakpoint | Layout Changes |
+|------------|----------------|
+| Mobile (< 640px) | [Stack elements, hide secondary content] |
+| Tablet (640-1023px) | [Adjust grid, collapsible sidebar] |
+| Desktop (1024px+) | [Full layout with all features] |
+
+### States to Implement
+- [ ] **Loading**: [Skeleton/spinner description]
+- [ ] **Empty**: [Empty state message and CTA]
+- [ ] **Error**: [Error display and recovery]
+- [ ] **Success**: [Confirmation feedback]
+
+### Design Tokens Reference
+- Colors: [List primary tokens used]
+- Spacing: [List spacing tokens used]
+- Typography: [List type tokens used]
+
+### Design Spec Reference
+See: `RLM/specs/features/FTR-XXX/design-spec.md`
+
+---
+
 ## Security Requirements
 - [ ] Input validation
 - [ ] Authentication required

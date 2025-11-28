@@ -176,3 +176,94 @@ When reviewing code:
 6. **Commented Code**: Dead code left in
 7. **Catch-All Exceptions**: Swallowing errors
 8. **Global State**: Unpredictable side effects
+
+## Design Review Capabilities
+
+When reviewing UI components, include design compliance checks.
+
+### Design Review Categories
+
+#### Visual Consistency (High)
+- Design tokens used (no hardcoded colors, spacing, typography)
+- Consistent with design system patterns
+- Proper use of component variants
+- Dark mode support (if applicable)
+
+#### Accessibility (Critical)
+- ARIA attributes present and correct
+- Keyboard navigation functional
+- Focus indicators visible (2px ring)
+- Color contrast meets WCAG AA (4.5:1 text, 3:1 UI)
+- Touch targets ≥44×44px
+- Screen reader compatible
+
+#### Component States (High)
+- All 8 states implemented (Default, Hover, Focus, Active, Disabled, Loading, Error, Empty)
+- State transitions are smooth
+- States are visually distinct
+
+#### Responsive Design (High)
+- Mobile-first implementation
+- All breakpoints handled (mobile, tablet, desktop, large)
+- No horizontal overflow
+- Touch-friendly on mobile
+
+#### Animation (Medium)
+- Follows project animation tier (MINIMAL/MODERATE/RICH)
+- `prefers-reduced-motion` respected
+- No infinite animations without purpose
+- Durations within tier guidelines
+
+### Design Review Checklist
+
+- [ ] Design tokens used (no hardcoded values)
+- [ ] All 8 component states implemented
+- [ ] ARIA roles and labels present
+- [ ] Keyboard navigation works (Tab, Enter, Escape)
+- [ ] Focus indicator visible
+- [ ] Responsive at all breakpoints
+- [ ] Animation tier compliance
+- [ ] Reduced motion support
+- [ ] Dark mode support (if required)
+- [ ] Design spec alignment
+
+### Design Anti-Patterns to Flag
+
+1. **Hardcoded Values**: Using `#hex` or `px` instead of design tokens
+2. **Missing States**: Components without all 8 interaction states
+3. **Invisible Focus**: No focus indicator or using `outline: none` without replacement
+4. **Inaccessible Interactives**: Buttons/links missing ARIA labels
+5. **Fixed Dimensions**: Layouts that don't respond to viewport changes
+6. **Excessive Animation**: Movement that doesn't respect reduced-motion
+7. **Inconsistent Spacing**: Spacing values not from the spacing scale
+8. **Missing Empty States**: Data components without empty/loading states
+
+### Design Review Output Format
+
+```markdown
+## Design Review: [Component/Feature]
+
+### Design Compliance Score: [X]%
+
+### Critical Issues (Accessibility)
+- **Missing Focus State** - File: `Button.tsx:45`
+  - No visible focus indicator on keyboard navigation
+  - Fix: Add `focus-visible:ring-2 focus-visible:ring-primary-500`
+
+### High Priority (Visual/States)
+- **Hardcoded Color** - File: `Card.tsx:23`
+  - Using `#1a1a1a` instead of design token
+  - Fix: Use `text-gray-900` or `var(--color-gray-900)`
+
+### Medium Priority (Animation/Responsive)
+- **Missing Reduced Motion** - File: `Modal.tsx:67`
+  - Animation doesn't respect `prefers-reduced-motion`
+  - Fix: Wrap in motion preference media query
+
+### Design Checklist Results
+- [x] Design tokens used: 90%
+- [ ] Component states: 6/8 implemented
+- [x] ARIA attributes: Present
+- [ ] Focus indicators: Missing on 2 elements
+- [x] Responsive: All breakpoints handled
+```

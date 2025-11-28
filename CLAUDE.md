@@ -68,6 +68,29 @@ Load minimal context for specific workflows (manual use - auto-priming built int
 | `/prime-bug` | Load bug investigation frameworks |
 | `/prime-task [TASK-XXX]` | Load single task context for TDD |
 | `/prime-review` | Load review checklists and anti-patterns |
+| `/prime-design [scope]` | Load design system context for UI development |
+
+### Design Workflow Commands (v2.4)
+
+Comprehensive UI/UX engineering with design system management:
+
+| Command | Purpose | Sub-Agent |
+|---------|---------|-----------|
+| `/cc-design system` | Generate complete design system from PRD | Designer |
+| `/cc-design research` | UX research with personas & journey maps | Designer |
+| `/cc-design component [name]` | Create component specification | Designer |
+| `/cc-design feature [FTR-XXX]` | Create feature design specification | Designer |
+| `/cc-design qa [scope]` | Run 117-point design QA checklist | Designer |
+| `/cc-design tokens export [framework]` | Export tokens for specific framework | Designer |
+
+**Design Philosophy Options** (chosen during `/discover`):
+- **CREATIVE**: Bold, unique, brand-differentiating designs
+- **CONSISTENT**: Accessible, familiar patterns, enterprise-ready
+
+**Animation Tiers**:
+- **MINIMAL**: CSS transitions only (150-200ms)
+- **MODERATE**: Framer Motion micro-interactions (200-400ms)
+- **RICH**: GSAP scroll/loading animations (custom vision)
 
 ## Architecture
 
@@ -90,7 +113,8 @@ RLM/
 │   ├── master-architect.md      # Architecture design
 │   ├── implementation-agent.md  # TDD code generation
 │   ├── testing-agent.md         # Test automation
-│   └── devops-agent.md          # CI/CD and deployment
+│   ├── devops-agent.md          # CI/CD and deployment
+│   └── design-agent.md          # UI/UX design system (v2.4)
 ├── progress/       # Progress tracking and logs
 │   └── token-usage/    # Token usage logs (v2.1)
 └── templates/      # Document templates
@@ -101,7 +125,8 @@ RLM/
 │   ├── architect.md      # Architecture design, ADRs
 │   ├── coder.md          # TDD implementation
 │   ├── tester.md         # Test writing, coverage
-│   └── reviewer.md       # Code review, security
+│   ├── reviewer.md       # Code review, security
+│   └── designer.md       # UI/UX design, tokens, accessibility (v2.4)
 ├── commands/         # Slash commands
 │   ├── cc-full.md        # Full automation pipeline (v2.2)
 │   ├── cc-create-specs.md # Specs from PRD (v2.2)
@@ -206,6 +231,17 @@ Agent prompts in `RLM/agents/` define behavior:
 | `assumption-log-template.md` | Track and validate project assumptions |
 | `tech-comparison-template.md` | Weighted technology evaluation matrix |
 
+## Design Templates (v2.4)
+
+| Template | Purpose |
+|----------|---------|
+| `design-system-template.md` | Complete design system (colors, typography, spacing, components) |
+| `ux-research-template.md` | UX research with personas, journey maps, competitive analysis |
+| `design-qa-checklist.md` | 117-point design QA scoring system |
+| `design-tokens-template.md` | Framework-agnostic tokens with exports (Tailwind, MUI, Chakra, etc.) |
+| `component-spec-template.md` | Component spec with all 8 states, accessibility, code snippets |
+| `feature-design-spec-template.md` | Feature-level design with user flows and screen layouts |
+
 ## Claude Code Sub-Agents (v2.2)
 
 Sub-agents in `.claude/agents/` operate in isolated context windows for efficiency:
@@ -214,9 +250,10 @@ Sub-agents in `.claude/agents/` operate in isolated context windows for efficien
 |-------|---------|-------|
 | **Research** | Web research, competitor analysis, documentation | WebSearch, WebFetch, Read, Write |
 | **Architect** | Technology decisions, architecture design, ADRs | Read, Write, Glob, Grep |
-| **Coder** | TDD implementation, code generation | Read, Write, Edit, Bash |
+| **Coder** | TDD implementation, code generation, design token usage | Read, Write, Edit, Bash |
 | **Tester** | Test writing, coverage analysis, bug investigation | Read, Write, Bash |
-| **Reviewer** | Code review, quality checks, security scanning | Read, Grep, Glob |
+| **Reviewer** | Code review, quality checks, security, design compliance | Read, Grep, Glob |
+| **Designer** | Design systems, UX research, component specs, accessibility | Read, Write, Glob, Grep, WebSearch, WebFetch |
 
 ### Key Concepts (v2.2)
 
@@ -230,6 +267,68 @@ Sub-agents in `.claude/agents/` operate in isolated context windows for efficien
 
 See `RLM/prompts/CC-ORCHESTRATION.md` for full orchestration protocol.
 See `RLM/docs/CLAUDE-CODE-GUIDE.md` for complete Claude Code workflow guide.
+
+## Design System Integration (v2.4)
+
+### Design Workflow
+
+Design is integrated into the main RLM workflow:
+
+1. **Discovery** (`/discover`) → Asks design questions (philosophy, animation tier, framework)
+2. **Design System** (`/cc-design system`) → Generates design system from PRD
+3. **UX Research** (`/cc-design research`) → Web-based research → personas & journeys
+4. **Component Specs** (`/cc-design component`) → Detailed component specifications
+5. **Implementation** (`/implement`) → Uses design tokens, implements all states
+6. **Design QA** (`/cc-design qa`) → 117-point checklist, ≥90% pass required
+
+### Design File Structure
+
+```
+RLM/specs/design/
+├── design-system.md           # Core design system
+├── ux-research.md             # Personas, journey maps
+├── tokens/
+│   ├── tokens.json            # Source tokens
+│   ├── tailwind.config.js     # Tailwind export
+│   ├── mui-theme.ts           # Material UI export
+│   ├── chakra-theme.ts        # Chakra UI export
+│   └── css-variables.css      # CSS Variables export
+└── components/
+    ├── button.md              # Component specifications
+    ├── input.md
+    └── [component].md
+```
+
+### UI Framework Support
+
+Design tokens can be exported for:
+- Tailwind CSS (default)
+- Material UI
+- Chakra UI
+- Bootstrap
+- Ant Design
+- CSS Variables (framework-agnostic)
+
+### Component State Requirements
+
+All interactive components MUST implement 8 states:
+1. Default - Resting appearance
+2. Hover - Mouse over (desktop)
+3. Focus - Keyboard focus (visible ring)
+4. Active - Being clicked/pressed
+5. Disabled - Non-interactive
+6. Loading - Async operation in progress
+7. Error - Validation/operation failure
+8. Empty - No content/data
+
+### Accessibility Standards
+
+- WCAG 2.1 AA minimum (AAA optional)
+- Color contrast: 4.5:1 text, 3:1 UI elements
+- Touch targets: 44×44px minimum
+- Keyboard navigation: all interactive elements
+- Screen reader: semantic HTML, ARIA labels
+- Reduced motion: always respect `prefers-reduced-motion`
 
 ## GitHub Copilot Integration (v2.3)
 

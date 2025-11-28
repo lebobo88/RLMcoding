@@ -175,7 +175,49 @@ Ask these 4 questions:
 
 12. **Special Requirements**: Any accessibility requirements (WCAG), internationalization, or other special needs?
 
-After Round 3, provide **opinionated technology recommendations** based on answers (see Technology Selection Criteria below).
+Wait for answers before Round 4.
+
+### Round 4: Design-Specific Questions
+
+Ask these design questions to inform UI/UX decisions:
+
+13. **Design Philosophy**: Which approach fits your product better?
+    - **CREATIVE**: Bold, unique, brand-differentiating designs (consumer apps, marketing sites, creative industries)
+    - **CONSISTENT**: Accessible, familiar patterns, enterprise-ready (B2B SaaS, healthcare, finance, compliance-heavy)
+
+14. **Brand Foundation**:
+    - Do you have existing brand guidelines? (yes/no)
+    - What 3-5 words describe the personality you want users to feel? (e.g., "professional, trustworthy, modern")
+    - Any competitor designs to emulate or differentiate from?
+
+15. **UI Framework Preference**:
+    - Tailwind CSS + shadcn/ui (recommended - utility-first, accessible)
+    - Material UI (Google's design language)
+    - Chakra UI (accessible components)
+    - Bootstrap (familiar, widely-used)
+    - Ant Design (enterprise-focused)
+    - No preference (will recommend based on project needs)
+
+16. **Animation Tier**: What level of motion design do you want?
+    - **MINIMAL**: Basic hover/focus transitions, loading states only (performance-first, accessibility-focused)
+    - **MODERATE**: Page transitions, micro-interactions, skeleton loaders (balanced, professional)
+    - **RICH**: GSAP scroll animations, complex transitions, storytelling motion (engaging, marketing-focused)
+
+    [If RICH selected, ask follow-up]:
+    - Describe your vision for the loading animation (e.g., "logo reveal", "particle effect", "simple spinner")
+    - Describe your scroll animation style (e.g., "parallax", "reveal on scroll", "sticky sections")
+    - Reference any websites with animation you admire?
+
+17. **Behavioral Economics** (for landing pages, e-commerce):
+    - Enable persuasion patterns like social proof, scarcity, anchoring? (yes/no)
+    - Note: Ethical guidelines will be enforced - no dark patterns
+
+18. **Additional Design Requirements**:
+    - Dark mode support needed? (yes/no)
+    - Accessibility beyond WCAG AA? (AAA compliance)
+    - Mobile-first priority? (yes/no)
+
+After Round 4, provide **opinionated technology and design recommendations** based on answers (see Technology Selection Criteria and Design Guidance below).
 
 ---
 
@@ -244,6 +286,55 @@ Use these opinionated guidelines to recommend technology stack. Present your rec
 - **HIGH (>90%)**: Clear requirements match, proven patterns, recommend confidently
 - **MEDIUM (60-90%)**: Multiple valid options, recommend with stated alternatives
 - **LOW (<60%)**: Novel requirements, recommend POC before commitment
+
+---
+
+## Design Guidance
+
+Use these opinionated guidelines to recommend design approach.
+
+### Design Philosophy Selection
+
+| Choose This | When You Have | Confidence |
+|-------------|---------------|------------|
+| **CREATIVE** | Consumer-facing, brand differentiation critical, marketing focus | HIGH |
+| **CONSISTENT** | B2B, enterprise, compliance requirements, usability priority | HIGH |
+
+### UI Framework Selection
+
+| Choose This | When You Have | Confidence |
+|-------------|---------------|------------|
+| **Tailwind + shadcn/ui** | Full customization needed, modern stack, accessibility priority | HIGH |
+| **Material UI** | Google ecosystem, Material Design familiarity, comprehensive components | HIGH |
+| **Chakra UI** | Accessibility focus, React-first, good DX | HIGH |
+| **Bootstrap** | Legacy familiarity, quick prototyping, team knows it | MEDIUM |
+| **Ant Design** | Enterprise apps, data-heavy interfaces, Asian market | MEDIUM |
+
+### Animation Tier Selection
+
+| Choose This | When You Have | Confidence |
+|-------------|---------------|------------|
+| **MINIMAL** | Performance critical, accessibility focus, internal tools | HIGH |
+| **MODERATE** | Most web apps, professional feel, balanced approach | HIGH |
+| **RICH** | Marketing sites, landing pages, creative showcase | MEDIUM |
+
+### Design Deliverables
+
+Based on design philosophy selected, the following will be generated:
+
+**For CREATIVE:**
+- Bold color palette with 60-30-10 rule
+- Custom typography scale (larger headings)
+- Animation-forward interactions
+- Unique component styling
+- Brand-differentiating patterns
+
+**For CONSISTENT:**
+- Accessible color palette (WCAG AA/AAA)
+- Standard typography scale
+- Minimal, purposeful animation
+- Familiar UI patterns (Jakob's Law)
+- Enterprise-ready components
 
 ---
 

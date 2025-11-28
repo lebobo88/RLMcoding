@@ -412,7 +412,106 @@ try {
 
 ---
 
-## 13. Review & Updates
+## 13. Design Standards
+
+### Design Philosophy
+**Selected**: CREATIVE | CONSISTENT
+
+| Philosophy | Characteristics |
+|------------|-----------------|
+| CREATIVE | Bold colors, unique layouts, custom animations, brand-differentiating |
+| CONSISTENT | Familiar patterns, accessibility-first, enterprise-ready, usability-focused |
+
+### Design System Location
+- Design System: `RLM/specs/design/design-system.md`
+- Design Tokens: `RLM/specs/design/tokens/`
+- Component Specs: `RLM/specs/design/components/`
+
+### UI Component Library
+| Technology | Purpose | Documentation |
+|------------|---------|---------------|
+| [Tailwind CSS / Material UI / Chakra UI / etc.] | CSS Framework | [Link] |
+| [shadcn/ui / Radix UI / etc.] | Component Primitives | [Link] |
+
+### Color Standards
+| Usage | Token Reference | Contrast Requirement |
+|-------|-----------------|---------------------|
+| Primary Actions | `color-primary-500` | 4.5:1 on white |
+| Text on Background | `color-gray-800` on `white` | 4.5:1 minimum |
+| Error States | `color-error-500` | 4.5:1 minimum |
+| Focus Indicators | `color-primary-500` | 3:1 minimum |
+
+### Typography Standards
+- **Font Family**: [Primary font], [Fallback fonts]
+- **Base Size**: 16px (1rem)
+- **Scale Ratio**: [1.25 Major Third / 1.333 Perfect Fourth]
+- **Line Height**: 1.5 for body, 1.2-1.3 for headings
+
+### Spacing Standards
+- **Base Unit**: 8px (0.5rem)
+- **Scale**: 0, 4, 8, 12, 16, 24, 32, 48, 64 pixels
+- **Component Padding**: Use spacing tokens, never arbitrary values
+
+### Animation Standards
+**Animation Tier**: MINIMAL | MODERATE | RICH
+
+| Tier | Allowed Animations | Duration Range |
+|------|-------------------|----------------|
+| MINIMAL | Hover, focus, loading spinners | 100-200ms |
+| MODERATE | + Page transitions, micro-interactions | 150-400ms |
+| RICH | + Scroll animations, complex sequences | 200-1000ms |
+
+**Required**: Always support `prefers-reduced-motion`
+
+### Accessibility Standards
+| Requirement | Standard | Verification |
+|-------------|----------|--------------|
+| WCAG Level | AA (minimum) / AAA (if specified) | Automated + manual testing |
+| Color Contrast | 4.5:1 text, 3:1 large text/UI | Contrast checker tools |
+| Keyboard Navigation | All interactive elements | Tab through entire UI |
+| Screen Reader | All content accessible | Test with NVDA/VoiceOver |
+| Touch Targets | 44×44px minimum | Visual inspection |
+| Focus Indicators | Visible 2px ring | Visual inspection |
+
+### Component State Requirements
+All interactive components MUST implement these states:
+
+| State | Description | Required |
+|-------|-------------|----------|
+| Default | Resting appearance | Yes |
+| Hover | Mouse over (desktop) | Yes |
+| Focus | Keyboard focus | Yes (visible) |
+| Active | Being clicked/pressed | Yes |
+| Disabled | Not interactive | Yes |
+| Loading | Async operation | If applicable |
+| Error | Validation failure | If applicable |
+| Empty | No content | If applicable |
+
+### Responsive Design Standards
+| Breakpoint | Name | Target |
+|------------|------|--------|
+| 0-639px | Mobile | Phones |
+| 640-767px | Tablet Small | Large phones, small tablets |
+| 768-1023px | Tablet | Tablets |
+| 1024-1279px | Desktop | Laptops |
+| 1280px+ | Large | Desktops |
+
+**Approach**: Mobile-first (base styles for mobile, enhance for larger)
+
+### Design Review Checklist
+Before merging UI changes:
+- [ ] Follows design system tokens
+- [ ] All component states implemented
+- [ ] Responsive at all breakpoints
+- [ ] Keyboard accessible
+- [ ] Screen reader tested
+- [ ] Color contrast verified
+- [ ] Animations respect reduced-motion
+- [ ] Design QA score ≥90%
+
+---
+
+## 14. Review & Updates
 
 This constitution should be reviewed and updated:
 - When adopting new technologies

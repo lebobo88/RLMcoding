@@ -22,6 +22,27 @@ Clear description of what needs to be done.
 - **Libraries:** [List of libraries]
 - **Patterns:** [Design patterns to use]
 
+## UI/UX Requirements (if applicable)
+- **Has UI Component:** [yes|no]
+- **Design Spec:** [Link to RLM/specs/design/components/[name].md or RLM/specs/features/FTR-XXX/design-spec.md]
+- **Component States Required:**
+  - [ ] Default
+  - [ ] Hover
+  - [ ] Focus (keyboard visible)
+  - [ ] Active
+  - [ ] Disabled
+  - [ ] Loading
+  - [ ] Error
+  - [ ] Empty (if data-driven)
+- **Design Tokens to Use:** [List tokens from RLM/specs/design/tokens/]
+- **Accessibility Requirements:**
+  - [ ] ARIA role: [role]
+  - [ ] Keyboard navigation: [Tab, Enter, Escape, Arrow keys]
+  - [ ] Screen reader: [aria-label, aria-describedby]
+  - [ ] Focus management: [trap, restore]
+- **Responsive Breakpoints:** [mobile, tablet, desktop, large]
+- **Animation Tier:** [MINIMAL|MODERATE|RICH] (see project constitution)
+
 ## Dependencies
 - [ ] TASK-XXX (Description) - [Status]
 - [ ] External dependency - [Status]
@@ -50,4 +71,11 @@ Clear description of what needs to be done.
 - [ ] No linter errors
 - [ ] Performance validated
 - [ ] Security checked
+- [ ] **Design compliance (if UI task):**
+  - [ ] All 8 component states implemented
+  - [ ] Design tokens used (no hardcoded values)
+  - [ ] Accessibility requirements met (keyboard, screen reader)
+  - [ ] Responsive at all breakpoints
+  - [ ] Animation follows project tier
+  - [ ] Design QA checklist passed (≥90%)
 
