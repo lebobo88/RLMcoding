@@ -1,0 +1,56 @@
+{
+  "repository": {
+    "owner": "your-org",
+    "repo": "your-project",
+    "branch": "main",
+    "url": "https://github.com/your-org/your-project"
+  },
+  "sync": {
+    "enabled": true,
+    "bidirectional": true,
+    "autoSync": false,
+    "syncInterval": "manual",
+    "conflictResolution": "manual"
+  },
+  "paths": {
+    "specs": "RLM/specs",
+    "tasks": "RLM/tasks",
+    "progress": "RLM/progress",
+    "issues": "RLM/issues",
+    "agents": "RLM/agents",
+    "config": "RLM/config"
+  },
+  "pullStrategy": {
+    "specs": "overwrite",
+    "tasks": "merge",
+    "agents": "overwrite",
+    "config": "merge"
+  },
+  "pushStrategy": {
+    "progress": "always",
+    "issues": "always",
+    "completed_tasks": "always",
+    "logs": "on_demand"
+  },
+  "webhooks": {
+    "enabled": false,
+    "onPush": "",
+    "onIssue": "",
+    "onComplete": ""
+  },
+  "authentication": {
+    "method": "token",
+    "tokenEnvVar": "RLM_GITHUB_TOKEN",
+    "scope": [
+      "repo",
+      "workflow"
+    ]
+  },
+  "commitMessages": {
+    "taskComplete": "feat: Complete {task-id} - {task-title}",
+    "taskBlocked": "block: {task-id} blocked - {blocker-type}",
+    "progressUpdate": "progress: Update status for {task-id}",
+    "issueCreated": "issue: Create {issue-id} - {issue-title}"
+  }
+}
+

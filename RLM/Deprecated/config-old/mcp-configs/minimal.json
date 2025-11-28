@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "./"],
+      "description": "Essential filesystem operations only"
+    }
+  },
+  "description": "Minimal MCP configuration - only filesystem. Use for maximum context efficiency.",
+  "tokenOverhead": "~2000 tokens",
+  "useCase": "Simple tasks, context-sensitive operations"
+}
+

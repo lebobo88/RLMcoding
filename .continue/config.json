@@ -1,0 +1,48 @@
+{
+  "$schema": "https://continue.dev/config-schema.json",
+  "slashCommands": [
+    {
+      "name": "discover",
+      "description": "Start RLM discovery process for a new project or feature idea",
+      "prompt": "I want to use the RLM method to discover and create specifications.\n\nFirst, read the Research Agent instructions from: RLM/agents/research-agent.md\n\nThe project idea is: {{{ input }}}\n\nFollow this process:\n\n1. **Research Phase**: Analyze the idea, identify competitors, research best practices\n\n2. **Question Phase**: Ask me clarifying questions in these categories:\n   - Business (Critical): Goals, users, timeline\n   - Technical (High): Scale, integrations, constraints\n   - Data (High): Storage, compliance, privacy\n   - Security (Medium): Auth, encryption, audit\n   - UX (Medium): Platforms, accessibility\n\n3. **Draft Phase**: After I answer, create these documents:\n   - RLM/specs/constitution.md\n   - RLM/specs/features/FTR-001/spec.md\n   - RLM/specs/architecture/overview.md\n   - RLM/specs/epics/breakdown.md\n\nFollow the templates in RLM/templates/"
+    },
+    {
+      "name": "implement",
+      "description": "Implement a feature following the RLM spec",
+      "prompt": "Implement feature: {{{ input }}}\n\n1. Read the feature spec from RLM/specs/features/{{{ input }}}/spec.md\n2. Check RLM/specs/constitution.md for coding standards\n3. Follow TDD - write tests first\n4. Implement to pass tests\n5. Update progress in RLM/progress/"
+    },
+    {
+      "name": "rlm-status",
+      "description": "Show RLM project status",
+      "prompt": "Read these files and summarize the project status:\n- RLM/specs/constitution.md\n- RLM/progress/status.json\n- List files in RLM/specs/features/\n- List files in RLM/tasks/active/\n\nProvide a summary of: project standards, active features, pending tasks."
+    }
+  ],
+  "contextProviders": [
+    {
+      "name": "file",
+      "params": {}
+    },
+    {
+      "name": "codebase",
+      "params": {}
+    },
+    {
+      "name": "folder",
+      "params": {
+        "path": "RLM/specs"
+      }
+    }
+  ],
+  "docs": [
+    {
+      "title": "RLM Specs",
+      "startUrl": "RLM/specs/",
+      "rootUrl": "RLM/specs/"
+    },
+    {
+      "title": "RLM Agents",
+      "startUrl": "RLM/agents/",
+      "rootUrl": "RLM/agents/"
+    }
+  ]
+}

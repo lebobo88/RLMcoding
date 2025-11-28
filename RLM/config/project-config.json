@@ -1,0 +1,84 @@
+{
+  "projectName": "RLM AI Agent Development System",
+  "version": "1.0.0",
+  "description": "Research-Lead-Manage AI Agent Development Workflow",
+  "techStack": {
+    "language": "typescript",
+    "framework": "next.js",
+    "database": "postgresql",
+    "testing": "jest",
+    "orm": "prisma"
+  },
+  "github": {
+    "repo": "your-org/your-project",
+    "branch": "main",
+    "syncEnabled": true
+  },
+  "automation": {
+    "defaultMode": "supervised",
+    "parallelTasks": 4,
+    "autoCommit": true,
+    "autoSync": false
+  },
+  "testing": {
+    "coverageThreshold": 80,
+    "autoFix": true,
+    "runOnBuild": true
+  },
+  "reporting": {
+    "enabled": true,
+    "webhookUrl": "",
+    "emailTo": "",
+    "slackWebhook": ""
+  },
+  "agents": {
+    "provider": "",
+    "defaultModel": "claude-sonnet-4",
+    "temperature": 0.2,
+    "maxTokens": 4096,
+    "supportedProviders": ["claude", "openai", "gemini", "ollama", "openai-compatible"],
+    "providerModels": {
+      "claude": ["claude-sonnet-4", "claude-opus-4", "claude-haiku-3.5"],
+      "openai": ["gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"],
+      "gemini": ["gemini-1.5-pro", "gemini-1.5-flash", "gemini-pro"],
+      "ollama": ["llama3", "codellama", "mistral", "mixtral", "deepseek-coder"]
+    }
+  },
+  "tokenTracking": {
+    "enabled": true,
+    "trackPerAgent": true,
+    "trackPerTask": true,
+    "trackPerSession": true,
+    "alertThreshold": 1000000,
+    "budgetDaily": 5000000,
+    "budgetMonthly": 100000000,
+    "costPerToken": {
+      "claude-sonnet-4-input": 0.000003,
+      "claude-sonnet-4-output": 0.000015,
+      "gpt-4-input": 0.00003,
+      "gpt-4-output": 0.00006,
+      "gemini-pro-input": 0.00000125,
+      "gemini-pro-output": 0.00000375
+    },
+    "logFile": "RLM/progress/token-usage.log",
+    "reportingEnabled": true,
+    "optimizationHints": true
+  },
+  "observability": {
+    "enabled": true,
+    "logEvents": true,
+    "sqliteDatabase": "RLM/progress/events.db",
+    "summarizeEvents": true,
+    "summaryModel": "claude-haiku-3.5",
+    "server": {
+      "enabled": false,
+      "port": 3000,
+      "host": "localhost"
+    },
+    "dashboard": {
+      "enabled": false,
+      "autoOpen": false
+    }
+  }
+}
+

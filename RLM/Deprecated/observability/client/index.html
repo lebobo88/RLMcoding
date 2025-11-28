@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RLM Observability Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>🤖 RLM Observability Dashboard</h1>
+            <div class="status-bar">
+                <span :class="['status-indicator', wsConnected ? 'connected' : 'disconnected']">
+                    {{ wsConnected ? '● Connected' : '○ Disconnected' }}
+                </span>
+                <span class="event-count">{{ events.length }} events</span>
+            </div>
+        </header>
+
+        <div class="container">
+            <aside class="sidebar">
+                <FilterPanel 
+                    :agents="agents"
+                    :event-types="eventTypes"
+                    :sessions="sessions"
+                    @filter-change="handleFilterChange"
+                />
+                
+                <div class="stats-panel">
+                    <h3>Statistics</h3>
+                    <div class="stat-item">
+                        <label>Total Events:</label>
+                        <span>{{ stats.total_events || 0 }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>Total Tokens:</label>
+                        <span>{{ formatNumber(stats.total_tokens || 0) }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>Total Cost:</label>
+                        <span>${{ formatCost(stats.total_cost || 0) }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>Sessions:</label>
+                        <span>{{ stats.unique_sessions || 0 }}</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="content">
+                <ActivityFeed 
+                    :events="filteredEvents"
+                    :selected-session="filters.session"
+                    @session-select="selectSession"
+                />
+            </main>
+        </div>
+
+        <InterventionPanel 
+            v-if="interventionMode"
+            :pending-approvals="pendingApprovals"
+            @approve="handleApproval"
+            @reject="handleRejection"
+        />
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

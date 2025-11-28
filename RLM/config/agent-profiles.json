@@ -1,0 +1,248 @@
+{
+  "agents": [
+    {
+      "id": "research-agent",
+      "name": "Research Agent",
+      "description": "Use this agent for idea discovery, market research, competitive analysis, and requirements gathering. Invoke with: raw project idea, target domain, and optional existing codebase path. The agent will research existing solutions, analyze competitors, identify gaps, formulate clarifying questions, and produce structured research findings for spec generation.",
+      "model": "claude-sonnet-4",
+      "temperature": 0.3,
+      "maxTokens": 8192,
+      "systemPromptFile": "agents/research-agent.md",
+      "contextIsolation": true,
+      "contextPrime": "prime_research",
+      "tools": [
+        "web_search",
+        "web_fetch",
+        "codebase_search",
+        "file_read",
+        "documentation"
+      ],
+      "triggers": [
+        "research_task",
+        "idea_discovery",
+        "competitive_analysis",
+        "requirements_gathering"
+      ],
+      "capabilities": [
+        "web_research",
+        "competitor_analysis",
+        "codebase_analysis",
+        "requirements_extraction",
+        "question_generation",
+        "domain_research"
+      ],
+      "inputContext": [
+        "RLM/specs/constitution.md",
+        "RLM/research/sessions/*/idea.md",
+        "RLM/config/project-config.json"
+      ],
+      "outputFormat": "RLM/research/sessions/[session-id]/",
+      "maxContextTokens": 75000
+    },
+    {
+      "id": "master-architect",
+      "name": "Master Architect",
+      "description": "Use this agent when you need system design, technology decisions, or architecture review. Invoke with: feature specification, technical constraints, and performance requirements. The agent will analyze requirements, design architecture, select technologies, and produce comprehensive technical specifications with trade-off analysis.",
+      "model": "claude-sonnet-4",
+      "temperature": 0.2,
+      "maxTokens": 8192,
+      "systemPromptFile": "agents/master-architect.md",
+      "contextIsolation": true,
+      "contextPrime": "prime_architecture",
+      "tools": [
+        "codebase_search",
+        "file_read",
+        "file_edit",
+        "terminal",
+        "documentation"
+      ],
+      "triggers": [
+        "architecture_task",
+        "design_review",
+        "tech_decision",
+        "spec_analysis"
+      ],
+      "capabilities": [
+        "system_design",
+        "technology_selection",
+        "api_design",
+        "data_modeling",
+        "architecture_review"
+      ],
+      "inputContext": [
+        "RLM/specs/constitution.md",
+        "RLM/specs/features/*/spec.md",
+        "RLM/specs/architecture/tech-stack.md"
+      ],
+      "outputFormat": "RLM/specs/architecture/[feature]/",
+      "maxContextTokens": 50000
+    },
+    {
+      "id": "implementation-agent",
+      "name": "Implementation Agent",
+      "description": "Use this agent for TDD code implementation. Invoke with: task specification, architecture plan, and acceptance criteria. The agent will write tests first, implement code to pass tests, and ensure quality standards. Always provide the specific task file path and expected file outputs.",
+      "model": "claude-sonnet-4",
+      "temperature": 0.1,
+      "maxTokens": 8192,
+      "systemPromptFile": "agents/implementation-agent.md",
+      "contextIsolation": true,
+      "contextPrime": "prime_implementation",
+      "tools": [
+        "file_read",
+        "file_edit",
+        "terminal",
+        "test_runner",
+        "linter"
+      ],
+      "triggers": [
+        "implementation_task",
+        "code_generation",
+        "bug_fix",
+        "refactoring"
+      ],
+      "capabilities": [
+        "tdd_development",
+        "code_generation",
+        "test_writing",
+        "debugging",
+        "refactoring"
+      ],
+      "inputContext": [
+        "RLM/specs/constitution.md",
+        "RLM/tasks/active/[task-id].md",
+        "RLM/specs/architecture/[feature]/plan.md"
+      ],
+      "outputFormat": "source_code + tests + progress_log",
+      "maxContextTokens": 100000
+    },
+    {
+      "id": "testing-agent",
+      "name": "Testing Agent",
+      "description": "Use this agent for test automation and quality assurance. Invoke when you need comprehensive testing, test fixes, or coverage analysis. Provide: source code files, test requirements, and acceptance criteria. The agent will write tests, analyze failures, and suggest fixes with minimal context pollution.",
+      "model": "claude-sonnet-4",
+      "temperature": 0.1,
+      "maxTokens": 4096,
+      "systemPromptFile": "agents/testing-agent.md",
+      "contextIsolation": true,
+      "contextPrime": "prime_testing",
+      "tools": [
+        "test_runner",
+        "coverage_analyzer",
+        "file_read",
+        "file_edit",
+        "terminal"
+      ],
+      "triggers": [
+        "testing_task",
+        "test_failure",
+        "coverage_check",
+        "quality_review"
+      ],
+      "capabilities": [
+        "test_automation",
+        "test_analysis",
+        "coverage_analysis",
+        "test_fixing",
+        "quality_assurance"
+      ],
+      "inputContext": [
+        "RLM/specs/constitution.md",
+        "source_files",
+        "test_files"
+      ],
+      "outputFormat": "test_results + coverage_report + fixes",
+      "maxContextTokens": 50000
+    },
+    {
+      "id": "devops-agent",
+      "name": "DevOps Agent",
+      "description": "Use this agent for CI/CD, deployment, and infrastructure tasks. Invoke with: deployment requirements, environment specifications, and infrastructure constraints. The agent will configure pipelines, setup monitoring, and handle deployments. Operates in isolated context to avoid polluting main session with deployment details.",
+      "model": "claude-sonnet-4",
+      "temperature": 0.2,
+      "maxTokens": 4096,
+      "systemPromptFile": "agents/devops-agent.md",
+      "contextIsolation": true,
+      "contextPrime": "prime_devops",
+      "tools": [
+        "terminal",
+        "file_read",
+        "file_edit",
+        "docker",
+        "kubernetes"
+      ],
+      "triggers": [
+        "deployment_task",
+        "ci_cd_setup",
+        "infrastructure_task",
+        "monitoring_setup"
+      ],
+      "capabilities": [
+        "ci_cd_setup",
+        "deployment",
+        "infrastructure_management",
+        "monitoring_setup",
+        "docker_kubernetes"
+      ],
+      "inputContext": [
+        "RLM/specs/architecture/deployment-architecture.md",
+        "RLM/ci-cd/",
+        "environment_configs"
+      ],
+      "outputFormat": "pipeline_configs + deployment_scripts + monitoring_setup",
+      "maxContextTokens": 50000
+    },
+    {
+      "id": "security-agent",
+      "name": "Security Agent",
+      "description": "Security auditing and vulnerability scanning",
+      "model": "claude-sonnet-4",
+      "temperature": 0.1,
+      "maxTokens": 4096,
+      "systemPromptFile": "agents/security-agent.md",
+      "tools": [
+        "security_scanner",
+        "file_read",
+        "terminal",
+        "vulnerability_checker"
+      ],
+      "triggers": [
+        "security_audit",
+        "vulnerability_scan",
+        "security_review"
+      ],
+      "capabilities": [
+        "security_auditing",
+        "vulnerability_scanning",
+        "code_security_review",
+        "dependency_scanning"
+      ]
+    },
+    {
+      "id": "documentation-agent",
+      "name": "Documentation Agent",
+      "description": "API documentation and technical writing",
+      "model": "claude-sonnet-4",
+      "temperature": 0.3,
+      "maxTokens": 4096,
+      "systemPromptFile": "agents/documentation-agent.md",
+      "tools": [
+        "file_read",
+        "file_edit",
+        "codebase_search",
+        "documentation_generator"
+      ],
+      "triggers": [
+        "documentation_task",
+        "api_documentation",
+        "readme_generation"
+      ],
+      "capabilities": [
+        "api_documentation",
+        "technical_writing",
+        "readme_generation",
+        "inline_documentation"
+      ]
+    }
+  ]
+}
+

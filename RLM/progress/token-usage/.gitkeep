@@ -1,0 +1,14 @@
+# Token Usage Directory
+
+This directory stores token usage logs and reports for the Claude Code sub-agent workflow.
+
+## File Types
+
+- `session-YYYY-MM-DD.json` - Daily session token logs
+- `report-YYYY-MM-DD.md` - Generated analysis reports
+- `summary.json` - Aggregated historical data
+
+## Usage
+
+Token data is automatically collected by the `token-reporter` hook.
+View reports using `/cc-tokens` command.

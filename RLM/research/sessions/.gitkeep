@@ -1,0 +1,2 @@
+# This directory stores RLM discovery session data
+# Each session creates a subdirectory: DISC-{timestamp}/

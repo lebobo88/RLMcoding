@@ -1,0 +1,19 @@
+{
+  "lastUpdate": "",
+  "tasks": {},
+  "metrics": {
+    "totalTasks": 0,
+    "completed": 0,
+    "inProgress": 0,
+    "blocked": 0,
+    "pending": 0,
+    "velocity": 0
+  },
+  "sprint": {
+    "current": "",
+    "startDate": "",
+    "endDate": "",
+    "daysRemaining": 0
+  }
+}
+

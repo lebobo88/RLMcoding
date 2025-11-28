@@ -1,0 +1,45 @@
+# RLM Method - Windsurf Integration
+
+This project uses the RLM (Research-Lead-Manage) method for AI-assisted development.
+
+## Spec Locations
+- Constitution: `RLM/specs/constitution.md` - Project standards
+- Features: `RLM/specs/features/FTR-XXX/spec.md` - Feature specifications
+- Architecture: `RLM/specs/architecture/` - Technical decisions
+- Tasks: `RLM/tasks/active/` - Current work items
+
+## Agent Prompts
+- Research: `RLM/agents/research-agent.md` - Discovery process
+- Architecture: `RLM/agents/master-architect.md` - Design decisions
+- Implementation: `RLM/agents/implementation-agent.md` - Coding standards
+- Testing: `RLM/agents/testing-agent.md` - Test strategy
+
+## Discovery Command
+
+When asked to "discover" or "research" a new idea:
+
+1. Read `RLM/agents/research-agent.md` for the process
+2. Research: Analyze idea, competitors, best practices
+3. Questions: Ask clarifying questions by category
+   - Business (goals, users, timeline)
+   - Technical (scale, integrations, constraints)
+   - Data (storage, compliance, privacy)
+   - Security (auth, encryption, audit)
+   - UX (platforms, accessibility)
+4. Draft specs following `RLM/templates/`
+5. Save to `RLM/specs/`
+
+## Implementation Standards
+
+- Always read the feature spec before implementing
+- Follow TDD - write tests first
+- Check constitution for coding standards
+- Reference specs in commits (e.g., "Implements FTR-001")
+- Update progress in `RLM/progress/`
+
+## Running Discovery Script
+
+```powershell
+./RLM/commands/rlm-discover.ps1 --idea "your project idea"
+./RLM/commands/rlm-discover.ps1 --idea "idea" --provider openai --model gpt-4o
+```

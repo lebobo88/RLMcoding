@@ -1,0 +1,56 @@
+# RLM Method - Cursor Integration
+
+This project uses the RLM (Research-Lead-Manage) method for AI-assisted development.
+
+## Key Directories
+- `RLM/specs/` - All specifications (constitution, features, architecture)
+- `RLM/agents/` - Agent prompts defining behavior for different tasks
+- `RLM/templates/` - Templates for spec documents
+- `RLM/tasks/` - Active and completed tasks
+- `RLM/progress/` - Progress tracking and reports
+
+## Discovery Process
+
+When asked to "discover", "research", or start a new project/feature:
+
+1. **Read** `RLM/agents/research-agent.md` for the full process
+2. **Research** the idea - analyze competitors, best practices, existing solutions
+3. **Questions** - Ask clarifying questions by category:
+   - Business (Critical): Goals, users, timeline, success metrics
+   - Technical (High): Scale, integrations, tech constraints
+   - Data (High): Storage, compliance, privacy requirements
+   - Security (Medium): Auth, encryption, audit needs
+   - UX (Medium): Platforms, accessibility, user flows
+4. **Draft** specs following templates in `RLM/templates/`
+5. **Save** to `RLM/specs/`
+
+## Implementation Process
+
+When implementing features:
+
+1. **Read** the feature spec from `RLM/specs/features/FTR-XXX/spec.md`
+2. **Follow TDD** - Write tests first, then implement
+3. **Check** constitution at `RLM/specs/constitution.md` for standards
+4. **Update** progress in `RLM/progress/`
+
+## Spec Locations
+
+- Constitution: `RLM/specs/constitution.md`
+- Features: `RLM/specs/features/FTR-XXX/spec.md`
+- Architecture: `RLM/specs/architecture/overview.md`
+- Epic Breakdown: `RLM/specs/epics/breakdown.md`
+
+## Running Discovery Script
+
+For full automated discovery with web research:
+```powershell
+./RLM/commands/rlm-discover.ps1 --idea "your project idea"
+```
+
+## Standards
+
+- Always reference specs before making changes
+- Follow existing patterns in the codebase
+- Use TypeScript strict mode
+- Maintain 80%+ test coverage
+- Document public APIs

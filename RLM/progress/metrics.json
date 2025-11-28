@@ -1,0 +1,84 @@
+{
+  "overview": {
+    "totalTasks": 0,
+    "completedTasks": 0,
+    "completionRate": 0,
+    "averageTaskDuration": 0,
+    "velocity": 0
+  },
+  "testing": {
+    "totalTests": 0,
+    "passingTests": 0,
+    "failingTests": 0,
+    "coverage": {
+      "statements": 0,
+      "branches": 0,
+      "functions": 0,
+      "lines": 0
+    }
+  },
+  "codeQuality": {
+    "linterErrors": 0,
+    "linterWarnings": 0,
+    "securityVulnerabilities": 0,
+    "technicalDebt": 0
+  },
+  "performance": {
+    "buildTime": 0,
+    "testTime": 0,
+    "deploymentTime": 0
+  },
+  "agents": {
+    "master-architect": {
+      "tasksCompleted": 0,
+      "averageDuration": 0,
+      "successRate": 0,
+      "tokensUsed": {
+        "total": 0,
+        "input": 0,
+        "output": 0,
+        "cost": 0
+      }
+    },
+    "implementation-agent": {
+      "tasksCompleted": 0,
+      "averageDuration": 0,
+      "successRate": 0,
+      "tokensUsed": {
+        "total": 0,
+        "input": 0,
+        "output": 0,
+        "cost": 0
+      }
+    },
+    "testing-agent": {
+      "tasksCompleted": 0,
+      "averageDuration": 0,
+      "successRate": 0,
+      "tokensUsed": {
+        "total": 0,
+        "input": 0,
+        "output": 0,
+        "cost": 0
+      }
+    }
+  },
+  "tokenUsage": {
+    "total": 0,
+    "input": 0,
+    "output": 0,
+    "totalCost": 0,
+    "dailyUsage": {},
+    "weeklyUsage": {},
+    "monthlyUsage": {},
+    "byAgent": {},
+    "byTask": {},
+    "averagePerTask": 0,
+    "budgetRemaining": {
+      "daily": 0,
+      "monthly": 0
+    },
+    "optimizationSuggestions": []
+  }
+}
+

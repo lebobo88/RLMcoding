@@ -1,0 +1,12 @@
+{
+  "dailyVelocity": [],
+  "weeklyVelocity": [],
+  "sprintVelocity": [],
+  "trends": {
+    "currentVelocity": 0,
+    "averageVelocity": 0,
+    "trend": "stable",
+    "projectedCompletion": ""
+  }
+}
+

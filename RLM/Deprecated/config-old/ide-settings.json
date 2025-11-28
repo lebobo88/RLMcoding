@@ -1,0 +1,104 @@
+{
+  "supportedIDEs": {
+    "cursor": {
+      "name": "Cursor",
+      "version": "0.40+",
+      "agentIntegration": "native",
+      "mcpSupport": true,
+      "configFile": ".cursorrules",
+      "features": [
+        "composer",
+        "agent_mode",
+        "mcp_tools",
+        "context_aware"
+      ]
+    },
+    "windsurf": {
+      "name": "Windsurf",
+      "version": "1.0+",
+      "agentIntegration": "cascade",
+      "mcpSupport": true,
+      "configFile": ".windsurf/workflows",
+      "features": [
+        "cascade_workflows",
+        "agent_orchestration",
+        "context_aware"
+      ]
+    },
+    "vscode": {
+      "name": "VS Code",
+      "version": "1.80+",
+      "agentIntegration": "copilot",
+      "mcpSupport": false,
+      "configFile": ".vscode/settings.json",
+      "features": [
+        "copilot",
+        "copilot_chat",
+        "extensions"
+      ]
+    },
+    "kiro": {
+      "name": "Kiro",
+      "version": "1.0+",
+      "agentIntegration": "hooks",
+      "mcpSupport": true,
+      "configFile": "kiro-hooks.toml",
+      "features": [
+        "spec_driven",
+        "agent_hooks",
+        "automated_workflows"
+      ]
+    },
+    "antigravity": {
+      "name": "Google Antigravity",
+      "version": "1.0+",
+      "agentIntegration": "native",
+      "mcpSupport": true,
+      "configFile": ".antigravity",
+      "features": [
+        "agent_first",
+        "gemini_integration",
+        "autonomous_coding"
+      ]
+    },
+    "claude-code": {
+      "name": "Claude Code CLI",
+      "version": "1.0+",
+      "agentIntegration": "cli",
+      "mcpSupport": true,
+      "configFile": ".claude-code",
+      "features": [
+        "command_line",
+        "agent_workflows",
+        "automation"
+      ]
+    }
+  },
+  "currentIDE": "cursor",
+  "agentInvocation": {
+    "cursor": {
+      "method": "mcp_tool_call",
+      "command": "cursor --agent",
+      "contextFiles": [
+        "RLM/specs/constitution.md",
+        "RLM/agents/{agent-id}.md"
+      ]
+    },
+    "windsurf": {
+      "method": "cascade_workflow",
+      "command": "windsurf cascade run",
+      "contextFiles": [
+        "RLM/specs/constitution.md",
+        "RLM/agents/{agent-id}.md"
+      ]
+    },
+    "vscode": {
+      "method": "task_runner",
+      "command": "code --task",
+      "contextFiles": [
+        "RLM/specs/constitution.md"
+      ]
+    }
+  }
+}
+

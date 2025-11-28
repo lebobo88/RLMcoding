@@ -1,0 +1,45 @@
+{
+  "version": "2.2",
+  "description": "Claude Code Enhanced Workflow Configuration",
+
+  "parallel": {
+    "limit": 5,
+    "max_limit": 10,
+    "description": "Maximum concurrent sub-agent spawns"
+  },
+
+  "automation": {
+    "level": "supervised",
+    "options": ["auto", "supervised", "manual"],
+    "description": "Default automation level for /cc-full and /cc-implement all"
+  },
+
+  "context_priming": {
+    "enabled": true,
+    "auto_load_constitution": true,
+    "auto_load_feature_spec": true,
+    "description": "Automatic context loading in /cc-* commands"
+  },
+
+  "token_reporting": {
+    "silent_logging": true,
+    "warning_threshold": 0.5,
+    "critical_threshold": 0.75,
+    "auto_bundle_threshold": 0.9,
+    "show_session_summary": true,
+    "description": "Automatic token usage tracking and warnings"
+  },
+
+  "error_handling": {
+    "auto_retry": false,
+    "max_retries": 2,
+    "invoke_problem_solving": true,
+    "description": "Behavior when sub-agent encounters errors"
+  },
+
+  "output": {
+    "verbose": false,
+    "show_sub_agent_progress": true,
+    "description": "Output verbosity settings"
+  }
+}

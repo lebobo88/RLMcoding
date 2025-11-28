@@ -1,0 +1,62 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo Pre-task checkpoint >> RLM/progress/logs/session.log"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo [%DATE% %TIME%] Task completed >> RLM/progress/logs/session.log"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo [%DATE% %TIME%] File edited >> RLM/progress/logs/session.log"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo [%DATE% %TIME%] Session ended >> RLM/progress/logs/session.log"
+          }
+        ]
+      }
+    ]
+  },
+  "documentation": {
+    "description": "Claude Code hooks configuration for RLM workflow",
+    "version": "2.1",
+    "hookTypes": {
+      "PreToolUse": "Fires before a tool is executed",
+      "PostToolUse": "Fires after a tool completes",
+      "Stop": "Fires when the agent stops"
+    },
+    "customHooks": {
+      "pre-commit": ".claude/hooks/pre-commit.md - Review before commits",
+      "post-task": ".claude/hooks/post-task.md - Update progress after tasks",
+      "on-error": ".claude/hooks/on-error.md - Handle implementation errors",
+      "context-bundle": ".claude/hooks/context-bundle.md - Save session state",
+      "token-reporter": ".claude/hooks/token-reporter.md - Track token usage"
+    }
+  }
+}

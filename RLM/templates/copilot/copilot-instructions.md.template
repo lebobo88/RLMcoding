@@ -1,0 +1,54 @@
+# {{PROJECT_NAME}} - Copilot Instructions
+
+## Project Overview
+{{PROJECT_DESCRIPTION}}
+
+## Methodology
+This project follows the RLM (Research-Lead-Manage) methodology:
+- Read specs from `RLM/specs/` before implementing any feature
+- Follow TDD: write failing tests first, then implementation
+- Reference task files in `RLM/tasks/active/` for requirements
+- Follow standards defined in `RLM/specs/constitution.md`
+
+## Technology Stack
+{{TECH_STACK_SUMMARY}}
+
+## Coding Standards
+
+### General Principles
+- Readability over cleverness
+- DRY (Don't Repeat Yourself)
+- KISS (Keep It Simple)
+- YAGNI (You Aren't Gonna Need It)
+
+### Naming Conventions
+| Element | Convention | Example |
+|---------|------------|---------|
+| Variables | camelCase | `userName`, `isActive` |
+| Functions | camelCase | `getUserById`, `calculateTotal` |
+| Classes | PascalCase | `UserService`, `OrderProcessor` |
+| Constants | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| Files (components) | PascalCase | `UserProfile.tsx` |
+| Files (utilities) | kebab-case | `date-utils.ts` |
+
+### Code Quality
+- Functions < 50 lines
+- 80%+ test coverage target
+- TypeScript strict mode
+- Document all public APIs
+
+## Testing Requirements
+- Unit tests: `[filename].test.ts`
+- Integration tests: `[filename].integration.test.ts`
+- Use AAA pattern (Arrange, Act, Assert)
+- Cover happy path, edge cases, and error scenarios
+
+## File Structure
+- Specs: `RLM/specs/features/FTR-XXX/`
+- Tasks: `RLM/tasks/active/TASK-XXX.md`
+- Architecture: `RLM/specs/architecture/`
+
+## Git Workflow
+- Branch: `feature/TASK-XXX-brief-description`
+- Commits: Conventional commits (`feat`, `fix`, `docs`, etc.)
+- Always link to task ID in commit/PR

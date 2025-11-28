@@ -1,0 +1,44 @@
+# {{PROJECT_NAME}} - Agent Instructions
+
+This project uses the RLM methodology for AI-assisted development.
+
+## Before You Start
+
+1. **Read the Task**: Check `RLM/tasks/active/TASK-XXX.md` for requirements
+2. **Read the Spec**: Find feature spec in `RLM/specs/features/FTR-XXX/`
+3. **Check Constitution**: Follow standards in `RLM/specs/constitution.md`
+
+## TDD Workflow (Required)
+
+Always follow this sequence:
+
+1. **RED**: Write failing test(s) first
+2. **GREEN**: Write minimal code to pass tests
+3. **REFACTOR**: Improve code while keeping tests green
+4. **VERIFY**: Run full test suite before completing
+
+## Task Completion Checklist
+
+Before marking a task complete:
+- [ ] All acceptance criteria from task file met
+- [ ] Tests written and passing
+- [ ] No linter errors
+- [ ] Code follows constitution standards
+- [ ] PR description references TASK-XXX
+
+## Key Directories
+
+| Directory | Purpose |
+|-----------|---------|
+| `RLM/specs/PRD.md` | Product requirements |
+| `RLM/specs/constitution.md` | Coding standards |
+| `RLM/specs/features/` | Feature specifications |
+| `RLM/tasks/active/` | Tasks to implement |
+| `RLM/tasks/completed/` | Finished tasks |
+
+## Error Handling
+
+If you encounter blockers:
+1. Document the blocker in your PR description
+2. Create a follow-up issue if needed
+3. Do NOT mark task as complete if blocked

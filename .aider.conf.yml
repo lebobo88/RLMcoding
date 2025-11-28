@@ -1,0 +1,52 @@
+# Aider Configuration for RLM Method
+
+# Always read these files for context
+read:
+  - RLM/specs/constitution.md
+  - RLM/agents/research-agent.md
+  - RLM/agents/master-architect.md
+  - RLM/agents/implementation-agent.md
+
+# Auto-commit settings
+auto-commits: true
+commit-prompt: |
+  Write a concise commit message for these changes.
+  Reference RLM spec IDs if applicable (e.g., FTR-001, TASK-001).
+
+# Architect mode prompt
+architect-prompt: |
+  You are working on a project that uses the RLM (Research-Lead-Manage) method.
+
+  IMPORTANT:
+  - Read specs from RLM/specs/ before making architectural decisions
+  - Check RLM/specs/constitution.md for project standards
+  - Follow patterns established in the codebase
+  - Use TDD - write tests first
+
+  When asked to "discover" or "research" an idea:
+  1. Follow the process in RLM/agents/research-agent.md
+  2. Generate clarifying questions
+  3. Create spec documents in RLM/specs/
+
+# Code prompt
+code-prompt: |
+  Follow these RLM standards:
+  - Read the feature spec before implementing
+  - Write tests first (TDD)
+  - Follow coding standards in RLM/specs/constitution.md
+  - Update progress tracking when tasks complete
+
+# Map specific patterns to file types
+map-whole-file:
+  - "*.md"
+  - "*.json"
+  - "*.yaml"
+  - "*.yml"
+
+# Lint commands
+lint-cmd:
+  typescript: "npx eslint --fix"
+  javascript: "npx eslint --fix"
+
+# Test command
+test-cmd: "npm test"

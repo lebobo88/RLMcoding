@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(taskkill:*)",
+      "Bash(npm run init-db:*)",
+      "Bash(curl:*)",
+      "Bash(npm run dev:*)",
+      "Bash(dir \"c:\\AiAppDeployments\\RLMcoding\" /s /b /on)",
+      "Bash(powershell -Command:*)",
+      "Bash(npx tsx -e:*)",
+      "Bash(npx tsx:*)",
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm install:*)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

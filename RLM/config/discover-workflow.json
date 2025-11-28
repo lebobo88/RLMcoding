@@ -1,0 +1,198 @@
+{
+  "workflow": "rlm-discover",
+  "version": "1.0.0",
+  "description": "AI-Assisted Spec Creation workflow - transforms raw ideas into complete specifications",
+  "phases": [
+    {
+      "id": "INIT",
+      "name": "Initialization",
+      "description": "Capture raw idea and setup session",
+      "agent": null,
+      "interactive": true,
+      "inputs": ["raw_idea", "codebase_path?", "domain?"],
+      "outputs": ["session_id", "idea.md"],
+      "transitions": {
+        "complete": "RESEARCH"
+      }
+    },
+    {
+      "id": "RESEARCH",
+      "name": "Research Phase",
+      "description": "AI researches the idea from multiple sources",
+      "agent": "research-agent",
+      "interactive": false,
+      "inputs": ["idea.md", "codebase_path?", "domain_apis?"],
+      "outputs": ["findings.md", "competitors.md", "recommendations.md"],
+      "transitions": {
+        "complete": "QUESTIONS",
+        "need_clarification": "QUESTIONS",
+        "error": "ERROR"
+      }
+    },
+    {
+      "id": "QUESTIONS",
+      "name": "Question Phase",
+      "description": "AI asks clarifying questions based on research gaps",
+      "agent": "research-agent",
+      "interactive": true,
+      "inputs": ["findings.md", "gaps"],
+      "outputs": ["questions.md", "answers.md"],
+      "allowMultipleRounds": true,
+      "transitions": {
+        "answers_provided": "QUESTIONS_FOLLOWUP",
+        "skip": "DRAFT",
+        "done": "DRAFT",
+        "more_research": "RESEARCH"
+      }
+    },
+    {
+      "id": "QUESTIONS_FOLLOWUP",
+      "name": "Follow-up Questions",
+      "description": "Generate follow-up questions based on previous answers",
+      "agent": "research-agent",
+      "interactive": true,
+      "inputs": ["answers.md", "findings.md"],
+      "outputs": ["questions.md", "answers.md"],
+      "transitions": {
+        "more_questions": "QUESTIONS_FOLLOWUP",
+        "sufficient": "DRAFT",
+        "skip": "DRAFT"
+      }
+    },
+    {
+      "id": "DRAFT",
+      "name": "Draft Phase",
+      "description": "Generate draft specifications from research and answers",
+      "agent": "master-architect",
+      "interactive": false,
+      "inputs": ["handoff.md", "constitution.md?"],
+      "outputs": ["constitution-draft.md", "feature-specs/", "architecture-draft.md", "epic-breakdown.md"],
+      "transitions": {
+        "complete": "REFINEMENT",
+        "error": "ERROR"
+      }
+    },
+    {
+      "id": "REFINEMENT",
+      "name": "Refinement Phase",
+      "description": "User reviews and requests changes to specs",
+      "agent": "master-architect",
+      "interactive": true,
+      "inputs": ["drafts/", "user_feedback"],
+      "outputs": ["final_specs/"],
+      "transitions": {
+        "approved": "COMPLETE",
+        "revise": "DRAFT",
+        "more_questions": "QUESTIONS"
+      }
+    },
+    {
+      "id": "COMPLETE",
+      "name": "Completion",
+      "description": "Specs finalized and saved to RLM/specs/",
+      "agent": null,
+      "interactive": false,
+      "inputs": ["final_specs/"],
+      "outputs": ["summary.md"],
+      "transitions": {}
+    },
+    {
+      "id": "ERROR",
+      "name": "Error State",
+      "description": "Handle workflow errors and allow recovery",
+      "agent": null,
+      "interactive": true,
+      "inputs": ["error_details"],
+      "outputs": ["error_log.md"],
+      "transitions": {
+        "retry": "RESEARCH",
+        "abort": "COMPLETE"
+      }
+    }
+  ],
+  "persistence": {
+    "location": "RLM/research/sessions/[session-id]/",
+    "stateFile": "state.json",
+    "format": "json",
+    "autosave": true
+  },
+  "agents": {
+    "research": {
+      "id": "research-agent",
+      "phases": ["RESEARCH", "QUESTIONS", "QUESTIONS_FOLLOWUP"]
+    },
+    "architect": {
+      "id": "master-architect",
+      "phases": ["DRAFT", "REFINEMENT"]
+    }
+  },
+  "webResearch": {
+    "enabled": true,
+    "provider": "perplexity",
+    "model": "llama-3.1-sonar-large-128k-online",
+    "fallback": "claude_websearch",
+    "maxQueries": 10,
+    "queryTypes": [
+      "competitor_analysis",
+      "best_practices",
+      "technology_comparison",
+      "market_analysis"
+    ]
+  },
+  "questionFlow": {
+    "mode": "incremental",
+    "maxRounds": 5,
+    "categories": [
+      {
+        "name": "Business",
+        "priority": "critical",
+        "askFirst": true
+      },
+      {
+        "name": "Technical",
+        "priority": "high",
+        "askFirst": true
+      },
+      {
+        "name": "Data",
+        "priority": "high",
+        "askFirst": false
+      },
+      {
+        "name": "Security",
+        "priority": "medium",
+        "askFirst": false
+      },
+      {
+        "name": "UX",
+        "priority": "medium",
+        "askFirst": false
+      }
+    ],
+    "skipKeywords": ["done", "skip", "proceed", "continue"],
+    "followUpTriggers": {
+      "enterprise": ["compliance", "sla", "audit", "availability"],
+      "consumer": ["mobile", "social", "notifications", "gamification"],
+      "ai": ["model", "training", "inference", "data_privacy"],
+      "realtime": ["websocket", "latency", "sync", "conflict_resolution"]
+    }
+  },
+  "outputs": {
+    "constitution": {
+      "location": "RLM/specs/constitution.md",
+      "mergeStrategy": "update"
+    },
+    "features": {
+      "location": "RLM/specs/features/",
+      "pattern": "FTR-{number}/spec.md"
+    },
+    "architecture": {
+      "location": "RLM/specs/architecture/",
+      "files": ["overview.md", "tech-stack.md", "data-model.md"]
+    },
+    "epics": {
+      "location": "RLM/specs/epics/",
+      "pattern": "EPIC-{number}.md"
+    }
+  }
+}
