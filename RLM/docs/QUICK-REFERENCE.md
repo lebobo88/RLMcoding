@@ -32,6 +32,8 @@
 
 ## Commands (Claude Code)
 
+### Standard Commands
+
 | Command | Purpose | Prompt File |
 |---------|---------|-------------|
 | `/discover [idea]` | Create PRD from idea | `01-DISCOVER.md` |
@@ -40,6 +42,21 @@
 | `/implement TASK-XXX` | Implement single task | `04-IMPLEMENT-TASK.md` |
 | `/implement all` | Implement all tasks | `05-IMPLEMENT-ALL.md` |
 | `/implement resume` | Resume previous session | `06-RESUME.md` |
+
+### Enhanced Commands (v2.4)
+
+| Command | Purpose |
+|---------|---------|
+| `/cc-full [idea]` | Full automation: idea → code |
+| `/cc-discover [idea]` | Discovery with research agent |
+| `/cc-create-specs` | Specs from PRD |
+| `/cc-implement [task\|all]` | TDD with parallel agents |
+| `/cc-design system` | Generate design system |
+| `/cc-design component [name]` | Component specification |
+| `/cc-design qa` | 117-point design QA |
+| `/cc-design tokens` | Framework-specific tokens |
+| `/cc-review` | Code review |
+| `/cc-test` | Testing with coverage |
 
 ## For Other IDEs
 
@@ -62,6 +79,7 @@ Read RLM/prompts/[prompt-name].md and follow it
 |-----------|----------|
 | `RLM/prompts/` | Workflow prompts (copy to AI) |
 | `RLM/specs/` | PRD, constitution, feature specs |
+| `RLM/specs/design/` | Design system, component specs (v2.4) |
 | `RLM/tasks/active/` | Pending tasks |
 | `RLM/tasks/completed/` | Done tasks |
 | `RLM/progress/` | Status, logs |
@@ -122,6 +140,12 @@ Specifications:
   RLM/specs/architecture/overview.md
   RLM/specs/epics/breakdown.md
 
+Design (v2.4):
+  RLM/specs/design/design-system.md
+  RLM/specs/design/tokens.json
+  RLM/specs/design/components/[name].md
+  RLM/specs/design/features/FTR-XXX-design.md
+
 Tasks:
   RLM/tasks/active/TASK-XXX.md
   RLM/tasks/completed/TASK-XXX.md
@@ -132,3 +156,31 @@ Progress:
   RLM/progress/logs/TASK-XXX.md
   RLM/progress/logs/SESSION-XXX.md
 ```
+
+## Design Quick Reference (v2.4)
+
+### 8 Component States
+```
+Default → Hover → Focus → Active
+                     ↓
+Disabled ← Loading ← Error ← Empty
+```
+
+### Animation Tiers
+| Tier | Technology | Duration |
+|------|------------|----------|
+| MINIMAL | CSS | 150-200ms |
+| MODERATE | Framer Motion | 200-400ms |
+| RICH | GSAP | 300-600ms |
+
+### Design QA Categories
+| Category | Points | Pass |
+|----------|--------|------|
+| Visual | 20 | 18+ |
+| Accessibility | 25 | 23+ |
+| States | 18 | 16+ |
+| Responsive | 18 | 16+ |
+| Animation | 12 | 11+ |
+| Error | 12 | 11+ |
+| Performance | 12 | 11+ |
+| **Total** | **117** | **≥105** |

@@ -18,7 +18,9 @@
       "Bash(cat:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\docs\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\docs\")"
+      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\docs\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\docs\")",
+      "Bash(if not exist \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\fixtures\" mkdir \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\fixtures\")",
+      "Bash(if not exist \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\features\" mkdir \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\features\")"
     ],
     "deny": [],
     "ask": []

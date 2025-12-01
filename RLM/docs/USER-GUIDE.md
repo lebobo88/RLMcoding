@@ -363,6 +363,96 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for more help.
 
 ---
 
+## Design Workflow (v2.4)
+
+RLM includes comprehensive UI/UX engineering capabilities through the Designer sub-agent.
+
+### Design System Generation
+
+Create or update your design system:
+```
+/cc-design system
+```
+
+This generates:
+- Design tokens (colors, typography, spacing, shadows)
+- Component library specifications
+- Animation system guidelines
+- Accessibility standards
+
+### Component Specifications
+
+Generate detailed component specs with all 8 states:
+```
+/cc-design component Button
+/cc-design component Modal
+```
+
+**8 Required States**:
+- Default - Normal appearance
+- Hover - Mouse over
+- Focus - Keyboard focus (visible outline)
+- Active - Being clicked/activated
+- Disabled - Non-interactive
+- Loading - Async operation in progress
+- Error - Error state
+- Empty - No data/content
+
+### Feature Design Specs
+
+Generate UI/UX specifications for features:
+```
+/cc-design spec FTR-001
+```
+
+### Design QA
+
+Run 117-point design quality checklist:
+```
+/cc-design qa
+```
+
+**Categories (7)**:
+- Visual Consistency (20 points)
+- Accessibility (25 points)
+- Component States (18 points)
+- Responsive Design (18 points)
+- Animation/Motion (12 points)
+- Error Handling (12 points)
+- Performance (12 points)
+
+**Pass Threshold**: ≥90% (105/117 points)
+
+### Design Tokens Export
+
+Generate framework-specific token files:
+```
+/cc-design tokens
+```
+
+Supported frameworks: Tailwind, MUI, Chakra, Bootstrap, Ant Design, CSS Variables
+
+### Animation Tiers
+
+Choose your animation complexity:
+
+| Tier | Technology | Use Case |
+|------|------------|----------|
+| MINIMAL | CSS Transitions | Simple apps, accessibility-focused |
+| MODERATE | Framer Motion | Most apps, balance of polish and performance |
+| RICH | GSAP | Marketing sites, high-polish experiences |
+
+### Accessibility Standards
+
+RLM enforces WCAG 2.1 AA (AAA recommended):
+- 4.5:1 contrast for normal text
+- 3:1 contrast for large text
+- Visible focus indicators
+- Keyboard navigation
+- Screen reader support
+
+---
+
 ## GitHub Copilot Integration
 
 RLM includes templates for GitHub Copilot integration. When your project is on GitHub, you can leverage Copilot's autonomous coding features.

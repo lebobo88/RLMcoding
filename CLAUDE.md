@@ -49,6 +49,7 @@ Full automation with parallel sub-agent spawning:
 | `/cc-implement [task\|all\|resume]` | TDD implementation (parallel for `all`) | Coder |
 | `/cc-test [scope]` | Testing with dedicated tester agent | Tester |
 | `/cc-review [scope]` | Code review before commit | Reviewer |
+| `/cc-verify FTR-XXX` | **Feature verification**: E2E tests from acceptance criteria | Verifier |
 | `/cc-background [task]` | Spawn autonomous background agent | Background |
 | `/cc-tokens` | Display token usage (auto in v2.2) | - |
 | `/cc-config [setting] [value]` | Configure workflow settings | - |
@@ -180,6 +181,7 @@ The workflow follows this sequence:
 2. **Specs** (`/create-specs`) → Generates feature specs and architecture
 3. **Tasks** (`/create-tasks`) → Creates fine-grained tasks in `RLM/tasks/active/`
 4. **Implementation** (`/implement`) → TDD: write tests first, then implementation
+5. **Verification** (`/cc-verify`) → Auto-triggered E2E tests when all feature tasks complete
 
 ### Automation Levels
 
@@ -254,6 +256,7 @@ Sub-agents in `.claude/agents/` operate in isolated context windows for efficien
 | **Tester** | Test writing, coverage analysis, bug investigation | Read, Write, Bash |
 | **Reviewer** | Code review, quality checks, security, design compliance | Read, Grep, Glob |
 | **Designer** | Design systems, UX research, component specs, accessibility | Read, Write, Glob, Grep, WebSearch, WebFetch |
+| **Verifier** | Feature verification, E2E testing, accessibility, visual regression | Read, Write, Edit, Bash, Glob, Grep |
 
 ### Key Concepts (v2.2)
 
@@ -329,6 +332,72 @@ All interactive components MUST implement 8 states:
 - Keyboard navigation: all interactive elements
 - Screen reader: semantic HTML, ARIA labels
 - Reduced motion: always respect `prefers-reduced-motion`
+
+## Feature Verification System (v2.5)
+
+Automatic E2E testing when all tasks for a feature complete.
+
+### Verification Workflow
+
+When the last task for a feature is completed:
+1. **Detection**: Post-task hook detects feature completion
+2. **Test Generation**: Verifier agent generates Playwright tests from acceptance criteria
+3. **Execution**: Full test suite runs (Functional + Accessibility + Visual)
+4. **Result Handling**:
+   - **PASS**: Feature marked as `verified`
+   - **FAIL**: Bug tasks created, feature blocked until fixed
+
+### Verification Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/cc-verify FTR-XXX` | Verify specific feature |
+| `/cc-verify all` | Verify all pending features |
+| `/cc-verify FTR-XXX --retry` | Re-verify after bug fixes |
+
+### Test Types
+
+| Type | Tool | Coverage |
+|------|------|----------|
+| **Functional** | Playwright | User flows, forms, navigation, data |
+| **Accessibility** | axe-core | WCAG 2.1 AA compliance |
+| **Visual** | Screenshots | UI states, responsive layouts |
+
+### Feature Status Flow
+
+```
+in_progress → verification-pending → verified
+                      ↓
+              verification-failed
+                      ↓
+              (fix bugs, retry)
+```
+
+### Verification File Structure
+
+```
+rlm-app/tests/e2e/
+├── page-objects/           # Reusable Page Objects
+│   └── base.page.ts
+├── fixtures/               # Test utilities
+│   └── test-utils.ts
+└── features/               # Per-feature tests (generated)
+    └── FTR-XXX/
+        ├── FTR-XXX.functional.test.ts
+        ├── FTR-XXX.a11y.test.ts
+        └── FTR-XXX.visual.test.ts
+
+RLM/progress/verification/  # Verification reports
+└── FTR-XXX-[timestamp].md
+```
+
+### Bug Task Creation
+
+When verification fails:
+- Bug tasks created in `RLM/tasks/active/TASK-XXX-BUG-NNN.md`
+- Include error details, screenshots, reproduction steps
+- Linked to the acceptance criterion that failed
+- Re-verification auto-triggered when all bugs fixed
 
 ## GitHub Copilot Integration (v2.3)
 

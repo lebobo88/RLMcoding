@@ -1,18 +1,32 @@
 # Claude Code Enhanced Workflow Guide
 
-This guide covers the Claude Code-specific RLM workflow (v2.2) that leverages sub-agent architecture for context efficiency and task specialization.
+This guide covers the Claude Code-specific RLM workflow (v2.4) that leverages sub-agent architecture for context efficiency and task specialization.
 
 ## Overview
 
 The Claude Code enhanced workflow adds specialized sub-agents and context management on top of the standard RLM method. It provides:
 
 - **40-60% context reduction** through sub-agent delegation
-- **Specialized agents** for research, architecture, coding, testing, and review
+- **Specialized agents** for research, architecture, coding, testing, review, and **design**
 - **Automatic token reporting** with threshold-based warnings (50%, 75%, 90%)
 - **Parallel sub-agent spawning** for concurrent task implementation
 - **Background agents** for long-running autonomous tasks
 - **Automatic context priming** built into all `/cc-*` commands
 - **Full automation pipeline** via `/cc-full [idea]`
+- **Comprehensive UI/UX engineering** with design systems, tokens, and accessibility (v2.4)
+
+### What's New in v2.4
+
+| Feature | Description |
+|---------|-------------|
+| **Designer Agent** | Full UI/UX engineering with design systems, tokens, accessibility |
+| **Design Philosophy** | CREATIVE (bold, unique) vs CONSISTENT (accessible, enterprise) |
+| **Animation Tiers** | MINIMAL (CSS), MODERATE (Framer Motion), RICH (GSAP) |
+| **117-Point Design QA** | Comprehensive checklist with ≥90% pass requirement |
+| **Framework Exports** | Tailwind, Material UI, Chakra, Bootstrap, Ant Design, CSS Variables |
+| **8 Component States** | Default, Hover, Focus, Active, Disabled, Loading, Error, Empty |
+| **UX Research** | Web-based research → personas, journey maps |
+| **Design Commands** | `/cc-design system`, `/cc-design component`, `/cc-design qa` |
 
 ### What's New in v2.2
 
@@ -35,6 +49,10 @@ The Claude Code enhanced workflow adds specialized sub-agents and context manage
 | Start from PRD | `/create-specs` | `/cc-create-specs` |
 | Full automation | N/A | `/cc-full [idea]` |
 | Design architecture | Read architect agent manually | `/cc-architect` |
+| **Design system** | N/A | `/cc-design system` |
+| **UX research** | N/A | `/cc-design research` |
+| **Component specs** | N/A | `/cc-design component [name]` |
+| **Design QA** | N/A | `/cc-design qa [scope]` |
 | Create tasks | `/create-tasks` | `/cc-create-tasks` |
 | Implement task | `/implement TASK-XXX` | `/cc-implement TASK-XXX` |
 | Implement all (parallel) | `/implement all` | `/cc-implement all` |
@@ -64,28 +82,28 @@ The Claude Code enhanced workflow adds specialized sub-agents and context manage
 ### Primary Agent vs Sub-Agents
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                        USER                          │
-│                          │                           │
-│                          ▼                           │
-│                 ┌──────────────────┐                │
-│                 │  PRIMARY AGENT   │                │
-│                 │  (You interact   │                │
-│                 │   with this)     │                │
-│                 └────────┬─────────┘                │
-│                          │                           │
-│         ┌────────┬───────┼───────┬────────┐        │
-│         ▼        ▼       ▼       ▼        ▼        │
-│    ┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐
-│    │Research││Architect││ Coder ││ Tester ││Reviewer│
-│    │  Agent ││  Agent  ││ Agent ││ Agent  ││ Agent  │
-│    └───┬────┘└───┬────┘└───┬────┘└───┬────┘└───┬────┘
-│        └─────────┴─────────┴─────────┴─────────┘    │
-│                          │                           │
-│                          ▼                           │
-│                   [File System]                      │
-│              Results written to files                │
-└─────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                            USER                                │
+│                              │                                 │
+│                              ▼                                 │
+│                    ┌──────────────────┐                       │
+│                    │  PRIMARY AGENT   │                       │
+│                    │  (You interact   │                       │
+│                    │   with this)     │                       │
+│                    └────────┬─────────┘                       │
+│                             │                                  │
+│    ┌────────┬───────┬───────┼───────┬────────┬────────┐      │
+│    ▼        ▼       ▼       ▼       ▼        ▼        ▼      │
+│ ┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐ │
+│ │Research││Architect││Designer││ Coder ││ Tester ││Reviewer│ │
+│ │  Agent ││  Agent  ││ Agent  ││ Agent ││ Agent  ││ Agent  │ │
+│ └───┬────┘└───┬────┘└───┬────┘└───┬────┘└───┬────┘└───┬────┘ │
+│     └─────────┴─────────┴─────────┴─────────┴─────────┘      │
+│                             │                                  │
+│                             ▼                                  │
+│                      [File System]                             │
+│                 Results written to files                       │
+└───────────────────────────────────────────────────────────────┘
 ```
 
 **Key Principle**: Sub-agents report to the Primary Agent, NOT to you. You only interact with the Primary Agent, which orchestrates everything.
@@ -159,8 +177,31 @@ Each sub-agent runs in its own context window:
 - Performance issue detection
 - Code quality analysis
 - Anti-pattern flagging
+- **Design compliance review** (v2.4)
 
 **Output**: Writes to `RLM/progress/reviews/`, returns severity summary to Primary
+
+### Designer Agent (`.claude/agents/designer.md`) - v2.4
+
+**Trigger**: `/cc-design system`, `/cc-design research`, `/cc-design component`, `/cc-design qa`
+
+**Capabilities**:
+- **Design System Generation**: Complete design systems with colors, typography, spacing, components
+- **UX Research**: Web-based research → personas, journey maps, competitive analysis
+- **Component Specifications**: Detailed specs with all 8 states, accessibility, code snippets
+- **Feature Design Specs**: User flows, screen layouts, responsive behavior
+- **Design Tokens**: Framework-agnostic tokens with exports (Tailwind, MUI, Chakra, Bootstrap, etc.)
+- **Design QA**: 117-point checklist with scoring across 7 categories
+- **Animation Design**: MINIMAL (CSS), MODERATE (Framer Motion), RICH (GSAP ScrollTrigger)
+- **Accessibility Compliance**: WCAG 2.1 AA/AAA, color contrast, keyboard navigation
+
+**Output**: Writes to `RLM/specs/design/`, returns summary to Primary
+
+**Design Philosophy Options**:
+| Philosophy | When To Use |
+|------------|-------------|
+| **CREATIVE** | Consumer apps, marketing sites, brand differentiation |
+| **CONSISTENT** | B2B SaaS, enterprise, healthcare, finance, compliance-heavy |
 
 ---
 
@@ -323,6 +364,95 @@ Configure workflow settings.
 /cc-config export                 # Export config as JSON
 ```
 
+### Design Commands (`/cc-design`) - v2.4
+
+#### `/cc-design system`
+
+Generate complete design system from PRD.
+
+```
+/cc-design system
+```
+
+What happens:
+1. Reads PRD for brand personality, target users
+2. Designer sub-agent creates design system
+3. Generates tokens with framework exports
+4. Creates component library specification
+
+#### `/cc-design research`
+
+UX research with web-based discovery.
+
+```
+/cc-design research
+```
+
+What happens:
+1. Performs web research on target users, competitors
+2. Creates user personas with Jobs-to-Be-Done
+3. Generates journey maps for key user flows
+4. Provides competitive design analysis
+
+#### `/cc-design component [name]`
+
+Create detailed component specification.
+
+```
+/cc-design component Button
+/cc-design component Modal
+/cc-design component DataTable
+```
+
+What happens:
+1. Analyzes component requirements
+2. Creates spec with all 8 states
+3. Defines accessibility requirements
+4. Provides code snippets for selected framework
+
+#### `/cc-design feature [FTR-XXX]`
+
+Create feature-level design specification.
+
+```
+/cc-design feature FTR-001
+```
+
+What happens:
+1. Reads feature spec for requirements
+2. Designs user flows and screen layouts
+3. Specifies component usage per screen
+4. Defines responsive behavior and states
+
+#### `/cc-design qa [scope]`
+
+Run 117-point design QA checklist.
+
+```
+/cc-design qa                     # QA entire project
+/cc-design qa src/components/     # QA specific path
+/cc-design qa feature FTR-001     # QA specific feature
+```
+
+What happens:
+1. Analyzes UI code against design system
+2. Checks 7 categories (Visual, Accessibility, Responsive, Interaction, Performance, Cross-Browser, Design System)
+3. Calculates compliance score (≥90% required to pass)
+4. Provides specific fix recommendations
+
+#### `/cc-design tokens export [framework]`
+
+Export design tokens for specific framework.
+
+```
+/cc-design tokens export tailwind   # Export to tailwind.config.js
+/cc-design tokens export mui        # Export to mui-theme.ts
+/cc-design tokens export chakra     # Export to chakra-theme.ts
+/cc-design tokens export bootstrap  # Export to _variables.scss
+/cc-design tokens export antd       # Export to antd-theme.ts
+/cc-design tokens export css        # Export to css-variables.css
+```
+
 ### Context Priming Commands (`/prime-*`)
 
 These commands load minimal context for focused work.
@@ -368,6 +498,20 @@ Load review checklists and anti-patterns.
 /prime-review performance
 /prime-review quality
 ```
+
+#### `/prime-design [scope]` - v2.4
+
+Load design system context for UI development.
+
+```
+/prime-design                          # Load core design system
+/prime-design component [name]         # Load specific component spec
+/prime-design feature [FTR-XXX]        # Load feature design spec
+/prime-design tokens                   # Load design tokens only
+/prime-design accessibility            # Load accessibility requirements
+```
+
+Loads: Design system, tokens, component states, accessibility standards
 
 ---
 
@@ -560,12 +704,14 @@ Or use `/prime-*` commands to load specific context.
 ├── agents/              # Sub-agent configurations
 │   ├── research.md
 │   ├── architect.md
+│   ├── designer.md      # v2.4: UI/UX design agent
 │   ├── coder.md
 │   ├── tester.md
 │   └── reviewer.md
 ├── commands/            # Slash commands
 │   ├── cc-discover.md
 │   ├── cc-architect.md
+│   ├── cc-design.md     # v2.4: Design workflow
 │   ├── cc-implement.md
 │   ├── cc-test.md
 │   ├── cc-review.md
@@ -574,7 +720,8 @@ Or use `/prime-*` commands to load specific context.
 │   ├── prime-feature.md
 │   ├── prime-bug.md
 │   ├── prime-task.md
-│   └── prime-review.md
+│   ├── prime-review.md
+│   └── prime-design.md  # v2.4: Design context primer
 ├── hooks/               # Hook handlers
 │   ├── pre-commit.md
 │   ├── post-task.md
@@ -586,13 +733,33 @@ Or use `/prime-*` commands to load specific context.
 RLM/
 ├── prompts/
 │   └── CC-ORCHESTRATION.md  # Orchestration protocol
+├── specs/
+│   └── design/              # v2.4: Design specifications
+│       ├── design-system.md # Core design system
+│       ├── ux-research.md   # Personas, journey maps
+│       ├── tokens/          # Design tokens
+│       │   ├── tokens.json  # Source tokens
+│       │   └── [exports]    # Framework-specific exports
+│       └── components/      # Component specifications
+├── templates/               # v2.4: Design templates
+│   ├── design-system-template.md
+│   ├── ux-research-template.md
+│   ├── design-qa-checklist.md
+│   ├── design-tokens-template.md
+│   ├── component-spec-template.md
+│   └── feature-design-spec-template.md
 ├── progress/
 │   ├── token-usage/         # Token logs and reports
 │   ├── bundles/             # Context bundles
 │   ├── reviews/             # Review results
 │   └── background/          # Background agent results
+├── agents/
+│   └── design-agent.md      # v2.4: Full design agent prompt
 └── docs/
-    └── CLAUDE-CODE-GUIDE.md # This guide
+    ├── CLAUDE-CODE-GUIDE.md # This guide
+    ├── UI-FRAMEWORK-REFERENCE.md  # v2.4: Framework guide
+    ├── DESIGN-PATTERNS-LIBRARY.md # v2.4: UI patterns
+    └── ACCESSIBILITY-GUIDE.md     # v2.4: WCAG guide
 ```
 
 ---

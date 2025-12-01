@@ -2,6 +2,147 @@
 
 ---
 
+# v2.4 - Comprehensive UI/UX Engineering
+
+**Release Date**: November 2024
+
+This release adds full UI/UX engineering capabilities with a dedicated Designer agent, design systems, tokens, and a 117-point design QA process.
+
+## Summary of v2.4 Changes
+
+### Designer Agent
+
+| Feature | Description |
+|---------|-------------|
+| **Design System Generation** | Complete design systems with colors, typography, spacing, components |
+| **UX Research** | Web-based research → personas, journey maps, competitive analysis |
+| **Component Specifications** | Detailed specs with all 8 states, accessibility, code snippets |
+| **Design Tokens** | Framework-agnostic tokens with exports to 6 frameworks |
+| **Design QA** | 117-point checklist with ≥90% pass requirement |
+| **Animation Design** | Three tiers: MINIMAL, MODERATE, RICH (GSAP) |
+
+### Design Philosophy Options
+
+| Philosophy | When To Use | Characteristics |
+|------------|-------------|-----------------|
+| **CREATIVE** | Consumer apps, marketing sites, creative industries | Bold colors, unique layouts, custom animations |
+| **CONSISTENT** | B2B SaaS, enterprise, healthcare, finance | Accessible, familiar patterns, usability-focused |
+
+### Animation Tiers
+
+| Tier | Technologies | Duration Range |
+|------|--------------|----------------|
+| **MINIMAL** | CSS transitions only | 100-200ms |
+| **MODERATE** | Framer Motion | 150-400ms |
+| **RICH** | GSAP ScrollTrigger | 200-1000ms |
+
+### 8 Component States (Required)
+
+All interactive components must implement:
+1. Default - Resting appearance
+2. Hover - Mouse over (desktop)
+3. Focus - Keyboard focus (visible 2px ring)
+4. Active - Being clicked/pressed
+5. Disabled - Non-interactive
+6. Loading - Async operation in progress
+7. Error - Validation/operation failure
+8. Empty - No content/data
+
+### Framework Token Exports
+
+| Framework | Export File |
+|-----------|-------------|
+| Tailwind CSS | `tailwind.config.js` |
+| Material UI | `mui-theme.ts` |
+| Chakra UI | `chakra-theme.ts` |
+| Bootstrap | `_variables.scss` |
+| Ant Design | `antd-theme.ts` |
+| CSS Variables | `css-variables.css` |
+
+### New Commands (v2.4)
+
+| Command | Purpose |
+|---------|---------|
+| `/cc-design system` | Generate complete design system from PRD |
+| `/cc-design research` | UX research with personas & journey maps |
+| `/cc-design component [name]` | Create component specification |
+| `/cc-design feature [FTR-XXX]` | Create feature design specification |
+| `/cc-design qa [scope]` | Run 117-point design QA checklist |
+| `/cc-design tokens export [framework]` | Export tokens for specific framework |
+| `/prime-design [scope]` | Load design context for UI development |
+
+### Files Created (v2.4)
+
+**Agents (2 files)**:
+- `RLM/agents/design-agent.md` - Full design agent prompt
+- `.claude/agents/designer.md` - Claude Code sub-agent
+
+**Templates (6 files)**:
+- `RLM/templates/design-system-template.md`
+- `RLM/templates/ux-research-template.md`
+- `RLM/templates/design-qa-checklist.md`
+- `RLM/templates/design-tokens-template.md`
+- `RLM/templates/component-spec-template.md`
+- `RLM/templates/feature-design-spec-template.md`
+
+**Commands (2 files)**:
+- `.claude/commands/cc-design.md`
+- `.claude/commands/prime-design.md`
+
+**Documentation (3 files)**:
+- `RLM/docs/UI-FRAMEWORK-REFERENCE.md`
+- `RLM/docs/DESIGN-PATTERNS-LIBRARY.md`
+- `RLM/docs/ACCESSIBILITY-GUIDE.md`
+
+### Files Modified (v2.4)
+
+| File | Changes |
+|------|---------|
+| `RLM/prompts/01-DISCOVER.md` | Added Round 4 design questions (13-18) |
+| `RLM/templates/PRD-TEMPLATE.md` | Added sections 18-20 for design |
+| `RLM/templates/spec-template.md` | Added UI/UX Requirements section |
+| `RLM/templates/CONSTITUTION-TEMPLATE.md` | Added Section 13: Design Standards |
+| `RLM/templates/task-template.md` | Added UI/UX requirements and design DoD |
+| `RLM/prompts/CC-ORCHESTRATION.md` | Added Designer to delegation table |
+| `.claude/agents/coder.md` | Added design token usage protocol |
+| `.claude/agents/reviewer.md` | Added design review capabilities |
+| `CLAUDE.md` | Added v2.4 design workflow documentation |
+| `RLM/docs/CLAUDE-CODE-GUIDE.md` | Added Designer agent and design commands |
+
+### Design Workflow Integration
+
+Design is now integrated into the main RLM workflow:
+
+1. **Discovery** (`/discover`) → Asks design questions (philosophy, animation, framework)
+2. **Design System** (`/cc-design system`) → Generates design system from PRD
+3. **UX Research** (`/cc-design research`) → Web research → personas & journeys
+4. **Component Specs** (`/cc-design component`) → Detailed component specifications
+5. **Implementation** (`/implement`) → Uses design tokens, implements all states
+6. **Design QA** (`/cc-design qa`) → 117-point checklist, ≥90% pass required
+
+### 117-Point Design QA Categories
+
+| Category | Points | Focus Areas |
+|----------|--------|-------------|
+| Visual Design | 20 | Colors, typography, spacing, alignment |
+| Accessibility | 25 | WCAG, keyboard, screen reader, contrast |
+| Responsive | 18 | Breakpoints, mobile-first, touch targets |
+| Interaction | 18 | States, feedback, animations |
+| Performance | 12 | Images, fonts, animations |
+| Cross-Browser | 12 | Browser support, fallbacks |
+| Design System | 12 | Token usage, consistency |
+
+**Pass Criteria**: ≥90% overall, no category below 80%, accessibility ≥90%
+
+### Migration from v2.3
+
+No migration required. v2.4 is additive:
+- All v2.3 features continue to work
+- Design commands are optional - projects work without them
+- Existing projects can run `/cc-design system` to add design capabilities
+
+---
+
 # v2.3 - GitHub Copilot Integration
 
 **Release Date**: November 2024
