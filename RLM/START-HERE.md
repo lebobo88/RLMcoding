@@ -4,6 +4,15 @@
 
 RLM transforms raw ideas into production-ready code through a structured workflow that works with **any AI coding agent** in **any IDE**.
 
+### What's New in v2.5 (Complete Pipeline Integration)
+
+- **9-Phase Pipeline** - Complete `/cc-full` now includes: Discover → Design System → Specs → Feature Design → Tasks → Implement → Quality → Verify → Report
+- **Verifier Sub-Agent** - New agent for E2E testing with Playwright, accessibility (axe-core), visual regression
+- **Design Integration** - Design system and feature design specs integrated into main automation pipeline
+- **Quality Phase** - Combined Design QA + Code Review + Test Coverage in single phase
+- **Two Entry Points** - `/cc-full [idea]` (from zero) or `/cc-full --from-prd` (from existing PRD)
+- **Skip Options** - `--skip-design-research`, `--skip-feature-design`, `--skip-design-qa`, `--skip-verification`
+
 ### What's New in v2.4 (Design Engineering)
 
 - **Designer Sub-Agent** - Specialized agent for UI/UX specifications and design system generation
@@ -74,31 +83,51 @@ Or in Claude Code: `/create-specs`
 
 ---
 
-## Complete Workflow
+## Complete Workflow (v2.5)
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  PATH 1: FROM ZERO                PATH 2: FROM PRD          │
-│  ──────────────────                ───────────────          │
-│  /discover [idea]                  /create-specs            │
-│       │                                 │                   │
-│       ▼                                 │                   │
-│  [Generate PRD] ◄───────────────────────┘                   │
-│       │                                                     │
-│       ▼                                                     │
-│  [Generate Specs: Features, Architecture, Epics]            │
-│       │                                                     │
-│       ▼                                                     │
-│  /create-tasks                                              │
-│  [Break into fine-grained tasks]                            │
-│       │                                                     │
-│       ▼                                                     │
-│  /implement [task|all|resume]                               │
-│  [TDD Implementation with 3 automation levels]              │
-│       │                                                     │
-│       ▼                                                     │
-│  [Complete Project]                                         │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│  PATH 1: FROM ZERO                    PATH 2: FROM PRD                   │
+│  ──────────────────                   ───────────────                    │
+│  /cc-full [idea]                      /cc-full --from-prd                │
+│  OR /cc-discover [idea]               OR /cc-create-specs                │
+│       │                                    │                             │
+│       ▼                                    │                             │
+│  Phase 1: DISCOVER ◄───────────────────────┘                             │
+│  [Generate PRD with design requirements]                                 │
+│       │                                                                  │
+│       ▼                                                                  │
+│  Phase 2: DESIGN SYSTEM                                                  │
+│  [/cc-design system → tokens, component library]                         │
+│       │                                                                  │
+│       ▼                                                                  │
+│  Phase 3: SPECS                                                          │
+│  [/cc-create-specs → features, architecture]                             │
+│       │                                                                  │
+│       ▼                                                                  │
+│  Phase 4: FEATURE DESIGN                                                 │
+│  [/cc-design feature FTR-XXX → UI/UX specs for each feature]             │
+│       │                                                                  │
+│       ▼                                                                  │
+│  Phase 5: TASKS                                                          │
+│  [/cc-create-tasks → fine-grained tasks with UI/UX requirements]         │
+│       │                                                                  │
+│       ▼                                                                  │
+│  Phase 6: IMPLEMENT                                                      │
+│  [/cc-implement all → parallel TDD with design tokens]                   │
+│       │                                                                  │
+│       ▼                                                                  │
+│  Phase 7: QUALITY                                                        │
+│  [/cc-design qa + /cc-review + /cc-test]                                 │
+│       │                                                                  │
+│       ▼                                                                  │
+│  Phase 8: VERIFY                                                         │
+│  [/cc-verify FTR-XXX → E2E tests for each feature]                       │
+│       │                                                                  │
+│       ▼                                                                  │
+│  Phase 9: REPORT                                                         │
+│  [Complete Project Summary]                                              │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -115,16 +144,20 @@ Or in Claude Code: `/create-specs`
 - `/implement all` - Implement all tasks
 - `/implement resume` - Resume interrupted session
 
-**Enhanced Commands** (v2.4 - Full automation with parallel sub-agents):
-- `/cc-full [idea]` - **Complete automation**: idea → code
-- `/cc-discover [idea]` - Discovery with delegated research (Path 1)
-- `/cc-create-specs` - Specs from PRD (Path 2)
-- `/cc-create-tasks` - Break features into tasks
+**Enhanced Commands** (v2.5 - Complete 9-phase pipeline):
+- `/cc-full [idea]` - **Complete automation**: idea → code (9 phases)
+- `/cc-full --from-prd` - Start from existing PRD (skips discover)
+- `/cc-discover [idea]` - Discovery with delegated research (Phase 1)
+- `/cc-design system` - Generate design system (Phase 2)
+- `/cc-create-specs` - Generate specs from PRD (Phase 3)
+- `/cc-design feature FTR-XXX` - Feature design specs (Phase 4)
+- `/cc-create-tasks` - Break features into tasks (Phase 5)
+- `/cc-implement [task|all|resume]` - TDD with parallel coder sub-agents (Phase 6)
+- `/cc-design qa [scope]` - 117-point design QA (Phase 7)
+- `/cc-review [scope]` - Code review with reviewer sub-agent (Phase 7)
+- `/cc-test [scope]` - Testing with tester sub-agent (Phase 7)
+- `/cc-verify FTR-XXX` - E2E verification per feature (Phase 8)
 - `/cc-architect` - Architecture with isolated context
-- `/cc-implement [task|all|resume]` - TDD with parallel coder sub-agents
-- `/cc-test [scope]` - Testing with tester sub-agent
-- `/cc-review [scope]` - Code review with reviewer sub-agent
-- `/cc-design [subcommand]` - Design system and UI/UX specifications (v2.4)
 - `/cc-background [task]` - Spawn autonomous background agent
 - `/cc-tokens` - View token usage summary
 - `/cc-config [setting] [value]` - Configure workflow settings
@@ -229,7 +262,7 @@ The discovery process now includes:
 - [Quick Reference](docs/QUICK-REFERENCE.md) - One-page cheat sheet
 - [Template Reference](docs/TEMPLATE-REFERENCE.md) - How to use templates
 - [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions
-- [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) - v2.4 Sub-agent workflow guide
+- [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) - v2.5 Sub-agent workflow guide
 - [UI Framework Reference](docs/UI-FRAMEWORK-REFERENCE.md) - Design token implementation (v2.4)
 - [Design Patterns Library](docs/DESIGN-PATTERNS-LIBRARY.md) - UI/UX pattern reference (v2.4)
 - [Accessibility Guide](docs/ACCESSIBILITY-GUIDE.md) - WCAG compliance guide (v2.4)

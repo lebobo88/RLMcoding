@@ -1,19 +1,30 @@
 # Claude Code Enhanced Workflow Guide
 
-This guide covers the Claude Code-specific RLM workflow (v2.4) that leverages sub-agent architecture for context efficiency and task specialization.
+This guide covers the Claude Code-specific RLM workflow (v2.5) that leverages sub-agent architecture for context efficiency and task specialization.
 
 ## Overview
 
 The Claude Code enhanced workflow adds specialized sub-agents and context management on top of the standard RLM method. It provides:
 
+- **Complete 9-phase pipeline** via `/cc-full [idea]` - from idea to verified code
 - **40-60% context reduction** through sub-agent delegation
-- **Specialized agents** for research, architecture, coding, testing, review, and **design**
+- **7 specialized agents** - Research, Architect, Designer, Coder, Tester, Reviewer, Verifier
 - **Automatic token reporting** with threshold-based warnings (50%, 75%, 90%)
 - **Parallel sub-agent spawning** for concurrent task implementation
-- **Background agents** for long-running autonomous tasks
-- **Automatic context priming** built into all `/cc-*` commands
-- **Full automation pipeline** via `/cc-full [idea]`
-- **Comprehensive UI/UX engineering** with design systems, tokens, and accessibility (v2.4)
+- **Quality phase** combining Design QA + Code Review + Tests
+- **E2E verification** with Playwright, accessibility tests, visual regression
+- **Comprehensive UI/UX engineering** with design systems, tokens, and accessibility
+
+### What's New in v2.5
+
+| Feature | Description |
+|---------|-------------|
+| **9-Phase Pipeline** | Discover → Design System → Specs → Feature Design → Tasks → Implement → Quality → Verify → Report |
+| **Verifier Agent** | E2E tests from acceptance criteria, accessibility (axe-core), visual regression |
+| **Quality Phase** | Combined Design QA + Code Review + Test Coverage in single phase |
+| **Two Entry Points** | `/cc-full [idea]` (from zero) or `/cc-full --from-prd` (from PRD) |
+| **Skip Options** | `--skip-design-research`, `--skip-feature-design`, `--skip-design-qa`, `--skip-verification` |
+| **Feature Lifecycle** | in_progress → verification-pending → verified (or verification-failed) |
 
 ### What's New in v2.4
 
@@ -32,7 +43,6 @@ The Claude Code enhanced workflow adds specialized sub-agents and context manage
 
 | Feature | Description |
 |---------|-------------|
-| **Two Entry Points** | `/cc-discover` (from zero) or `/cc-create-specs` (from PRD) |
 | **Full Automation** | `/cc-full [idea]` chains all phases automatically |
 | **Parallel Spawning** | Up to 10 concurrent sub-agents (configurable) |
 | **Auto Context Priming** | No manual `/prime-*` needed - built into commands |
@@ -43,36 +53,48 @@ The Claude Code enhanced workflow adds specialized sub-agents and context manage
 
 ### Choose Your Command Style
 
-| Scenario | Standard RLM | Claude Code Enhanced |
-|----------|--------------|----------------------|
-| Start new project | `/discover [idea]` | `/cc-discover [idea]` |
-| Start from PRD | `/create-specs` | `/cc-create-specs` |
-| Full automation | N/A | `/cc-full [idea]` |
-| Design architecture | Read architect agent manually | `/cc-architect` |
-| **Design system** | N/A | `/cc-design system` |
-| **UX research** | N/A | `/cc-design research` |
-| **Component specs** | N/A | `/cc-design component [name]` |
-| **Design QA** | N/A | `/cc-design qa [scope]` |
-| Create tasks | `/create-tasks` | `/cc-create-tasks` |
-| Implement task | `/implement TASK-XXX` | `/cc-implement TASK-XXX` |
-| Implement all (parallel) | `/implement all` | `/cc-implement all` |
-| Run tests | Manual test commands | `/cc-test [scope]` |
-| Code review | Manual review | `/cc-review [scope]` |
-| Configure workflow | N/A | `/cc-config [setting] [value]` |
+| Scenario | Standard RLM | Claude Code Enhanced | Phase |
+|----------|--------------|----------------------|-------|
+| Full automation (from zero) | N/A | `/cc-full [idea]` | 1-9 |
+| Full automation (from PRD) | N/A | `/cc-full --from-prd` | 2-9 |
+| Start new project | `/discover [idea]` | `/cc-discover [idea]` | 1 |
+| **Design system** | N/A | `/cc-design system` | 2 |
+| Start from PRD | `/create-specs` | `/cc-create-specs` | 3 |
+| **Feature design** | N/A | `/cc-design feature FTR-XXX` | 4 |
+| Create tasks | `/create-tasks` | `/cc-create-tasks` | 5 |
+| Implement task | `/implement TASK-XXX` | `/cc-implement TASK-XXX` | 6 |
+| Implement all (parallel) | `/implement all` | `/cc-implement all` | 6 |
+| **Design QA** | N/A | `/cc-design qa [scope]` | 7 |
+| Code review | Manual review | `/cc-review [scope]` | 7 |
+| Run tests | Manual test commands | `/cc-test [scope]` | 7 |
+| **Verify feature** | N/A | `/cc-verify FTR-XXX` | 8 |
+| Design architecture | Read architect agent manually | `/cc-architect` | - |
+| **UX research** | N/A | `/cc-design research` | 2 |
+| **Component specs** | N/A | `/cc-design component [name]` | - |
+| Configure workflow | N/A | `/cc-config [setting] [value]` | - |
 
-**Rule of Thumb**: Use `/cc-*` commands for complex work where context efficiency matters. Use standard commands for simple tasks.
+**Rule of Thumb**: Use `/cc-full` for complete projects. Use individual `/cc-*` commands when you need control over specific phases.
 
 ### Full Automation Quickstart
 
 ```bash
-# One command: idea → code
+# One command: idea → verified code (9 phases)
 /cc-full Build a habit tracking app with social features
 
-# Or step by step with entry points
-/cc-discover [idea]        # Path 1: From zero
-/cc-create-specs           # Path 2: From PRD
-/cc-create-tasks           # Break into tasks
-/cc-implement all          # Parallel implementation
+# Start from existing PRD
+/cc-full --from-prd
+
+# Or step by step (each phase)
+/cc-discover [idea]           # Phase 1: Discovery
+/cc-design system             # Phase 2: Design System
+/cc-create-specs              # Phase 3: Specs
+/cc-design feature FTR-001    # Phase 4: Feature Design (each feature)
+/cc-create-tasks              # Phase 5: Tasks
+/cc-implement all             # Phase 6: Parallel implementation
+/cc-design qa all             # Phase 7: Quality (Design QA)
+/cc-review                    # Phase 7: Quality (Code Review)
+/cc-test                      # Phase 7: Quality (Tests)
+/cc-verify FTR-001            # Phase 8: Verification (each feature)
 ```
 
 ---
@@ -82,28 +104,29 @@ The Claude Code enhanced workflow adds specialized sub-agents and context manage
 ### Primary Agent vs Sub-Agents
 
 ```
-┌───────────────────────────────────────────────────────────────┐
-│                            USER                                │
-│                              │                                 │
-│                              ▼                                 │
-│                    ┌──────────────────┐                       │
-│                    │  PRIMARY AGENT   │                       │
-│                    │  (You interact   │                       │
-│                    │   with this)     │                       │
-│                    └────────┬─────────┘                       │
-│                             │                                  │
-│    ┌────────┬───────┬───────┼───────┬────────┬────────┐      │
-│    ▼        ▼       ▼       ▼       ▼        ▼        ▼      │
-│ ┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐ │
-│ │Research││Architect││Designer││ Coder ││ Tester ││Reviewer│ │
-│ │  Agent ││  Agent  ││ Agent  ││ Agent ││ Agent  ││ Agent  │ │
-│ └───┬────┘└───┬────┘└───┬────┘└───┬────┘└───┬────┘└───┬────┘ │
-│     └─────────┴─────────┴─────────┴─────────┴─────────┘      │
-│                             │                                  │
-│                             ▼                                  │
-│                      [File System]                             │
-│                 Results written to files                       │
-└───────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                                 USER                                     │
+│                                   │                                      │
+│                                   ▼                                      │
+│                         ┌──────────────────┐                            │
+│                         │  PRIMARY AGENT   │                            │
+│                         │  (You interact   │                            │
+│                         │   with this)     │                            │
+│                         └────────┬─────────┘                            │
+│                                  │                                       │
+│  ┌────────┬────────┬────────┬────┴────┬────────┬────────┬────────┐     │
+│  ▼        ▼        ▼        ▼         ▼        ▼        ▼        ▼     │
+│┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐  │
+││Research││Architect││Designer││ Coder  ││ Tester ││Reviewer││Verifier│  │
+││ Agent  ││  Agent  ││ Agent  ││ Agent  ││ Agent  ││ Agent  ││ Agent  │  │
+│└───┬────┘└───┬────┘└───┬────┘└───┬────┘└───┬────┘└───┬────┘└───┬────┘  │
+│    │ Ph 1    │ Ph 1,3  │ Ph 2,4,7│ Ph 6    │ Ph 7    │ Ph 7    │ Ph 8  │
+│    └─────────┴─────────┴─────────┴─────────┴─────────┴─────────┘       │
+│                                  │                                       │
+│                                  ▼                                       │
+│                           [File System]                                  │
+│                      Results written to files                            │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 **Key Principle**: Sub-agents report to the Primary Agent, NOT to you. You only interact with the Primary Agent, which orchestrates everything.
@@ -202,6 +225,26 @@ Each sub-agent runs in its own context window:
 |------------|-------------|
 | **CREATIVE** | Consumer apps, marketing sites, brand differentiation |
 | **CONSISTENT** | B2B SaaS, enterprise, healthcare, finance, compliance-heavy |
+
+### Verifier Agent (`.claude/agents/verifier.md`) - v2.5
+
+**Trigger**: `/cc-verify FTR-XXX`, auto-triggered when all feature tasks complete
+
+**Capabilities**:
+- **E2E Test Generation**: Creates Playwright tests from acceptance criteria
+- **Functional Testing**: User flows, forms, navigation, data operations
+- **Accessibility Testing**: axe-core integration, WCAG 2.1 AA compliance
+- **Visual Regression**: Screenshot comparison for UI states and responsive layouts
+- **Bug Task Creation**: Auto-creates bug tasks when verification fails
+
+**Output**: Writes to `RLM/progress/verification/`, creates E2E tests in `rlm-app/tests/e2e/features/`
+
+**Test Types**:
+| Type | Tool | Checks |
+|------|------|--------|
+| Functional | Playwright | User flows, forms, navigation, data |
+| Accessibility | axe-core | WCAG 2.1 AA compliance |
+| Visual | Screenshots | UI states, responsive layouts |
 
 ---
 

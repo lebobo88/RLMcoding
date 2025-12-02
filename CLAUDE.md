@@ -35,29 +35,35 @@ Use these Claude Code slash commands for the standard RLM workflow:
 | `/implement all` | Implement all active tasks |
 | `/implement resume` | Resume interrupted session |
 
-### Claude Code Enhanced Commands (v2.2)
+### Claude Code Enhanced Commands (v2.5)
 
-Full automation with parallel sub-agent spawning:
+Complete 9-phase pipeline with full automation:
 
-| Command | Purpose | Sub-Agent |
-|---------|---------|-----------|
-| `/cc-full [idea]` | **Complete automation**: idea → code | All |
-| `/cc-discover [idea]` | Enhanced discovery (Path 1: from zero) | Research |
-| `/cc-create-specs` | Generate specs from PRD (Path 2) | Architect |
-| `/cc-create-tasks` | Break features into tasks | - |
-| `/cc-architect` | Architecture design with isolated context | Architect |
-| `/cc-implement [task\|all\|resume]` | TDD implementation (parallel for `all`) | Coder |
-| `/cc-test [scope]` | Testing with dedicated tester agent | Tester |
-| `/cc-review [scope]` | Code review before commit | Reviewer |
-| `/cc-verify FTR-XXX` | **Feature verification**: E2E tests from acceptance criteria | Verifier |
-| `/cc-background [task]` | Spawn autonomous background agent | Background |
-| `/cc-tokens` | Display token usage (auto in v2.2) | - |
-| `/cc-config [setting] [value]` | Configure workflow settings | - |
+| Command | Phase | Purpose | Sub-Agent |
+|---------|-------|---------|-----------|
+| `/cc-full [idea]` | All | **Complete 9-phase automation**: idea → verified code | All |
+| `/cc-full --from-prd` | 2-9 | Start from existing PRD (skip discover) | All |
+| `/cc-discover [idea]` | 1 | Discovery with research (Path 1: from zero) | Research |
+| `/cc-design system` | 2 | Generate design system from PRD | Designer |
+| `/cc-create-specs` | 3 | Generate specs from PRD (Path 2) | Architect |
+| `/cc-design feature FTR-XXX` | 4 | Create feature design specification | Designer |
+| `/cc-create-tasks` | 5 | Break features into tasks | - |
+| `/cc-implement [task\|all\|resume]` | 6 | TDD implementation (parallel for `all`) | Coder |
+| `/cc-design qa [scope]` | 7 | Run 117-point design QA checklist | Designer |
+| `/cc-review [scope]` | 7 | Code review before commit | Reviewer |
+| `/cc-test [scope]` | 7 | Testing with dedicated tester agent | Tester |
+| `/cc-verify FTR-XXX` | 8 | **Feature verification**: E2E tests | Verifier |
+| `/cc-architect` | - | Architecture design with isolated context | Architect |
+| `/cc-background [task]` | - | Spawn autonomous background agent | Background |
+| `/cc-tokens` | - | Display token usage (auto in v2.5) | - |
+| `/cc-config [setting] [value]` | - | Configure workflow settings | - |
 
-**v2.2 Features**:
-- **Automatic context priming** - Built into all `/cc-*` commands
-- **Automatic token reporting** - Warnings at 50%, 75%, 90% budget
-- **Parallel spawning** - Up to 10 concurrent coder sub-agents
+**v2.5 Features**:
+- **9-Phase Pipeline** - Discover → Design System → Specs → Feature Design → Tasks → Implement → Quality → Verify → Report
+- **Two Entry Points** - `/cc-full [idea]` (from zero) or `/cc-full --from-prd` (from PRD)
+- **Quality Phase** - Combined Design QA + Code Review + Test Coverage
+- **Verifier Agent** - E2E tests with Playwright, accessibility (axe-core), visual regression
+- **Skip Options** - `--skip-design-research`, `--skip-feature-design`, `--skip-design-qa`, `--skip-verification`
 
 ### Context Priming Commands
 
@@ -173,15 +179,24 @@ rlm-app/
 - **GitHub**: Octokit REST API
 - **Testing**: Jest, Playwright
 
-## RLM Workflow
+## RLM Workflow (v2.5)
 
-The workflow follows this sequence:
+The complete 9-phase workflow:
 
-1. **Discovery** (`/discover`) → Generates PRD.md and constitution.md
-2. **Specs** (`/create-specs`) → Generates feature specs and architecture
-3. **Tasks** (`/create-tasks`) → Creates fine-grained tasks in `RLM/tasks/active/`
-4. **Implementation** (`/implement`) → TDD: write tests first, then implementation
-5. **Verification** (`/cc-verify`) → Auto-triggered E2E tests when all feature tasks complete
+1. **Discovery** (`/cc-discover`) → PRD.md, constitution.md with design requirements
+2. **Design System** (`/cc-design system`) → Design tokens, component library
+3. **Specs** (`/cc-create-specs`) → Feature specs and architecture
+4. **Feature Design** (`/cc-design feature`) → UI/UX specs for each feature
+5. **Tasks** (`/cc-create-tasks`) → Fine-grained tasks with UI requirements
+6. **Implementation** (`/cc-implement all`) → Parallel TDD with design tokens
+7. **Quality** (`/cc-design qa` + `/cc-review` + `/cc-test`) → Design QA, code review, tests
+8. **Verification** (`/cc-verify FTR-XXX`) → E2E tests per feature
+9. **Report** → Complete project summary
+
+### Two Entry Points
+
+- **Path 1: From Zero** - `/cc-full [idea]` starts at Phase 1
+- **Path 2: From PRD** - `/cc-full --from-prd` starts at Phase 2
 
 ### Automation Levels
 
@@ -244,28 +259,29 @@ Agent prompts in `RLM/agents/` define behavior:
 | `component-spec-template.md` | Component spec with all 8 states, accessibility, code snippets |
 | `feature-design-spec-template.md` | Feature-level design with user flows and screen layouts |
 
-## Claude Code Sub-Agents (v2.2)
+## Claude Code Sub-Agents (v2.5)
 
 Sub-agents in `.claude/agents/` operate in isolated context windows for efficiency:
 
-| Agent | Purpose | Tools |
-|-------|---------|-------|
-| **Research** | Web research, competitor analysis, documentation | WebSearch, WebFetch, Read, Write |
-| **Architect** | Technology decisions, architecture design, ADRs | Read, Write, Glob, Grep |
-| **Coder** | TDD implementation, code generation, design token usage | Read, Write, Edit, Bash |
-| **Tester** | Test writing, coverage analysis, bug investigation | Read, Write, Bash |
-| **Reviewer** | Code review, quality checks, security, design compliance | Read, Grep, Glob |
-| **Designer** | Design systems, UX research, component specs, accessibility | Read, Write, Glob, Grep, WebSearch, WebFetch |
-| **Verifier** | Feature verification, E2E testing, accessibility, visual regression | Read, Write, Edit, Bash, Glob, Grep |
+| Agent | Purpose | Phase | Tools |
+|-------|---------|-------|-------|
+| **Research** | Web research, competitor analysis | 1 | WebSearch, WebFetch, Read, Write |
+| **Architect** | Technology decisions, architecture design | 1, 3 | Read, Write, Glob, Grep |
+| **Designer** | Design systems, UI/UX specs, component specs | 2, 4, 7 | Read, Write, Glob, Grep, WebSearch, WebFetch |
+| **Coder** | TDD implementation with design tokens | 6 | Read, Write, Edit, Bash |
+| **Tester** | Test writing, coverage analysis | 7 | Read, Write, Bash |
+| **Reviewer** | Code review, security, design compliance | 7 | Read, Grep, Glob |
+| **Verifier** | E2E testing, accessibility, visual regression | 8 | Read, Write, Edit, Bash, Glob, Grep |
 
-### Key Concepts (v2.2)
+### Key Concepts (v2.5)
 
+- **9-Phase Pipeline**: Complete automation from idea to verified code
 - **Context Isolation**: Sub-agents have 0% token pollution to primary context
 - **Parallel Spawning**: Up to 10 concurrent sub-agents implementing tasks
-- **Automatic Context Priming**: Built into all `/cc-*` commands
-- **Automatic Token Reporting**: Warnings at 50%, 75%, 90% budget thresholds
-- **Full Automation**: `/cc-full [idea]` chains all phases automatically
-- **Two Entry Points**: `/cc-discover` (from zero) or `/cc-create-specs` (from PRD)
+- **Quality Phase**: Combined Design QA + Code Review + Test Coverage
+- **Verifier Agent**: E2E tests from acceptance criteria, accessibility (axe-core), visual regression
+- **Two Entry Points**: `/cc-full [idea]` (from zero) or `/cc-full --from-prd` (from PRD)
+- **Skip Options**: `--skip-design-research`, `--skip-feature-design`, `--skip-design-qa`, `--skip-verification`
 - **Configuration**: `/cc-config` for runtime customization
 
 See `RLM/prompts/CC-ORCHESTRATION.md` for full orchestration protocol.

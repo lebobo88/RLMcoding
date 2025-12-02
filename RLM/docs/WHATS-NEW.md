@@ -2,6 +2,128 @@
 
 ---
 
+# v2.5 - Complete Pipeline Integration
+
+**Release Date**: December 2024
+
+This release integrates design, verification, and quality phases into the complete `/cc-full` automation pipeline, creating a unified 9-phase workflow from idea to verified production code.
+
+## Summary of v2.5 Changes
+
+### Complete 9-Phase Pipeline
+
+The `/cc-full` command now runs all phases automatically:
+
+```
+Phase 1: DISCOVER      → PRD with design requirements
+Phase 2: DESIGN SYSTEM → Design tokens, component library
+Phase 3: SPECS         → Feature specifications, architecture
+Phase 4: FEATURE DESIGN → UI/UX specs for each feature
+Phase 5: TASKS         → Fine-grained tasks with UI requirements
+Phase 6: IMPLEMENT     → Parallel TDD with design tokens
+Phase 7: QUALITY       → Design QA + Code Review + Tests
+Phase 8: VERIFY        → E2E tests per feature
+Phase 9: REPORT        → Complete summary
+```
+
+### New Verifier Sub-Agent
+
+| Feature | Description |
+|---------|-------------|
+| **E2E Test Generation** | Generates Playwright tests from acceptance criteria |
+| **Functional Tests** | User flows, forms, navigation, data |
+| **Accessibility Tests** | axe-core integration, WCAG 2.1 AA compliance |
+| **Visual Regression** | Screenshot comparison for UI states |
+| **Bug Task Creation** | Auto-creates bug tasks when verification fails |
+
+### Two Entry Points
+
+| Entry Point | Command | Starts At |
+|-------------|---------|-----------|
+| From Zero | `/cc-full [idea]` | Phase 1: Discover |
+| From PRD | `/cc-full --from-prd` | Phase 2: Design System |
+
+### Quality Phase (Combined)
+
+Phase 7 now combines three quality checks that can run in parallel:
+
+| Check | Sub-Agent | Output |
+|-------|-----------|--------|
+| Design QA | Designer | 117-point checklist, ≥90% required |
+| Code Review | Reviewer | Security, patterns, design compliance |
+| Test Coverage | Tester | Unit, integration, component state tests |
+
+### Skip Options
+
+```bash
+/cc-full [idea] --skip-design-research    # Skip UX research
+/cc-full [idea] --skip-feature-design     # Skip feature design specs
+/cc-full [idea] --skip-design-qa          # Skip design QA
+/cc-full [idea] --skip-verification       # Skip E2E verification
+```
+
+### Resume Options
+
+```bash
+/cc-full resume                    # Resume from last completed phase
+/cc-full resume --from=design-system  # Restart from specific phase
+/cc-full resume --from=implement      # Restart from implementation
+```
+
+### Files Modified (v2.5)
+
+| File | Changes |
+|------|---------|
+| `.claude/commands/cc-full.md` | Complete rewrite with 9 phases |
+| `RLM/prompts/CC-ORCHESTRATION.md` | Added all 9 phases, Verifier agent |
+| `RLM/START-HERE.md` | Updated workflow diagram, v2.5 features |
+| `RLM/docs/QUICK-REFERENCE.md` | Complete rewrite with phases |
+| `RLM/docs/USER-GUIDE.md` | Added design workflow section |
+| `RLM/docs/CLAUDE-CODE-GUIDE.md` | Updated to v2.5 |
+| `CLAUDE.md` | Updated workflow documentation |
+
+### New Configuration Options
+
+Added to `RLM/progress/cc-config.json`:
+
+```json
+{
+  "design": {
+    "philosophy": "CONSISTENT",
+    "animation_tier": "MODERATE",
+    "accessibility_level": "AA",
+    "framework": "tailwind",
+    "research_first": false,
+    "qa_threshold": 0.9
+  },
+  "verification": {
+    "enabled": true,
+    "accessibility_tests": true,
+    "visual_regression": true
+  }
+}
+```
+
+### Feature Lifecycle (Updated)
+
+```
+in_progress → verification-pending → verified
+                      ↓
+              verification-failed
+                      ↓
+              (bug tasks created, fix and retry)
+```
+
+### Migration from v2.4
+
+No migration required. v2.5 is additive:
+- All v2.4 features continue to work
+- Existing projects can use `/cc-full` for complete automation
+- Individual commands still work independently
+- Verification is optional via `--skip-verification`
+
+---
+
 # v2.4 - Comprehensive UI/UX Engineering
 
 **Release Date**: November 2024
