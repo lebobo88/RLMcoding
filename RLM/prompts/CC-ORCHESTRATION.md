@@ -158,6 +158,224 @@ Target: 10,000 users, multi-tenant architecture.
 3. **Summarize Aggressively**: Sub-agents return summaries, not full output
 4. **Write to Files**: Detailed output goes to files, not context
 
+## 3-Tier Context Management Protocol (v2.6)
+
+Efficient context management is critical for large projects. Apply this tiered strategy:
+
+### Tier 1: REDUCE (Minimize Context Loaded)
+
+**Goal**: Load only what's needed, avoid context bloat from the start.
+
+| Strategy | Implementation | Token Savings |
+|----------|----------------|---------------|
+| **Selective File Reading** | Read specific sections, not entire files | ~30% |
+| **Minimal MCP Loading** | Don't autoload all MCP servers | ~12% |
+| **Config Files per Task** | Use task-specific configs | ~8% |
+| **Summary Files** | Read summaries, not full docs | ~25% |
+
+**File Reading Priority**:
+```
+ALWAYS LOAD (< 500 tokens):
+├── Current task file (TASK-XXX.md)
+├── Constitution (coding standards)
+└── Active feature spec summary
+
+LOAD IF UI TASK (< 300 tokens):
+├── Design tokens (tokens.json)
+└── Component spec (if exists)
+
+LOAD ON DEMAND (only when needed):
+├── Full PRD (read specific sections)
+├── Architecture docs
+└── Previous session context
+```
+
+**Anti-Pattern Detection**:
+```
+WARNING: Context bloat detected
+├── > 10 files loaded at once
+├── > 50KB of context in single prompt
+├── Full file reads when sections would suffice
+└── Repeated reads of same file in session
+```
+
+### Tier 2: DELEGATE (Offload High-Token Work)
+
+**Goal**: Sub-agents handle token-heavy operations without polluting primary context.
+
+**Delegation Matrix**:
+| Task Type | Token Cost | Delegate? | Sub-Agent |
+|-----------|------------|-----------|-----------|
+| Web scraping | 5,000-20,000 | YES | Research |
+| Documentation fetching | 3,000-15,000 | YES | Research |
+| Full codebase analysis | 10,000-50,000 | YES | Architect |
+| Design system creation | 5,000-15,000 | YES | Designer |
+| Code implementation | 3,000-10,000 | YES | Coder |
+| Test suite generation | 3,000-8,000 | YES | Tester |
+| Security scanning | 2,000-5,000 | YES | Reviewer |
+
+**Sub-Agent Context Isolation**:
+```
+Primary Agent Context:
+├── Task context (~2,000 tokens)
+├── User conversation (~1,000 tokens)
+└── System prompts (~500 tokens)
+│
+└── Spawns Coder Sub-Agent:
+    ├── Fresh context window
+    ├── Task payload (~1,500 tokens)
+    ├── Implementation work (~8,000 tokens)
+    └── Returns: 200-word summary (~300 tokens)
+
+Result: 8,000+ tokens of code work
+        NOT added to primary context
+```
+
+**Delegation Protocol**:
+1. Primary prepares minimal context payload
+2. Sub-agent operates in isolated context
+3. Sub-agent writes detailed output to files
+4. Sub-agent returns summary (< 300 words) to Primary
+5. Primary reads files only if needed for next step
+
+### Tier 3: MANAGE (Persistent State & Recovery)
+
+**Goal**: Handle context overflow gracefully with checkpoints and bundles.
+
+**Checkpoint System**:
+```
+Token Usage Thresholds:
+│
+├── 50% (50,000 tokens)
+│   └── Action: Warning logged, continue normally
+│
+├── 75% (75,000 tokens)
+│   └── Actions:
+│       ├── Save checkpoint to RLM/progress/checkpoint.json
+│       ├── Activate smart truncation (Tier 3 items first)
+│       └── Reduce parallel batch size to 3
+│
+├── 90% (90,000 tokens)
+│   └── Actions:
+│       ├── Save full context bundle
+│       ├── Complete current task only
+│       └── Force pause with resume instructions
+│
+└── 95% (95,000 tokens)
+    └── Actions:
+        ├── Emergency bundle save
+        ├── Stop all work immediately
+        └── Report to user with /cc-implement resume instructions
+```
+
+**Smart Truncation Tiers** (applied at 75% token usage):
+
+```
+TIER 1 - NEVER TRUNCATE (Protected):
+├── Current task specification
+├── Constitution (coding standards)
+├── Active feature spec
+├── Recent errors/decisions (last 5)
+└── Key decisions log
+
+TIER 2 - SUMMARIZE IF NEEDED:
+├── Completed task summaries (keep last 3)
+├── Previous session context
+├── Design tokens (core subset only)
+└── Research findings (key points only)
+
+TIER 3 - TRUNCATE FIRST:
+├── Historical logs (> 1 hour old)
+├── Verbose tool outputs
+├── Exploration context (file listings, searches)
+└── Full file contents (use summaries)
+```
+
+**Context Bundle Format**:
+```json
+{
+  "bundle_id": "session-2024-01-15-143000",
+  "created_at": "2024-01-15T14:30:00Z",
+  "token_usage": {
+    "at_bundle": 92000,
+    "limit": 100000
+  },
+  "state": {
+    "phase": "implement",
+    "completed_tasks": ["TASK-001", "TASK-002", "TASK-003"],
+    "in_progress_task": "TASK-004",
+    "remaining_tasks": ["TASK-005", "TASK-006", "TASK-007"],
+    "design_qa_score": null,
+    "test_coverage": null
+  },
+  "context": {
+    "current_task": { /* minimal task context */ },
+    "decisions_log": [ /* key decisions made */ ],
+    "errors_encountered": [ /* recent errors */ ],
+    "user_preferences": { /* extracted from conversation */ }
+  },
+  "resume_instructions": "Run /cc-implement resume to continue from TASK-004"
+}
+```
+
+**Recovery Protocol**:
+```
+User runs: /cc-implement resume
+│
+├─► Read latest bundle from RLM/progress/bundles/
+│
+├─► Restore state:
+│   ├─► Set phase to bundle.state.phase
+│   ├─► Mark completed tasks
+│   └─► Load current task context
+│
+├─► Apply decisions log (avoid re-asking resolved questions)
+│
+└─► Continue from in_progress_task
+```
+
+### Context Audit Command
+
+Add to `/cc-debug` for context analysis:
+
+```
+/cc-debug context-audit
+
+Output:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTEXT AUDIT REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Current Usage: 45,230 / 100,000 tokens (45.2%)
+
+Breakdown by Category:
+├── System prompts:     2,500 tokens (5.5%)
+├── User conversation:  8,200 tokens (18.1%)
+├── File contents:     22,100 tokens (48.9%)
+├── Tool outputs:      10,430 tokens (23.1%)
+└── Sub-agent returns:  2,000 tokens (4.4%)
+
+Optimization Opportunities:
+├── [HIGH] 3 files read in full that could use summaries
+├── [MED] 2 tool outputs could be truncated
+└── [LOW] Consider delegating remaining analysis
+
+Recommendation: Continue normally (below 50% threshold)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Efficiency Metrics
+
+Track these context efficiency metrics:
+
+| Metric | Target | Calculation |
+|--------|--------|-------------|
+| Delegation Ratio | > 60% | Sub-agent tokens / Total tokens |
+| Context Reuse | > 40% | Cached reads / Total reads |
+| Truncation Rate | < 10% | Truncated content / Total content |
+| Bundle Recovery | > 95% | Successful resumes / Total resumes |
+| Tokens per Task | < 10,000 | Total tokens / Tasks completed |
+
 ## Workflow Orchestration (v2.5 Complete Pipeline)
 
 The complete `/cc-full` pipeline consists of 9 phases:

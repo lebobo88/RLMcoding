@@ -1,5 +1,5 @@
 {
-  "version": "2.6",
+  "version": "2.7",
   "description": "Claude Code Enhanced Workflow Configuration",
 
   "parallel": {
@@ -137,5 +137,57 @@
       ]
     },
     "description": "Intelligent context window management with checkpointing and truncation"
+  },
+
+  "enhancements": {
+    "prompt_patterns": {
+      "enabled": true,
+      "auto_select": true,
+      "patterns_path": "RLM/prompts/patterns/",
+      "available_patterns": [
+        "root-cause-analysis",
+        "decision-matrix",
+        "comparative-analysis",
+        "problem-decomposition"
+      ],
+      "description": "Reusable prompt patterns for structured reasoning"
+    },
+    "behavioral_economics": {
+      "enabled": true,
+      "checklist_in_design": true,
+      "checklist_path": "RLM/templates/behavioral-economics-checklist.md",
+      "require_in_qa": false,
+      "description": "Behavioral economics principles for product design"
+    },
+    "cognitive_psychology": {
+      "enabled": true,
+      "validate_in_qa": true,
+      "principles": [
+        "fitts_law",
+        "hicks_law",
+        "millers_law",
+        "jakobs_law",
+        "peak_end_rule",
+        "von_restorff_effect"
+      ],
+      "description": "Cognitive psychology principles for UX research and design QA"
+    },
+    "description": "Research-aligned enhancements from v2.7"
+  },
+
+  "test_mode": {
+    "enabled": false,
+    "output_directory": "test_projects/",
+    "collect_metrics": true,
+    "metrics_to_collect": [
+      "tokens_used",
+      "execution_time",
+      "lines_of_code",
+      "test_coverage",
+      "files_created"
+    ],
+    "comparison_reports": true,
+    "command": "/cc-test-run",
+    "description": "Isolated test project execution for RLM methodology validation"
   }
 }

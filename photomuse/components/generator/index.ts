@@ -1,1 +1,0 @@
-export { ShootCard } from './ShootCard';

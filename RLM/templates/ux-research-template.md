@@ -289,32 +289,114 @@ Home
 
 ---
 
-## 9. Behavioral Psychology Application
+## 9. Cognitive Psychology Principles
 
-### Cognitive Load Management
+### Core Cognitive Laws
 
-| Principle | Application | Implementation |
-|-----------|-------------|----------------|
-| **Miller's Law (7±2)** | Limit choices per screen | Group into categories, progressive disclosure |
-| **Hick's Law** | Reduce decision time | Smart defaults, recommendations |
-| **Progressive Disclosure** | Show complexity on demand | Expandable sections, advanced options |
+| Law | Definition | UX Application | Implementation |
+|-----|------------|----------------|----------------|
+| **Fitts's Law** | Time to target = f(distance × size) | Larger targets, closer placement | Primary CTAs: min 44×44px, near thumb zones |
+| **Hick's Law** | Decision time = log₂(n+1) choices | Fewer options, smart defaults | Max 7±2 choices per screen, progressive disclosure |
+| **Miller's Law** | Working memory holds 7±2 items | Chunk information, visible state | Group into sections, breadcrumbs for navigation |
+| **Jakob's Law** | Users prefer familiar patterns | Use established conventions | Follow platform patterns, don't reinvent navigation |
+| **Peak-End Rule** | Judge experience by peaks and endings | Design memorable moments | Polish onboarding completion, success states |
+| **Von Restorff Effect** | Different items are remembered | Make important elements stand out | Visual hierarchy, color contrast for CTAs |
 
-### Persuasion Patterns (Ethical)
+### Cognitive Load Theory
 
-| Pattern | Application | Ethics Check |
-|---------|-------------|--------------|
-| **Social Proof** | Show user counts, testimonials | Real data only |
-| **Scarcity** | Limited availability | Only genuine scarcity |
-| **Authority** | Expert endorsements | Legitimate credentials |
-| **Reciprocity** | Free value first | No manipulation |
+| Load Type | Definition | UX Impact | Reduction Strategy |
+|-----------|------------|-----------|-------------------|
+| **Intrinsic Load** | Complexity inherent to the task | Some tasks are just hard | Break into steps, provide guidance |
+| **Extraneous Load** | Unnecessary mental effort from design | Bad UX causes this | Remove clutter, simplify layouts |
+| **Germane Load** | Effort that leads to learning | Good - builds schemas | Consistent patterns, helpful feedback |
 
-### Dark Pattern Avoidance Checklist
+**Design Guidelines**:
+```
+REDUCE EXTRANEOUS LOAD:
+├── Visual hierarchy guides attention
+├── Consistent navigation patterns
+├── Clear labeling (no jargon)
+├── Related items grouped together
+└── Unnecessary animations removed
+
+OPTIMIZE INTRINSIC LOAD:
+├── Complex tasks broken into steps
+├── Progress indicators show state
+├── Examples and templates provided
+└── Inline help available on demand
+```
+
+### Memory & Attention Principles
+
+| Principle | Psychology Basis | UX Implication |
+|-----------|------------------|----------------|
+| **Recognition > Recall** | Recognition is easier than recall | Show options, don't make users remember |
+| **Serial Position Effect** | First/last items remembered best | Put key info at start/end of lists |
+| **Change Blindness** | Users miss gradual changes | Use clear notifications for state changes |
+| **Inattentional Blindness** | Focused users miss the unexpected | Don't hide critical info in periphery |
+| **Selective Attention** | Users focus on one thing at a time | One primary action per screen |
+
+### Emotional Design
+
+| Emotion | When to Design For | Implementation |
+|---------|-------------------|----------------|
+| **Delight** | First success, milestones | Celebrations, micro-animations |
+| **Confidence** | Before committing | Progress visibility, undo options |
+| **Trust** | Payment, sensitive data | Security indicators, social proof |
+| **Relief** | After difficult tasks | Clear completion states |
+| **Anticipation** | Loading states | Skeleton screens, engaging spinners |
+
+### Peak-End Rule Application
+
+```
+Design for memorable PEAKS:
+├── Onboarding completion celebration
+├── First successful task
+├── Achievement milestones
+└── Positive feedback moments
+
+Design for positive ENDINGS:
+├── Clear task completion state
+├── Summary of accomplishments
+├── Easy next steps
+└── Satisfying logout/close experience
+```
+
+### Persuasion Patterns (Ethical Application)
+
+| Pattern | Psychology Basis | Ethical Use | Avoid |
+|---------|------------------|-------------|-------|
+| **Social Proof** | Herd behavior | Real user counts, testimonials | Fake reviews, inflated numbers |
+| **Scarcity** | Loss aversion | Genuine limited availability | Fake countdown timers |
+| **Authority** | Expert trust | Legitimate credentials | False claims |
+| **Reciprocity** | Give to receive | Free value first | Guilt manipulation |
+| **Commitment** | Consistency bias | Small asks building to large | Bait-and-switch |
+| **Liking** | Prefer similar/attractive | Personalization, quality design | Manipulation |
+
+### Cognitive Psychology Checklist
+
+**Pre-Design Validation**:
+- [ ] Primary user flow analyzed for cognitive load
+- [ ] Information architecture follows mental models
+- [ ] Navigation uses familiar patterns (Jakob's Law)
+- [ ] Key decisions limited to 7±2 options (Miller's Law)
+
+**Design Application**:
+- [ ] Touch targets meet minimum size (Fitts's Law)
+- [ ] Important elements visually distinct (Von Restorff)
+- [ ] Progress visible for multi-step tasks
+- [ ] Recognition preferred over recall throughout
+- [ ] Peak moments designed for delight
+- [ ] End states designed for satisfaction
+
+**Dark Pattern Avoidance**:
 - [ ] No confirm-shaming ("No thanks, I don't want to save money")
 - [ ] No hidden costs revealed late in flow
 - [ ] Easy unsubscribe/cancel (not harder than subscribe)
 - [ ] No forced continuity without clear warning
 - [ ] Privacy settings default to user-protective
 - [ ] No misdirection or visual tricks
+- [ ] No roach motels (easy entry, difficult exit)
 
 ---
 

@@ -28,7 +28,8 @@
       "Bash(npx playwright:*)",
       "Bash(find:*)",
       "Bash(ls:*)",
-      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\research\\project\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\research\\project\")"
+      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\research\\project\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\research\\project\")",
+      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\prompts\\patterns\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\prompts\\patterns\")"
     ],
     "deny": [],
     "ask": []

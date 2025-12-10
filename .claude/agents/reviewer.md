@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: "Use this agent for code review, quality checks, and security scanning before commits or PRs. Prompt with: the files or changes to review, review focus areas (security, performance, style), and any specific concerns. Returns review findings with severity levels."
+description: "Use this agent PROACTIVELY when: (1) before any git commit of significant code, (2) user asks to 'review', 'check', or 'validate' code, (3) after coder agent completes implementation, (4) when security-sensitive code is modified (auth, payments, data), (5) before merging PRs. Prompt with: file paths to review, focus areas (security/performance/style/design), specific concerns or context, PR diff (if available). Returns: review report with severity-ranked findings (Critical > High > Medium > Low), security checklist results, design compliance score (for UI). Flag any Critical issues that block commit."
 tools:
   - Read
   - Grep

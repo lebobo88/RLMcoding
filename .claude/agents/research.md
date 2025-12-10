@@ -1,6 +1,6 @@
 ---
 name: research
-description: "Use this agent when performing web research, competitor analysis, documentation fetching, or market research. Prompt with: the research topic, specific questions to answer, and any constraints (e.g., focus areas, competitors to analyze). Returns structured research findings."
+description: "Use this agent PROACTIVELY when: (1) user mentions competitors, market research, or asks 'what do others do?', (2) evaluating unfamiliar technologies or APIs, (3) validating business assumptions during discovery, (4) user asks about industry trends or best practices. Prompt with: research topic, 3-5 specific questions to answer, competitor names (if known), constraints (time, focus areas). Returns: structured findings written to RLM/specs/research/, 200-word summary for primary agent."
 tools:
   - WebSearch
   - WebFetch

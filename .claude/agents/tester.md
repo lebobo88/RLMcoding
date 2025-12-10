@@ -1,6 +1,6 @@
 ---
 name: tester
-description: "Use this agent for test writing, coverage analysis, bug investigation, and quality validation. Prompt with: the component/feature to test, existing test coverage status, and specific testing requirements (unit, integration, e2e). Returns test files and coverage analysis."
+description: "Use this agent PROACTIVELY when: (1) coverage is below 80% for a component, (2) user reports flaky or failing tests, (3) before merging significant code changes, (4) investigating bugs that need reproduction, (5) after implementation to verify quality. Prompt with: component/feature path, current coverage percentage (if known), test type needed (unit/integration/e2e), specific scenarios to cover, bug details (if investigating). Returns: test files written to project, coverage report, bug reproduction steps. Apply root-cause-analysis pattern from RLM/prompts/patterns/ for bug investigation."
 tools:
   - Read
   - Write

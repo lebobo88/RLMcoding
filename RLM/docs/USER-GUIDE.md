@@ -1,4 +1,4 @@
-# RLM User Guide (v2.6)
+# RLM User Guide (v2.7)
 
 ## Introduction
 
@@ -11,10 +11,14 @@ RLM (Research, Lead, Manage) is an AI-powered software development methodology t
 - **Universal Compatibility**: Works with Claude Code, Cursor, Windsurf, VS Code, Aider, and any AI assistant
 - **TDD by Default**: All implementation follows Test-Driven Development
 - **Design System Integration**: Full UI/UX engineering with design tokens and accessibility
+- **Behavioral Economics**: Research-backed product design principles
+- **Cognitive Psychology**: UX patterns based on cognitive science
 - **Flexible Automation**: Choose your control level (AUTO, SUPERVISED, MANUAL)
 - **Incremental Development**: Checkpoint system prevents overwriting existing work
 - **Resume Capability**: Stop and continue anytime without losing progress
 - **Debug & Reconciliation**: Built-in state validation and repair tools
+- **Prompt Pattern Library**: Reusable reasoning patterns for complex tasks
+- **Test Mode**: Isolated project execution for methodology validation
 
 ---
 
@@ -56,37 +60,37 @@ The AI will ask ~12-18 questions in 3-4 rounds, including design preferences for
 RLM follows a structured 9-phase workflow:
 
 ```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                         RLM 9-PHASE PIPELINE (v2.6)                       │
-├──────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│  PHASE 1: DISCOVER        → PRD.md, constitution.md                      │
-│      │    Auto-detects project research in RLM/research/project/         │
-│      ▼                                                                   │
-│  PHASE 2: DESIGN SYSTEM   → Design tokens, component library (if UI)     │
-│      │    Auto-detected: UI projects include design, CLI/API skip it     │
-│      ▼                                                                   │
-│  PHASE 3: SPECIFICATIONS  → Feature specs, architecture                  │
-│      │                                                                   │
-│      ▼                                                                   │
-│  PHASE 4: FEATURE DESIGN  → UI/UX specs for each feature (if UI)         │
-│      │                                                                   │
-│      ▼                                                                   │
-│  PHASE 5: TASKS           → Fine-grained tasks with checkpoint tracking  │
-│      │    Incremental: only creates tasks for NEW features               │
-│      ▼                                                                   │
-│  PHASE 6: IMPLEMENTATION  → TDD with integrated review per task          │
-│      │    Real-time progress reporting with token tracking               │
-│      ▼                                                                   │
-│  PHASE 7: QUALITY         → Design QA + Code Review + Test Coverage      │
-│      │                                                                   │
-│      ▼                                                                   │
-│  PHASE 8: VERIFICATION    → E2E tests per feature (Playwright + axe)     │
-│      │    Auto-triggered when all feature tasks complete                 │
-│      ▼                                                                   │
-│  PHASE 9: REPORT          → Complete project summary                     │
-│                                                                          │
-└──────────────────────────────────────────────────────────────────────────┘
++----------------------------------------------------------------------------+
+|                        RLM 9-PHASE PIPELINE (v2.7)                          |
++----------------------------------------------------------------------------+
+|                                                                            |
+|  PHASE 1: DISCOVER        → PRD.md, constitution.md                        |
+|      │    Auto-detects project research in RLM/research/project/           |
+|      ▼                                                                     |
+|  PHASE 2: DESIGN SYSTEM   → Design tokens, component library (if UI)       |
+|      │    Auto-detected: UI projects include design, CLI/API skip it       |
+|      ▼                                                                     |
+|  PHASE 3: SPECIFICATIONS  → Feature specs, architecture                    |
+|      │                                                                     |
+|      ▼                                                                     |
+|  PHASE 4: FEATURE DESIGN  → UI/UX specs for each feature (if UI)           |
+|      │                                                                     |
+|      ▼                                                                     |
+|  PHASE 5: TASKS           → Fine-grained tasks with checkpoint tracking    |
+|      │    Incremental: only creates tasks for NEW features                 |
+|      ▼                                                                     |
+|  PHASE 6: IMPLEMENTATION  → TDD with integrated review per task            |
+|      │    Real-time progress reporting with token tracking                 |
+|      ▼                                                                     |
+|  PHASE 7: QUALITY         → Design QA + Code Review + Test Coverage        |
+|      │                                                                     |
+|      ▼                                                                     |
+|  PHASE 8: VERIFICATION    → E2E tests per feature (Playwright + axe)       |
+|      │    Auto-triggered when all feature tasks complete                   |
+|      ▼                                                                     |
+|  PHASE 9: REPORT          → Complete project summary                       |
+|                                                                            |
++----------------------------------------------------------------------------+
 ```
 
 ### Two Entry Points
@@ -123,7 +127,7 @@ OR
    - Round 2: Scale, integrations, tech constraints, data requirements
    - Round 3: Authentication, platforms, compliance, UX
    - Round 4 (UI): Design philosophy, animation tier, framework
-4. AI generates comprehensive PRD
+4. AI generates comprehensive PRD (v2.7: Enhanced 15-section structure)
 
 **Auto-Detection Features**:
 - Project research folder is automatically detected
@@ -141,6 +145,7 @@ OR
 2. Generates design tokens (colors, typography, spacing)
 3. Creates component library specification
 4. Defines animation guidelines
+5. (v2.7) Applies behavioral economics principles
 
 **Output**: `RLM/specs/design/design-system.md`, `RLM/specs/design/tokens/`
 
@@ -169,6 +174,7 @@ OR
 2. Designs user flows and screen layouts
 3. Specifies component usage
 4. Defines responsive behavior
+5. (v2.7) Applies cognitive psychology principles
 
 **Output**: `RLM/specs/features/FTR-XXX/design-spec.md`
 
@@ -275,6 +281,58 @@ Choose your level of AI autonomy during implementation:
 
 ---
 
+## Sub-Agents (v2.7)
+
+RLM uses specialized sub-agents that operate in isolated context windows:
+
+| Agent | Purpose | Proactive Triggers | Phase |
+|-------|---------|-------------------|-------|
+| **Research** | Web research, competitor analysis | "what do others do?", market research | 1 |
+| **Architect** | Technology decisions, ADRs | "which technology?", trade-offs | 1, 3 |
+| **Designer** | Design systems, UI/UX specs | UI feature start, colors/typography | 2, 4, 7 |
+| **Coder** | TDD implementation | "build/implement/create", tasks | 6 |
+| **Tester** | Test coverage, bug investigation | Coverage < 80%, flaky tests | 7 |
+| **Reviewer** | Code review, security | Before commits, security code | 7 |
+| **Verifier** | E2E tests, accessibility | Feature completion | 8 |
+
+---
+
+## Prompt Pattern Library (v2.7)
+
+Reusable reasoning patterns for complex tasks:
+
+| Pattern | Use Case | Applied By |
+|---------|----------|------------|
+| `root-cause-analysis.md` | Bug investigation, 5-Whys | Coder, Tester |
+| `decision-matrix.md` | Technology selection | Architect |
+| `comparative-analysis.md` | Alternative evaluation | Architect, Research |
+| `problem-decomposition.md` | Complex task breakdown | Coder |
+
+**Location**: `RLM/prompts/patterns/`
+
+---
+
+## 3-Tier Context Management (v2.7)
+
+Intelligent context window management:
+
+| Tier | Goal | Strategy |
+|------|------|----------|
+| **Tier 1: REDUCE** | Minimize loaded | Selective file reading, summaries |
+| **Tier 2: DELEGATE** | Offload high-token work | Sub-agent delegation |
+| **Tier 3: MANAGE** | Handle overflow | Checkpoints, smart truncation |
+
+### Context Thresholds
+
+| Threshold | Action |
+|-----------|--------|
+| 50% | Save checkpoint, log warning, continue |
+| 75% | Save checkpoint, activate truncation, suggest wrap-up |
+| 90% | Save checkpoint, complete current task only, pause |
+| 95% | Emergency bundle save, stop all work |
+
+---
+
 ## IDE-Specific Instructions
 
 ### Claude Code (Recommended)
@@ -289,11 +347,12 @@ Use slash commands directly:
 /implement all
 /implement resume
 
-# Enhanced Commands (v2.6)
+# Enhanced Commands (v2.7)
 /cc-full Build a habit tracking app    # Complete 9-phase automation
 /cc-full --from-prd                    # Start from existing PRD
 /cc-debug                              # Diagnose and fix state issues
 /cc-debug quick                        # Fast scan for common issues
+/cc-test-run my-project                # Run isolated test project
 /rlm-full [idea]                       # Standard prompt pipeline
 ```
 
@@ -341,13 +400,6 @@ RLM automatically tracks:
 - Token usage in `RLM/progress/token-usage/`
 - Session logs in `RLM/progress/logs/`
 
-### Context Window Management
-
-RLM manages context automatically:
-- **50% threshold**: Save checkpoint, log warning, continue
-- **75% threshold**: Save checkpoint, suggest wrapping up
-- **90% threshold**: Save checkpoint, complete current task only, pause
-
 ### Resuming Work
 
 If you stop mid-implementation:
@@ -375,6 +427,26 @@ Use the debug command to diagnose and fix state issues:
 - Checkpoint drift
 - Broken dependencies
 - Duplicate IDs
+- Missing specs
+- Stale progress files
+- Blocked loops
+- Incomplete metadata
+
+---
+
+## Test Mode (v2.7)
+
+Run isolated test projects for methodology validation:
+
+```bash
+/cc-test-run my-test-project                    # Interactive
+/cc-test-run my-test-project --from-prd path/   # From existing PRD
+/cc-test-run my-test-project --idea "desc"      # With idea description
+```
+
+**Creates**: `test_projects/[name]-[timestamp]/`
+
+**Collects**: tokens, time, lines of code, test coverage
 
 ---
 
@@ -410,8 +482,15 @@ RLM/
 │   ├── 05-IMPLEMENT-ALL.md    # All tasks (with context mgmt)
 │   ├── 06-RESUME.md           # Resume session
 │   ├── 07-TEST.md             # Testing
-│   └── 08-REPORT.md           # Reporting
+│   ├── 08-REPORT.md           # Reporting
+│   └── patterns/              # Prompt patterns (v2.7)
+│       ├── root-cause-analysis.md
+│       ├── decision-matrix.md
+│       ├── comparative-analysis.md
+│       └── problem-decomposition.md
 ├── templates/                 # Document templates
+│   ├── PRD-template-v2.md     # Enhanced PRD (v2.7)
+│   └── behavioral-economics-checklist.md  # (v2.7)
 ├── specs/                     # Generated specifications
 │   ├── PRD.md                 # Product requirements
 │   ├── constitution.md        # Project standards
@@ -441,9 +520,11 @@ RLM/
 Configure RLM via `RLM/progress/cc-config.json` or `/cc-config`:
 
 ```bash
-/cc-config parallel_limit 8          # Concurrent sub-agents (1-10)
-/cc-config automation_level auto     # Full autonomy
-/cc-config reporting.mode both       # realtime + silent logging
+/cc-config parallel_limit 8                      # Concurrent sub-agents (1-10)
+/cc-config automation_level auto                 # Full autonomy
+/cc-config reporting.mode both                   # realtime + silent logging
+/cc-config enhancements.prompt_patterns.enabled true    # v2.7
+/cc-config enhancements.behavioral_economics.enabled true  # v2.7
 ```
 
 Key settings:
@@ -451,6 +532,8 @@ Key settings:
 - `design.auto_detect`: Auto-detect UI vs Non-UI
 - `context_management.auto_checkpoint.enabled`: Auto-save at thresholds
 - `debug.auto_fix_safe`: Allow safe auto-fixes
+- `enhancements.prompt_patterns.enabled`: Use prompt pattern library
+- `enhancements.behavioral_economics.enabled`: Apply behavioral economics
 
 ---
 
@@ -509,6 +592,37 @@ Generates design tokens, component library, animation guidelines.
 
 ---
 
+## Behavioral Economics Principles (v2.7)
+
+Applied during design phases for ethical product decisions:
+
+| Principle | Application |
+|-----------|-------------|
+| **Choice Architecture** | Design defaults to guide optimal choices |
+| **Prospect Theory** | Frame messaging as loss/gain appropriately |
+| **Anchoring** | Strategic pricing and value presentation |
+| **Social Proof** | Display genuine user activity and testimonials |
+| **Endowment Effect** | Create ownership through personalization |
+| **Scarcity/Urgency** | Use only for genuine constraints |
+| **Cognitive Load** | Progressive disclosure to reduce overwhelm |
+
+---
+
+## Cognitive Psychology Laws (v2.7)
+
+Applied during UX research and design QA:
+
+| Law | UX Application |
+|-----|----------------|
+| **Fitts's Law** | Minimum 44x44px touch targets |
+| **Hick's Law** | Maximum 7±2 choices per screen |
+| **Miller's Law** | Chunk information into groups |
+| **Jakob's Law** | Use familiar design patterns |
+| **Peak-End Rule** | Polish first and last impressions |
+| **Von Restorff Effect** | Visual hierarchy for important elements |
+
+---
+
 ## Best Practices
 
 ### During Discovery
@@ -540,6 +654,7 @@ Generates design tokens, component library, animation guidelines.
 | Can't resume | Check `RLM/progress/status.json` |
 | State inconsistent | Run `/cc-debug` to diagnose and fix |
 | Context overflow | Session auto-saved; use `/implement resume` |
+| High token usage | Run `/cc-debug context-audit` |
 
 ---
 

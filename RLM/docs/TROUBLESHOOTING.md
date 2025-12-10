@@ -1,14 +1,16 @@
-# RLM Troubleshooting Guide
+# RLM Troubleshooting Guide (v2.7)
 
 ## Quick Fixes
 
 | Problem | Quick Solution |
 |---------|---------------|
 | AI doesn't know RLM | "Read RLM/START-HERE.md first" |
-| No PRD exists | Run `/discover` |
-| No specs exist | Run `/create-specs` |
-| No tasks exist | Run `/create-tasks` |
-| Can't resume | Check `RLM/progress/status.json` |
+| No PRD exists | Run `/discover` or `/cc-discover` |
+| No specs exist | Run `/create-specs` or `/cc-create-specs` |
+| No tasks exist | Run `/create-tasks` or `/cc-create-tasks` |
+| Can't resume | Check `RLM/progress/status.json` or `checkpoint.json` |
+| State inconsistent | Run `/cc-debug quick` |
+| High token usage | Run `/cc-debug context-audit` |
 
 ---
 
@@ -50,15 +52,24 @@
    ```
    /discover [your project idea]
    ```
+   Or enhanced:
+   ```
+   /cc-discover [your project idea]
+   ```
 
 2. Check PRD location:
    - Expected: `RLM/specs/PRD.md`
    - If elsewhere, specify path: `/create-specs path/to/prd.md`
 
-3. Validate PRD has required sections:
+3. Validate PRD has required sections (v2.7 enhanced structure):
+   - Executive Summary
+   - User Personas with needs
    - User Stories with acceptance criteria
    - Functional Requirements
    - Non-Functional Requirements
+   - Technology Stack with confidence levels
+   - Security & Compliance
+   - Success Metrics & KPIs
 
 ---
 
@@ -81,9 +92,10 @@
    - Edit task file in `RLM/tasks/active/`
    - Create additional TASK-XXX files
 
-3. Use the authentication example as reference:
-   - "Implement authentication" = BAD (too large)
-   - 15+ small tasks = GOOD (each focused)
+3. Use the problem-decomposition prompt pattern (v2.7):
+   ```
+   Read RLM/prompts/patterns/problem-decomposition.md and apply it to break down this task
+   ```
 
 ---
 
@@ -101,17 +113,27 @@
    Read RLM/progress/status.json and tell me the current state
    ```
 
-2. Look for session logs:
+2. Check checkpoint file (v2.6+):
+   ```
+   Read RLM/progress/checkpoint.json and tell me the checkpoint state
+   ```
+
+3. Look for session logs:
    ```
    List files in RLM/progress/logs/ and show the most recent
    ```
 
-3. Manual recovery:
+4. Check context bundles:
+   ```
+   List files in RLM/progress/bundles/ and restore from latest
+   ```
+
+5. Manual recovery:
    - Find last completed task in logs
    - Update status.json manually
    - Continue from next task
 
-4. Start fresh if needed:
+6. Start fresh if needed:
    - All tasks still exist in `RLM/tasks/active/`
    - Only progress tracking was lost
 
@@ -185,7 +207,12 @@
    Read RLM/tasks/INDEX.md and show the dependency graph
    ```
 
-3. Reorder tasks:
+3. Use debug command to find broken dependencies:
+   ```
+   /cc-debug quick
+   ```
+
+4. Reorder tasks:
    - Start with tasks showing "Dependencies: None"
    - Work down the dependency tree
 
@@ -212,6 +239,11 @@
 3. For persistent test failures:
    ```
    Read RLM/prompts/07-TEST.md and fix the failing tests
+   ```
+
+4. Use root-cause-analysis pattern (v2.7):
+   ```
+   Read RLM/prompts/patterns/root-cause-analysis.md and apply 5-Whys to this failure
    ```
 
 ---
@@ -252,7 +284,12 @@
 
 **Solutions:**
 
-1. Validate JSON:
+1. Run debug command (v2.6+):
+   ```
+   /cc-debug --auto-fix
+   ```
+
+2. Validate JSON manually:
    ```json
    {
      "lastUpdate": "2024-01-15T10:30:00Z",
@@ -262,12 +299,12 @@
    }
    ```
 
-2. Rebuild from files:
+3. Rebuild from files:
    - Count tasks in `active/` → pending
    - Count tasks in `completed/` → completed
    - Count tasks in `blocked/` → blocked
 
-3. Reset if needed:
+4. Reset if needed:
    ```json
    {
      "lastUpdate": "[now]",
@@ -301,6 +338,161 @@
    - Previous decisions are logged
    - Ask AI to read logs for context
 
+4. Use context priming (v2.6+):
+   ```
+   /prime-task TASK-XXX
+   ```
+
+---
+
+### Context Window Overflow
+
+**Symptoms:**
+- AI stops mid-task
+- "Context limit reached" messages
+- Incomplete responses
+
+**Solutions:**
+
+1. Use `/implement resume`:
+   - Session is auto-saved at context thresholds
+   - Bundle files created in `RLM/progress/bundles/`
+
+2. Check context thresholds in cc-config.json:
+   ```json
+   "context_management": {
+     "auto_checkpoint": {
+       "thresholds": [0.5, 0.75, 0.9]
+     }
+   }
+   ```
+
+3. Delegate to sub-agents:
+   - Use `/cc-implement` to delegate to Coder agent
+   - Sub-agents have isolated context windows
+
+4. Break down large tasks:
+   - Tasks over 35,000 tokens should be split
+   - Use `/cc-create-tasks` with finer granularity
+
+---
+
+### High Token Usage
+
+**Symptoms:**
+- Tasks consuming excessive tokens
+- Efficiency rating "Poor" (> 35,000 tokens/task)
+- Slow progress through task list
+
+**Solutions:**
+
+1. Run context audit (v2.7):
+   ```
+   /cc-debug context-audit
+   ```
+
+2. Check token efficiency ratings:
+   | Rating | Tokens/Task | Action |
+   |--------|-------------|--------|
+   | Excellent | < 10,000 | Normal |
+   | Good | 10-20,000 | Normal |
+   | Fair | 20-35,000 | Consider splitting |
+   | Poor | > 35,000 | Split task |
+
+3. Enable smart truncation:
+   ```bash
+   /cc-config context_management.smart_truncation.enabled true
+   ```
+
+4. Use selective file reading:
+   - Read only necessary files
+   - Avoid loading entire directories
+
+---
+
+### Debug Command Issues
+
+**Issue Types Detected by `/cc-debug`:**
+
+| Issue Type | Description | Auto-Fix? |
+|------------|-------------|-----------|
+| `orphan-tasks` | Tasks with no parent feature | Yes |
+| `missing-tasks` | Features with incomplete coverage | No |
+| `status-mismatch` | File status vs status.json | Yes |
+| `checkpoint-drift` | Checkpoint out of sync | Yes |
+| `broken-deps` | Non-existent dependencies | No |
+| `duplicate-ids` | Same ID used twice | No |
+| `missing-specs` | Tasks referencing missing specs | No |
+| `stale-progress` | Progress files > 24h old | Yes |
+| `blocked-loop` | Circular blocking dependencies | No |
+| `incomplete-metadata` | Missing required fields | Partial |
+
+**Running Debug:**
+```bash
+/cc-debug              # Full scan with interactive fixes
+/cc-debug quick        # Fast scan, common issues only
+/cc-debug --auto-fix   # Automatically fix safe issues
+```
+
+---
+
+### Design System Issues
+
+**Symptoms:**
+- Design tokens not generated
+- Component states missing
+- Design QA failing
+
+**Solutions:**
+
+1. Regenerate design system:
+   ```
+   /cc-design system
+   ```
+
+2. Check design detection:
+   ```
+   Read RLM/progress/cc-config.json and check design.auto_detect
+   ```
+
+3. Force design for UI project:
+   ```bash
+   /cc-config design.force_enabled true
+   ```
+
+4. Check for required 8 states:
+   - Default, Hover, Focus, Active
+   - Disabled, Loading, Error, Empty
+
+---
+
+### Verification Failures
+
+**Symptoms:**
+- E2E tests failing
+- Accessibility issues
+- Feature marked verification-failed
+
+**Solutions:**
+
+1. Check verification report:
+   ```
+   Read RLM/progress/verification/FTR-XXX-[timestamp].md
+   ```
+
+2. Bug tasks are auto-created:
+   - Check `RLM/tasks/active/TASK-XXX-BUG-NNN.md`
+   - Fix bugs, then re-verify
+
+3. Re-run verification:
+   ```
+   /cc-verify FTR-XXX --retry
+   ```
+
+4. Check accessibility issues:
+   - axe-core violations listed in report
+   - Fix WCAG 2.1 AA compliance issues
+
 ---
 
 ## Prevention Tips
@@ -310,17 +502,20 @@
 - [ ] Constitution defines tech stack and standards
 - [ ] Tasks are small (1-4 hours)
 - [ ] Dependencies are mapped
+- [ ] Research placed in `RLM/research/project/`
 
 ### During Implementation
 - [ ] Use SUPERVISED mode until familiar
 - [ ] Run tests after each change
 - [ ] Review generated code
 - [ ] Check progress regularly
+- [ ] Run `/cc-debug quick` periodically
 
 ### When Stopping
 - [ ] Note current task and state
 - [ ] Verify status.json is updated
 - [ ] Don't stop mid-task if possible
+- [ ] Check for auto-saved bundles
 
 ---
 
@@ -329,4 +524,6 @@
 1. **Re-read the prompts**: `RLM/prompts/*.md` contain detailed instructions
 2. **Check templates**: `RLM/templates/` show expected formats
 3. **Review START-HERE**: `RLM/START-HERE.md` has the workflow overview
-4. **Ask the AI**: "Read RLM/docs/USER-GUIDE.md and help me with [issue]"
+4. **Quick reference**: `RLM/docs/QUICK-REFERENCE.md` for command overview
+5. **Run debug**: `/cc-debug` for automated state analysis
+6. **Ask the AI**: "Read RLM/docs/USER-GUIDE.md and help me with [issue]"

@@ -1,6 +1,6 @@
 ---
 name: coder
-description: "Use this agent for TDD implementation, code generation, and feature development. Prompt with: the task specification (from RLM/tasks/), relevant feature spec, and any specific implementation requirements. Returns implemented code following TDD practices."
+description: "Use this agent PROACTIVELY when: (1) implementing tasks from RLM/tasks/active/, (2) user asks to 'build', 'implement', 'create', or 'code' something, (3) fixing bugs with known root cause, (4) refactoring existing code. Prompt with: task ID (TASK-XXX), feature spec path, design spec path (for UI tasks), specific implementation requirements or constraints. Returns: implemented code with tests (TDD), 5-step progress updates, test coverage report. Apply problem-decomposition pattern from RLM/prompts/patterns/ for complex tasks, root-cause-analysis for bugs."
 tools:
   - Read
   - Write

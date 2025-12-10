@@ -35,13 +35,13 @@ Use these Claude Code slash commands for the standard RLM workflow:
 | `/implement all` | Implement all active tasks |
 | `/implement resume` | Resume interrupted session |
 
-### Claude Code Enhanced Commands (v2.6)
+### Claude Code Enhanced Commands (v2.7)
 
 Complete 9-phase pipeline with full automation:
 
 | Command | Phase | Purpose | Sub-Agent |
 |---------|-------|---------|-----------|
-| `/cc-full [idea]` | All | **Complete 9-phase automation**: idea → verified code | All |
+| `/cc-full [idea]` | All | **Complete 9-phase automation**: idea -> verified code | All |
 | `/cc-full --from-prd` | 2-9 | Start from existing PRD (skip discover) | All |
 | `/cc-discover [idea]` | 1 | Discovery with research (Path 1: from zero) | Research |
 | `/cc-design system` | 2 | Generate design system from PRD | Designer |
@@ -55,32 +55,42 @@ Complete 9-phase pipeline with full automation:
 | `/cc-verify FTR-XXX` | 8 | **Feature verification**: E2E tests | Verifier |
 | `/cc-architect` | - | Architecture design with isolated context | Architect |
 | `/cc-background [task]` | - | Spawn autonomous background agent | Background |
-| `/cc-tokens` | - | Display token usage (auto in v2.6) | - |
+| `/cc-tokens` | - | Display token usage (auto in v2.7) | - |
 | `/cc-config [setting] [value]` | - | Configure workflow settings | - |
 | `/cc-debug [quick\|--auto-fix]` | - | **Diagnose and fix state issues** | - |
+| `/cc-test-run [name]` | - | **Run isolated test project** (v2.7) | - |
 | `/rlm-full [idea\|resume]` | All | **Standard prompt pipeline** (non-CC) | - |
 
-**v2.6 Features** (NEW):
-- **Real-Time Progress Reporting** - Visual progress bars, step-by-step updates, token tracking
-- **5-Step Progress Model** - Loading → Writing Tests → Implementing → Running Tests → Quality Checks
-- **Configurable Reporting** - `realtime`, `silent`, or `both` modes via cc-config.json
-- **Token Efficiency Tracking** - Per-task and session metrics with efficiency ratings
-- **Session Logging** - Detailed JSON logs in `RLM/progress/token-usage/`
-- **Checkpoint System** - Incremental task creation with generation tracking
-- **Global Debug Command** - `/cc-debug` for state reconciliation (10 issue types)
-- **Auto Project Research** - Detects research in `RLM/research/project/`
-- **Auto Design Detection** - UI vs Non-UI classification sets `DESIGN_REQUIRED`
-- **Context Window Management** - Auto-checkpoint at 50/75/90%, smart truncation
-- **Integrated Review/Verify** - Per-task review, auto feature verification
-- **IDE/Copilot Parity** - Shared instructions in `RLM/templates/ide-agents/`
-- **Standard Pipeline** - `/rlm-full` for non-CC environments with same automation
+### v2.7 Features (December 2025)
+
+- **Prompt Pattern Library** - 4 reusable reasoning patterns for structured problem-solving
+- **API Hook Pattern** - Sub-agents proactively activate on relevant user requests
+- **3-Tier Context Management** - Reduce -> Delegate -> Manage with smart truncation
+- **Behavioral Economics Integration** - 7 principles integrated into Designer workflow
+- **Cognitive Psychology Principles** - 6 laws (Fitts, Hick, Miller, etc.) in UX research
+- **Enhanced PRD Template v2** - 15-section comprehensive structure
+- **Test Mode** - `/cc-test-run` for isolated methodology testing
+- **Context Audit** - Token usage analysis in `/cc-debug context-audit`
+
+### Previous Version Features
+
+**v2.6 Features**:
+- Real-Time Progress Reporting with 5-step model
+- Configurable Reporting modes (realtime, silent, both)
+- Token Efficiency Tracking with per-task metrics
+- Checkpoint System for incremental task tracking
+- Global Debug Command (`/cc-debug`) for state reconciliation
+- Auto Project Research detection
+- Auto Design Detection (UI vs Non-UI)
+- Context Window Management with auto-checkpoint
+- IDE/Copilot Parity with shared instructions
 
 **v2.5 Features**:
-- **9-Phase Pipeline** - Discover → Design System → Specs → Feature Design → Tasks → Implement → Quality → Verify → Report
-- **Two Entry Points** - `/cc-full [idea]` (from zero) or `/cc-full --from-prd` (from PRD)
-- **Quality Phase** - Combined Design QA + Code Review + Test Coverage
-- **Verifier Agent** - E2E tests with Playwright, accessibility (axe-core), visual regression
-- **Skip Options** - `--skip-design-research`, `--skip-feature-design`, `--skip-design-qa`, `--skip-verification`
+- 9-Phase Pipeline (Discover -> Design System -> Specs -> Feature Design -> Tasks -> Implement -> Quality -> Verify -> Report)
+- Two Entry Points (`/cc-full [idea]` or `/cc-full --from-prd`)
+- Quality Phase (Design QA + Code Review + Test Coverage)
+- Verifier Agent (E2E tests with Playwright, accessibility, visual regression)
+- Skip Options (`--skip-design-research`, `--skip-feature-design`, `--skip-design-qa`, `--skip-verification`)
 
 ### Context Priming Commands
 
@@ -94,7 +104,7 @@ Load minimal context for specific workflows (manual use - auto-priming built int
 | `/prime-review` | Load review checklists and anti-patterns |
 | `/prime-design [scope]` | Load design system context for UI development |
 
-### Design Workflow Commands (v2.4)
+### Design Workflow Commands
 
 Comprehensive UI/UX engineering with design system management:
 
@@ -123,6 +133,11 @@ Comprehensive UI/UX engineering with design system management:
 ```
 RLM/
 ├── prompts/        # Workflow prompts (00-* detection, 01-08 workflow)
+│   └── patterns/   # Prompt pattern library (v2.7)
+│       ├── root-cause-analysis.md
+│       ├── decision-matrix.md
+│       ├── comparative-analysis.md
+│       └── problem-decomposition.md
 ├── specs/          # Generated specifications
 │   ├── PRD.md              # Product Requirements Document
 │   ├── constitution.md     # Project standards
@@ -138,42 +153,44 @@ RLM/
 │   ├── implementation-agent.md  # TDD code generation
 │   ├── testing-agent.md         # Test automation
 │   ├── devops-agent.md          # CI/CD and deployment
-│   └── design-agent.md          # UI/UX design system (v2.4)
+│   └── design-agent.md          # UI/UX design system
 ├── progress/       # Progress tracking and logs
-│   └── token-usage/    # Token usage logs (v2.1)
+│   ├── cc-config.json    # Workflow configuration
+│   ├── checkpoint.json   # Incremental task tracking
+│   ├── token-usage/      # Token usage logs
+│   ├── bundles/          # Context bundles for resume
+│   └── background/       # Background agent results
+├── research/
+│   └── project/          # Project research for auto-detection
 └── templates/      # Document templates
+    ├── PRD-template-v2.md           # Enhanced PRD (v2.7)
+    ├── behavioral-economics-checklist.md  # Design checklist (v2.7)
+    ├── design-system-template.md
+    ├── ux-research-template.md      # With cognitive psychology (v2.7)
+    ├── design-qa-checklist.md
+    ├── design-tokens-template.md
+    ├── component-spec-template.md
+    └── feature-design-spec-template.md
 
-.claude/              # Claude Code enhanced workflow (v2.2)
+.claude/              # Claude Code enhanced workflow
 ├── agents/           # Sub-agent configurations
 │   ├── research.md       # Web research, competitor analysis
 │   ├── architect.md      # Architecture design, ADRs
 │   ├── coder.md          # TDD implementation
 │   ├── tester.md         # Test writing, coverage
 │   ├── reviewer.md       # Code review, security
-│   └── designer.md       # UI/UX design, tokens, accessibility (v2.4)
+│   ├── designer.md       # UI/UX design, tokens, accessibility
+│   └── verifier.md       # E2E testing, accessibility, visual regression
 ├── commands/         # Slash commands
-│   ├── cc-full.md        # Full automation pipeline (v2.2)
-│   ├── cc-create-specs.md # Specs from PRD (v2.2)
-│   ├── cc-create-tasks.md # Task breakdown (v2.2)
-│   ├── cc-config.md      # Configuration management (v2.2)
-│   ├── cc-debug.md       # Debug/reconciliation (v2.6)
-│   ├── rlm-full.md       # Standard pipeline command (v2.6)
-│   ├── cc-*.md           # Other enhanced workflow commands
-│   └── prime-*.md        # Context priming commands (manual)
+│   ├── cc-full.md        # Full automation pipeline
+│   ├── cc-test-run.md    # Test mode command (v2.7)
+│   ├── cc-debug.md       # Debug/reconciliation
+│   ├── rlm-full.md       # Standard pipeline command
+│   └── [other commands]
 └── hooks/            # Lifecycle event handlers
     └── hooks.json        # Hook configuration
 
-RLM/progress/
-├── cc-config.json    # Workflow configuration (v2.6)
-├── checkpoint.json   # Incremental task tracking (v2.6)
-├── token-usage/      # Token usage logs
-├── bundles/          # Context bundles for resume
-└── background/       # Background agent results
-
-RLM/research/
-└── project/          # Project research for auto-detection (v2.6)
-
-RLM/templates/ide-agents/shared/  # IDE parity (v2.6)
+RLM/templates/ide-agents/shared/  # IDE parity
 ├── rlm-core-instructions.md      # Core workflow instructions
 └── token-tracking.md             # Token estimation for IDEs
 ```
@@ -206,19 +223,19 @@ rlm-app/
 - **GitHub**: Octokit REST API
 - **Testing**: Jest, Playwright
 
-## RLM Workflow (v2.5)
+## RLM Workflow (9-Phase Pipeline)
 
-The complete 9-phase workflow:
+The complete workflow from idea to verified code:
 
-1. **Discovery** (`/cc-discover`) → PRD.md, constitution.md with design requirements
-2. **Design System** (`/cc-design system`) → Design tokens, component library
-3. **Specs** (`/cc-create-specs`) → Feature specs and architecture
-4. **Feature Design** (`/cc-design feature`) → UI/UX specs for each feature
-5. **Tasks** (`/cc-create-tasks`) → Fine-grained tasks with UI requirements
-6. **Implementation** (`/cc-implement all`) → Parallel TDD with design tokens
-7. **Quality** (`/cc-design qa` + `/cc-review` + `/cc-test`) → Design QA, code review, tests
-8. **Verification** (`/cc-verify FTR-XXX`) → E2E tests per feature
-9. **Report** → Complete project summary
+1. **Discovery** (`/cc-discover`) -> PRD.md, constitution.md with design requirements
+2. **Design System** (`/cc-design system`) -> Design tokens, component library
+3. **Specs** (`/cc-create-specs`) -> Feature specs and architecture
+4. **Feature Design** (`/cc-design feature`) -> UI/UX specs for each feature
+5. **Tasks** (`/cc-create-tasks`) -> Fine-grained tasks with UI requirements
+6. **Implementation** (`/cc-implement all`) -> Parallel TDD with design tokens
+7. **Quality** (`/cc-design qa` + `/cc-review` + `/cc-test`) -> Design QA, code review, tests
+8. **Verification** (`/cc-verify FTR-XXX`) -> E2E tests per feature
+9. **Report** -> Complete project summary
 
 ### Two Entry Points
 
@@ -248,90 +265,86 @@ When implementing, choose autonomy level:
 - Document public APIs
 - Reference specs in commits (e.g., "Implements FTR-001")
 
-## Agent Definitions
+## Claude Code Sub-Agents (v2.7)
 
-Agent prompts in `RLM/agents/` define behavior:
-- **Master Architect**: System design, tech decisions, spec validation
-  - Chain-of-Thought decision process
-  - Opinionated technology selection matrix
-  - Anti-pattern documentation
-- **Implementation Agent**: TDD code generation, error handling, documentation
-  - 5-step problem-solving framework
-  - Bug investigation framework
-  - Debugging techniques reference
-- **Research Agent**: Discovery and PRD generation
-  - Industry detection (SaaS, E-commerce, FinTech, etc.)
-  - Competitive analysis matrix
-  - TAM/SAM/SOM estimation
-  - Jobs-to-Be-Done framework
-- **Testing Agent**: Test automation, coverage validation
-- **DevOps Agent**: CI/CD, deployment automation
+Sub-agents in `.claude/agents/` operate in isolated context windows for efficiency. Each agent has proactive trigger descriptions (API hook pattern) that specify when to use them automatically:
 
-## New Templates (v2.0)
+| Agent | Purpose | Proactive Triggers | Tools |
+|-------|---------|-------------------|-------|
+| **Research** | Web research, competitor analysis | Mentions of competitors, market research, "what do others do?" | WebSearch, WebFetch, Read, Write |
+| **Architect** | Technology decisions, architecture design | "which technology?", system integration, trade-off evaluation | Read, Write, Glob, Grep |
+| **Designer** | Design systems, UI/UX specs, component specs | UI feature start, colors/typography questions, new screens | Read, Write, Glob, Grep, WebSearch, WebFetch |
+| **Coder** | TDD implementation with design tokens | Tasks in active/, "build/implement/create", bug fixes | Read, Write, Edit, Bash |
+| **Tester** | Test writing, coverage analysis | Coverage < 80%, flaky tests, before merges, bug reproduction | Read, Write, Bash |
+| **Reviewer** | Code review, security, design compliance | Before commits, security-sensitive code, after implementation | Read, Grep, Glob |
+| **Verifier** | E2E testing, accessibility, visual regression | Feature task completion, verification requests | Read, Write, Edit, Bash, Glob, Grep |
 
-| Template | Purpose |
-|----------|---------|
-| `decision-record-template.md` | Architecture Decision Records (ADRs) |
-| `assumption-log-template.md` | Track and validate project assumptions |
-| `tech-comparison-template.md` | Weighted technology evaluation matrix |
+### Prompt Pattern Library (v2.7)
 
-## Design Templates (v2.4)
+Reusable reasoning patterns in `RLM/prompts/patterns/`:
 
-| Template | Purpose |
-|----------|---------|
-| `design-system-template.md` | Complete design system (colors, typography, spacing, components) |
-| `ux-research-template.md` | UX research with personas, journey maps, competitive analysis |
-| `design-qa-checklist.md` | 117-point design QA scoring system |
-| `design-tokens-template.md` | Framework-agnostic tokens with exports (Tailwind, MUI, Chakra, etc.) |
-| `component-spec-template.md` | Component spec with all 8 states, accessibility, code snippets |
-| `feature-design-spec-template.md` | Feature-level design with user flows and screen layouts |
+| Pattern | Use Case | Applied By |
+|---------|----------|------------|
+| `root-cause-analysis.md` | Bug investigation with 5-Whys | Coder, Tester |
+| `decision-matrix.md` | Technology selection with weighted scoring | Architect |
+| `comparative-analysis.md` | Feature comparison, alternative evaluation | Architect, Research |
+| `problem-decomposition.md` | Complex task breakdown | Coder |
 
-## Claude Code Sub-Agents (v2.5)
-
-Sub-agents in `.claude/agents/` operate in isolated context windows for efficiency:
-
-| Agent | Purpose | Phase | Tools |
-|-------|---------|-------|-------|
-| **Research** | Web research, competitor analysis | 1 | WebSearch, WebFetch, Read, Write |
-| **Architect** | Technology decisions, architecture design | 1, 3 | Read, Write, Glob, Grep |
-| **Designer** | Design systems, UI/UX specs, component specs | 2, 4, 7 | Read, Write, Glob, Grep, WebSearch, WebFetch |
-| **Coder** | TDD implementation with design tokens | 6 | Read, Write, Edit, Bash |
-| **Tester** | Test writing, coverage analysis | 7 | Read, Write, Bash |
-| **Reviewer** | Code review, security, design compliance | 7 | Read, Grep, Glob |
-| **Verifier** | E2E testing, accessibility, visual regression | 8 | Read, Write, Edit, Bash, Glob, Grep |
-
-### Key Concepts (v2.6)
+### Key Concepts
 
 - **9-Phase Pipeline**: Complete automation from idea to verified code
 - **Context Isolation**: Sub-agents have 0% token pollution to primary context
 - **Parallel Spawning**: Up to 10 concurrent sub-agents implementing tasks
+- **3-Tier Context Management**: Reduce -> Delegate -> Manage with smart truncation
+- **Proactive Agent Triggers**: Agents activate automatically on relevant requests
 - **Quality Phase**: Combined Design QA + Code Review + Test Coverage
 - **Verifier Agent**: E2E tests from acceptance criteria, accessibility (axe-core), visual regression
-- **Two Entry Points**: `/cc-full [idea]` (from zero) or `/cc-full --from-prd` (from PRD)
-- **Skip Options**: `--skip-design-research`, `--skip-feature-design`, `--skip-design-qa`, `--skip-verification`
-- **Configuration**: `/cc-config` for runtime customization
-- **Checkpoint System**: Generation-based tracking prevents duplicate task creation
-- **Debug Command**: `/cc-debug` diagnoses 10 issue types with interactive fixes
-- **Auto Research**: Discovery phase detects `RLM/research/project/` folder
-- **Context Management**: Auto-checkpoint at thresholds, smart truncation by tier
-- **IDE Parity**: Shared instructions work across Cursor, Windsurf, Continue.dev, Copilot
 
 See `RLM/prompts/CC-ORCHESTRATION.md` for full orchestration protocol.
 See `RLM/docs/CLAUDE-CODE-GUIDE.md` for complete Claude Code workflow guide.
-See `RLM/docs/WHATS-NEW.md` for v2.6 release notes.
+See `RLM/docs/WHATS-NEW.md` for version history and release notes.
 
-## Design System Integration (v2.4)
+## Design System Integration
 
 ### Design Workflow
 
 Design is integrated into the main RLM workflow:
 
-1. **Discovery** (`/discover`) → Asks design questions (philosophy, animation tier, framework)
-2. **Design System** (`/cc-design system`) → Generates design system from PRD
-3. **UX Research** (`/cc-design research`) → Web-based research → personas & journeys
-4. **Component Specs** (`/cc-design component`) → Detailed component specifications
-5. **Implementation** (`/implement`) → Uses design tokens, implements all states
-6. **Design QA** (`/cc-design qa`) → 117-point checklist, ≥90% pass required
+1. **Discovery** (`/discover`) -> Asks design questions (philosophy, animation tier, framework)
+2. **Design System** (`/cc-design system`) -> Generates design system from PRD
+3. **UX Research** (`/cc-design research`) -> Web-based research -> personas & journeys
+4. **Component Specs** (`/cc-design component`) -> Detailed component specifications
+5. **Implementation** (`/implement`) -> Uses design tokens, implements all states
+6. **Design QA** (`/cc-design qa`) -> 117-point checklist, >=90% pass required
+
+### Behavioral Economics Integration (v2.7)
+
+Designer agent applies 7 behavioral economics principles:
+
+| Principle | Application |
+|-----------|-------------|
+| **Choice Architecture** | Design defaults to guide optimal choices |
+| **Prospect Theory** | Frame messaging as loss/gain appropriately |
+| **Anchoring** | Strategic pricing and value presentation |
+| **Social Proof** | Display genuine user activity |
+| **Endowment Effect** | Create ownership through personalization |
+| **Scarcity/Urgency** | Use only for genuine constraints |
+| **Cognitive Load** | Progressive disclosure, minimize complexity |
+
+See `RLM/templates/behavioral-economics-checklist.md` for the full checklist.
+
+### Cognitive Psychology Principles (v2.7)
+
+UX research template includes cognitive psychology principles:
+
+| Law | UX Application |
+|-----|----------------|
+| **Fitts's Law** | Larger targets (min 44x44px), closer placement |
+| **Hick's Law** | Fewer options (max 7+/-2), smart defaults |
+| **Miller's Law** | Chunk information, visible state |
+| **Jakob's Law** | Use established conventions |
+| **Peak-End Rule** | Design memorable peaks and endings |
+| **Von Restorff Effect** | Make important elements stand out |
 
 ### Design File Structure
 
@@ -351,16 +364,6 @@ RLM/specs/design/
     └── [component].md
 ```
 
-### UI Framework Support
-
-Design tokens can be exported for:
-- Tailwind CSS (default)
-- Material UI
-- Chakra UI
-- Bootstrap
-- Ant Design
-- CSS Variables (framework-agnostic)
-
 ### Component State Requirements
 
 All interactive components MUST implement 8 states:
@@ -377,12 +380,12 @@ All interactive components MUST implement 8 states:
 
 - WCAG 2.1 AA minimum (AAA optional)
 - Color contrast: 4.5:1 text, 3:1 UI elements
-- Touch targets: 44×44px minimum
+- Touch targets: 44x44px minimum
 - Keyboard navigation: all interactive elements
 - Screen reader: semantic HTML, ARIA labels
 - Reduced motion: always respect `prefers-reduced-motion`
 
-## Feature Verification System (v2.5)
+## Feature Verification System
 
 Automatic E2E testing when all tasks for a feature complete.
 
@@ -412,43 +415,36 @@ When the last task for a feature is completed:
 | **Accessibility** | axe-core | WCAG 2.1 AA compliance |
 | **Visual** | Screenshots | UI states, responsive layouts |
 
-### Feature Status Flow
+## Test Mode (v2.7)
 
-```
-in_progress → verification-pending → verified
-                      ↓
-              verification-failed
-                      ↓
-              (fix bugs, retry)
-```
+Run isolated test projects to validate the RLM methodology:
 
-### Verification File Structure
-
-```
-rlm-app/tests/e2e/
-├── page-objects/           # Reusable Page Objects
-│   └── base.page.ts
-├── fixtures/               # Test utilities
-│   └── test-utils.ts
-└── features/               # Per-feature tests (generated)
-    └── FTR-XXX/
-        ├── FTR-XXX.functional.test.ts
-        ├── FTR-XXX.a11y.test.ts
-        └── FTR-XXX.visual.test.ts
-
-RLM/progress/verification/  # Verification reports
-└── FTR-XXX-[timestamp].md
+```bash
+/cc-test-run my-test-project                    # New test from idea prompt
+/cc-test-run my-test-project --from-prd path/   # Start from existing PRD
+/cc-test-run my-test-project --idea "desc"      # Provide idea inline
 ```
 
-### Bug Task Creation
+**What it does**:
+1. Creates isolated directory: `test_projects/[name]-[timestamp]/`
+2. Copies RLM structure
+3. Runs `/cc-full` in isolation
+4. Collects metrics (tokens, time, LOC, coverage)
+5. Generates comparison report if multiple instances exist
 
-When verification fails:
-- Bug tasks created in `RLM/tasks/active/TASK-XXX-BUG-NNN.md`
-- Include error details, screenshots, reproduction steps
-- Linked to the acceptance criterion that failed
-- Re-verification auto-triggered when all bugs fixed
+Configure in `cc-config.json`:
+```json
+{
+  "test_mode": {
+    "enabled": false,
+    "output_directory": "test_projects/",
+    "collect_metrics": true,
+    "metrics_to_collect": ["tokens_used", "execution_time", "lines_of_code", "test_coverage"]
+  }
+}
+```
 
-## GitHub Copilot Integration (v2.3)
+## GitHub Copilot Integration
 
 RLM includes templates for GitHub Copilot integration in generated projects. When a project is generated, these templates enable Copilot's autonomous coding capabilities.
 
@@ -456,38 +452,12 @@ RLM includes templates for GitHub Copilot integration in generated projects. Whe
 
 ```
 RLM/templates/copilot/
-├── copilot-instructions.md.template     # → .github/copilot-instructions.md
-├── AGENTS.md.template                    # → AGENTS.md (project root)
-├── agents/                               # → .github/agents/
-│   ├── rlm-architect.agent.md
-│   ├── rlm-coder.agent.md
-│   ├── rlm-tester.agent.md
-│   ├── rlm-reviewer.agent.md
-│   └── rlm-research.agent.md
-├── prompts/                              # → .github/prompts/
-│   ├── rlm-discover.prompt.md
-│   ├── rlm-create-specs.prompt.md
-│   ├── rlm-create-tasks.prompt.md
-│   ├── rlm-implement.prompt.md
-│   ├── rlm-implement-all.prompt.md
-│   ├── rlm-test.prompt.md
-│   ├── rlm-review.prompt.md
-│   ├── rlm-fix-bug.prompt.md
-│   ├── rlm-prime-feature.prompt.md
-│   └── rlm-prime-task.prompt.md
-└── workflows/                            # → .github/workflows/
-    └── rlm-task-to-issue.yml
+├── copilot-instructions.md.template     # -> .github/copilot-instructions.md
+├── AGENTS.md.template                    # -> AGENTS.md (project root)
+├── agents/                               # -> .github/agents/
+├── prompts/                              # -> .github/prompts/
+└── workflows/                            # -> .github/workflows/
 ```
-
-### Copilot Features Supported
-
-| Feature | Purpose | Files |
-|---------|---------|-------|
-| **Custom Instructions** | Repository-wide RLM guidance | `.github/copilot-instructions.md` |
-| **AGENTS.md** | Coding agent guidance | `AGENTS.md` |
-| **Custom Agents** | Specialized RLM agents | `.github/agents/*.agent.md` |
-| **Prompt Files** | Reusable RLM prompts | `.github/prompts/*.prompt.md` |
-| **Task→Issue Workflow** | Convert tasks to GitHub issues | `.github/workflows/rlm-task-to-issue.yml` |
 
 ### Using Copilot Coding Agent
 
@@ -497,10 +467,27 @@ RLM/templates/copilot/
 4. Open an issue and click "Assign to Copilot"
 5. Copilot autonomously implements and creates a PR
 
-### Template Variables
+## Configuration
 
-| Variable | Source | Example |
-|----------|--------|---------|
-| `{{PROJECT_NAME}}` | PRD.md | "MyApp" |
-| `{{PROJECT_DESCRIPTION}}` | PRD.md | "A habit tracking application" |
-| `{{TECH_STACK_SUMMARY}}` | constitution.md | "Next.js, TypeScript, PostgreSQL" |
+### cc-config.json Structure
+
+```json
+{
+  "version": "2.7",
+  "parallel": { "limit": 10 },
+  "automation": { "level": "auto" },
+  "reporting": { "mode": "both" },
+  "enhancements": {
+    "prompt_patterns": { "enabled": true, "auto_select": true },
+    "behavioral_economics": { "enabled": true, "checklist_in_design": true },
+    "cognitive_psychology": { "enabled": true, "validate_in_qa": true }
+  },
+  "test_mode": { "enabled": false, "output_directory": "test_projects/" },
+  "context_management": {
+    "auto_checkpoint": { "enabled": true, "thresholds": [0.5, 0.75, 0.9] },
+    "smart_truncation": { "enabled": true, "start_at": 0.75 }
+  }
+}
+```
+
+See `RLM/progress/cc-config.json` for full configuration options.

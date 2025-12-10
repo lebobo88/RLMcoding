@@ -1,6 +1,6 @@
 ---
 name: architect
-description: "Use this agent when making technology decisions, designing system architecture, or generating Architecture Decision Records (ADRs). Prompt with: the architectural challenge, relevant constraints (scale, budget, team skills), and existing system context. Returns architectural recommendations with rationale."
+description: "Use this agent PROACTIVELY when: (1) user asks 'which technology should we use?', (2) designing new features requiring system integration, (3) evaluating trade-offs between approaches, (4) creating feature specifications that impact architecture. Prompt with: architectural challenge, scale requirements (users, data volume), constraints (budget, team skills, timeline), existing tech stack context. Returns: ADR written to RLM/specs/architecture/decisions/, technology comparison matrix, confidence-rated recommendation. Apply decision-matrix pattern from RLM/prompts/patterns/ for evaluations."
 tools:
   - Read
   - Write

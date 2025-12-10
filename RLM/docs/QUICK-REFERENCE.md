@@ -1,44 +1,44 @@
-# RLM Quick Reference (v2.6)
+# RLM Quick Reference (v2.7)
 
 ## Complete Workflow Diagram
 
 ```
-┌────────────────────────────────────────────────────────────────────────────┐
-│                        RLM 9-PHASE PIPELINE (v2.6)                          │
-├────────────────────────────────────────────────────────────────────────────┤
-│                                                                            │
-│  PATH 1: FROM ZERO              PATH 2: FROM PRD                           │
-│  /cc-full [idea]                /cc-full --from-prd                        │
-│  /rlm-full [idea]               /rlm-full --from-prd                       │
-│       │                              │                                     │
-│       ▼                              │                                     │
-│  Phase 1: DISCOVER ◄─────────────────┘                                     │
-│       │   (Auto-detects research in RLM/research/project/)                 │
-│       ▼                                                                    │
-│  Phase 2: DESIGN SYSTEM ─────► /cc-design system (if UI)                   │
-│       │   (Auto-detected: UI vs Non-UI classification)                     │
-│       ▼                                                                    │
-│  Phase 3: SPECS ─────────────► /cc-create-specs                            │
-│       │                                                                    │
-│       ▼                                                                    │
-│  Phase 4: FEATURE DESIGN ────► /cc-design feature FTR-XXX (if UI)          │
-│       │                                                                    │
-│       ▼                                                                    │
-│  Phase 5: TASKS ─────────────► /cc-create-tasks (checkpoint system)        │
-│       │                                                                    │
-│       ▼                                                                    │
-│  Phase 6: IMPLEMENT ─────────► /cc-implement all (parallel + progress)     │
-│       │   (Integrated review per task, 5-step progress reporting)          │
-│       ▼                                                                    │
-│  Phase 7: QUALITY ───────────► /cc-design qa + /cc-review + /cc-test       │
-│       │                                                                    │
-│       ▼                                                                    │
-│  Phase 8: VERIFY ────────────► /cc-verify FTR-XXX (auto-triggered)         │
-│       │                                                                    │
-│       ▼                                                                    │
-│  Phase 9: REPORT                                                           │
-│                                                                            │
-└────────────────────────────────────────────────────────────────────────────┘
++----------------------------------------------------------------------------+
+|                        RLM 9-PHASE PIPELINE (v2.7)                          |
++----------------------------------------------------------------------------+
+|                                                                            |
+|  PATH 1: FROM ZERO              PATH 2: FROM PRD                           |
+|  /cc-full [idea]                /cc-full --from-prd                        |
+|  /rlm-full [idea]               /rlm-full --from-prd                       |
+|       |                              |                                     |
+|       v                              |                                     |
+|  Phase 1: DISCOVER <-----------------+                                     |
+|       |   (Auto-detects research in RLM/research/project/)                 |
+|       v                                                                    |
+|  Phase 2: DESIGN SYSTEM -------> /cc-design system (if UI)                 |
+|       |   (Auto-detected: UI vs Non-UI classification)                     |
+|       v                                                                    |
+|  Phase 3: SPECS ---------------> /cc-create-specs                          |
+|       |                                                                    |
+|       v                                                                    |
+|  Phase 4: FEATURE DESIGN ------> /cc-design feature FTR-XXX (if UI)        |
+|       |                                                                    |
+|       v                                                                    |
+|  Phase 5: TASKS ---------------> /cc-create-tasks (checkpoint system)      |
+|       |                                                                    |
+|       v                                                                    |
+|  Phase 6: IMPLEMENT -----------> /cc-implement all (parallel + progress)   |
+|       |   (Integrated review per task, 5-step progress reporting)          |
+|       v                                                                    |
+|  Phase 7: QUALITY -------------> /cc-design qa + /cc-review + /cc-test     |
+|       |                                                                    |
+|       v                                                                    |
+|  Phase 8: VERIFY --------------> /cc-verify FTR-XXX (auto-triggered)       |
+|       |                                                                    |
+|       v                                                                    |
+|  Phase 9: REPORT                                                           |
+|                                                                            |
++----------------------------------------------------------------------------+
 ```
 
 ## Commands
@@ -54,7 +54,7 @@
 | `/implement all` | Implement all tasks | `05-IMPLEMENT-ALL.md` |
 | `/implement resume` | Resume previous session | `06-RESUME.md` |
 
-### Enhanced Commands (Claude Code v2.6)
+### Enhanced Commands (Claude Code v2.7)
 
 | Command | Phase | Purpose |
 |---------|-------|---------|
@@ -71,16 +71,25 @@
 | `/cc-test` | 7 | Testing with coverage |
 | `/cc-verify FTR-XXX` | 8 | E2E feature verification |
 
-### New Commands (v2.6)
+### New Commands (v2.7)
 
 | Command | Purpose |
 |---------|---------|
+| `/cc-test-run [name]` | Run isolated test project for methodology validation |
+| `/cc-debug context-audit` | Analyze context usage and optimization |
 | `/cc-debug` | Full diagnostic scan and reconciliation |
 | `/cc-debug quick` | Fast scan for common issues |
 | `/cc-debug --auto-fix` | Auto-fix safe issues |
 | `/rlm-full [idea]` | Standard prompt pipeline (non-CC) |
-| `/rlm-full --from-prd` | Start standard pipeline from PRD |
-| `/rlm-full resume` | Resume standard pipeline |
+
+## Prompt Pattern Library (v2.7)
+
+| Pattern | Use Case | Applied By |
+|---------|----------|------------|
+| `root-cause-analysis.md` | Bug investigation, 5-Whys | Coder, Tester |
+| `decision-matrix.md` | Technology selection | Architect |
+| `comparative-analysis.md` | Alternative evaluation | Architect, Research |
+| `problem-decomposition.md` | Complex task breakdown | Coder |
 
 ## For Other IDEs
 
@@ -99,21 +108,22 @@ Read RLM/prompts/[prompt-name].md and follow it
 
 ## Sub-Agents
 
-| Agent | Purpose | Phase |
-|-------|---------|-------|
-| Research | Web research, competitors | 1 |
-| Architect | Tech decisions, ADRs | 1, 3 |
-| Designer | Design system, UI/UX specs | 2, 4, 7 |
-| Coder | TDD implementation | 6 |
-| Tester | Test coverage | 7 |
-| Reviewer | Code review, security | 7 |
-| Verifier | E2E tests, accessibility | 8 |
+| Agent | Purpose | Phase | Proactive Triggers |
+|-------|---------|-------|-------------------|
+| Research | Web research, competitors | 1 | "what do others do?", market research |
+| Architect | Tech decisions, ADRs | 1, 3 | "which technology?", trade-offs |
+| Designer | Design system, UI/UX specs | 2, 4, 7 | UI feature start, colors/typography |
+| Coder | TDD implementation | 6 | "build/implement/create", tasks |
+| Tester | Test coverage | 7 | Coverage < 80%, flaky tests |
+| Reviewer | Code review, security | 7 | Before commits, security code |
+| Verifier | E2E tests, accessibility | 8 | Feature completion |
 
 ## Key Directories
 
 | Directory | Contents |
 |-----------|----------|
 | `RLM/prompts/` | Workflow prompts |
+| `RLM/prompts/patterns/` | Prompt patterns (v2.7) |
 | `RLM/specs/` | PRD, constitution, feature specs |
 | `RLM/specs/design/` | Design system, tokens, components |
 | `RLM/tasks/active/` | Pending tasks |
@@ -133,25 +143,27 @@ Read RLM/prompts/[prompt-name].md and follow it
 | `RLM/progress/status.json` | Current state |
 | `RLM/progress/checkpoint.json` | Incremental tracking |
 | `RLM/progress/cc-config.json` | Configuration |
+| `RLM/templates/PRD-template-v2.md` | Enhanced PRD template (v2.7) |
+| `RLM/templates/behavioral-economics-checklist.md` | Design checklist (v2.7) |
 
 ## Task Lifecycle
 
 ```
-pending → in_progress → completed
-                    ↘ blocked
+pending -> in_progress -> completed
+                     \-> blocked
 ```
 
 ## Feature Lifecycle
 
 ```
-in_progress → verification-pending → verified
-                      ↓
+in_progress -> verification-pending -> verified
+                      |
               verification-failed
-                      ↓
+                      |
               (fix bugs, retry)
 ```
 
-## 5-Step Progress Model (v2.6)
+## 5-Step Progress Model
 
 ```
 Step 1: Load specs and context      (0-20%)
@@ -161,13 +173,22 @@ Step 4: Run tests and fix           (70-85%)
 Step 5: Quality checks and review   (85-100%)
 ```
 
+## 3-Tier Context Management (v2.7)
+
+| Tier | Goal | Strategy |
+|------|------|----------|
+| **Tier 1: REDUCE** | Minimize loaded | Selective file reading, summaries |
+| **Tier 2: DELEGATE** | Offload high-token work | Sub-agent delegation |
+| **Tier 3: MANAGE** | Handle overflow | Checkpoints, smart truncation |
+
 ## Context Thresholds
 
 | Threshold | Action |
 |-----------|--------|
 | 50% | Save checkpoint, log warning, continue |
-| 75% | Save checkpoint, suggest wrap-up |
+| 75% | Save checkpoint, activate truncation, suggest wrap-up |
 | 90% | Save checkpoint, complete current task only, pause |
+| 95% | Emergency bundle save, stop all work |
 
 ## Token Efficiency Ratings
 
@@ -177,6 +198,29 @@ Step 5: Quality checks and review   (85-100%)
 | Good | 10-20,000 | Normal complexity |
 | Fair | 20-35,000 | Complex or rework |
 | Poor | > 35,000 | Consider splitting |
+
+## Behavioral Economics Principles (v2.7)
+
+| Principle | Application |
+|-----------|-------------|
+| Choice Architecture | Design defaults to guide choices |
+| Prospect Theory | Frame as loss/gain appropriately |
+| Anchoring | Strategic pricing presentation |
+| Social Proof | Display genuine user activity |
+| Endowment Effect | Create ownership through personalization |
+| Scarcity/Urgency | Use only for genuine constraints |
+| Cognitive Load | Progressive disclosure |
+
+## Cognitive Psychology Laws (v2.7)
+
+| Law | UX Application |
+|-----|----------------|
+| Fitts's Law | Min 44x44px targets |
+| Hick's Law | Max 7+/-2 choices |
+| Miller's Law | Chunk information |
+| Jakob's Law | Use familiar patterns |
+| Peak-End Rule | Polish endings |
+| Von Restorff Effect | Visual hierarchy for CTAs |
 
 ## Output by Phase
 
@@ -217,7 +261,8 @@ Step 5: Quality checks and review   (85-100%)
 | Can't resume | Check status.json or checkpoint.json |
 | State inconsistent | Run `/cc-debug quick` |
 | Context overflow | Session auto-saved, use `/implement resume` |
-| Tasks overwritten | Use checkpoint system (auto in v2.6) |
+| Tasks overwritten | Use checkpoint system (auto) |
+| High token usage | Run `/cc-debug context-audit` |
 
 ## Document Locations
 
@@ -249,15 +294,25 @@ Progress:
 
 Research:
   RLM/research/project/
+
+Patterns (v2.7):
+  RLM/prompts/patterns/root-cause-analysis.md
+  RLM/prompts/patterns/decision-matrix.md
+  RLM/prompts/patterns/comparative-analysis.md
+  RLM/prompts/patterns/problem-decomposition.md
+
+Templates (v2.7):
+  RLM/templates/PRD-template-v2.md
+  RLM/templates/behavioral-economics-checklist.md
 ```
 
 ## Design Quick Reference
 
 ### 8 Component States
 ```
-Default → Hover → Focus → Active
-                     ↓
-Disabled ← Loading ← Error ← Empty
+Default -> Hover -> Focus -> Active
+                     |
+Disabled <- Loading <- Error <- Empty
 ```
 
 ### Animation Tiers
@@ -277,7 +332,7 @@ Disabled ← Loading ← Error ← Empty
 | Animation | 12 | 11+ |
 | Error | 12 | 11+ |
 | Performance | 12 | 11+ |
-| **Total** | **117** | **≥105** |
+| **Total** | **117** | **>=105** |
 
 ## Verification Tests
 
@@ -299,8 +354,21 @@ Disabled ← Loading ← Error ← Empty
 ## Configuration Options
 
 ```bash
-/cc-config parallel_limit 8          # Concurrent sub-agents
-/cc-config automation_level auto     # Full autonomy
-/cc-config reporting.mode both       # realtime + silent
-/cc-config design.auto_detect true   # Auto UI/Non-UI
+/cc-config parallel_limit 8              # Concurrent sub-agents
+/cc-config automation_level auto         # Full autonomy
+/cc-config reporting.mode both           # realtime + silent
+/cc-config design.auto_detect true       # Auto UI/Non-UI
+/cc-config enhancements.prompt_patterns.enabled true  # v2.7
+/cc-config enhancements.behavioral_economics.enabled true  # v2.7
 ```
+
+## Test Mode (v2.7)
+
+```bash
+/cc-test-run my-test-project                    # Interactive
+/cc-test-run my-test-project --from-prd path/   # From PRD
+/cc-test-run my-test-project --idea "desc"      # With idea
+```
+
+Creates: `test_projects/[name]-[timestamp]/`
+Collects: tokens, time, LOC, coverage
