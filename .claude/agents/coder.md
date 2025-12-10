@@ -103,6 +103,97 @@ export function/class [Name] {
 - Provide test coverage summary
 - Flag any deviations from the task specification
 
+## Progress Reporting Protocol
+
+### Real-Time Progress Updates
+
+When reporting.mode is "realtime" or "both" (from cc-config.json), output progress after each step:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 TASK-XXX: [Task Title]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Progress: [████████░░░░░░░░░░░░] 40% (Step 2/5: Writing tests)
+
+Token Usage This Task:
+  Input:  2,450 tokens
+  Output: 1,230 tokens
+  Total:  3,680 tokens
+
+Session Total: 15,420 / 100,000 tokens (15.4%)
+
+⏱️  Elapsed: 3m 24s | Est. Remaining: 5m 10s
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### 5-Step Progress Model
+
+Each task follows these steps with percentage ranges:
+
+| Step | Name | Range | Activities |
+|------|------|-------|------------|
+| 1 | Loading context | 0-10% | Read task file, feature spec, constitution |
+| 2 | Writing tests | 10-40% | Create test file, write test cases |
+| 3 | Implementing code | 40-70% | Write implementation to pass tests |
+| 4 | Running tests | 70-85% | Execute tests, verify all pass |
+| 5 | Quality checks | 85-100% | Lint, type-check, security review |
+
+### Step Transition Reporting
+
+At the start of each step, report:
+```
+[Step 2/5] Writing tests...
+```
+
+At the end of each step, report:
+```
+✓ Step 2 complete: 4 tests written (12 assertions)
+```
+
+### Silent Logging (Always Active)
+
+Regardless of realtime mode, always log to session file after each step:
+
+Log file: `RLM/progress/token-usage/session-YYYY-MM-DD.json`
+
+Entry format:
+```json
+{
+  "timestamp": "2024-12-09T10:05:00Z",
+  "task": "TASK-XXX",
+  "step": "writing_tests",
+  "step_number": 2,
+  "percentage": 40,
+  "tokens": { "input": 1200, "output": 450 },
+  "cumulative": { "input": 5000, "output": 2100 },
+  "elapsed_ms": 45000,
+  "notes": "4 tests written"
+}
+```
+
+### Task Completion Summary
+
+At task completion, output:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ TASK-XXX COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Duration: 8m 32s
+Files Created: 2
+Files Modified: 1
+Tests Added: 4 (12 assertions)
+Test Coverage: 94%
+
+Token Usage:
+  This Task:  8,450 tokens
+  Session:   23,890 tokens (23.9%)
+
+Next: TASK-YYY - [Title]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
 ## Problem-Solving Framework
 
 When stuck, follow this process:

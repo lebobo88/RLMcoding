@@ -24,6 +24,94 @@ Use this framework when the user hasn't specified preferences.
 
 ---
 
+## Phase 0.5: Detect Project Research (Auto-Detection)
+
+Before starting discovery questions, check for existing project research.
+
+### Step 0.5.1: Scan Research Folder
+
+Check `RLM/research/project/` for pre-collected research materials:
+
+```
+Scanning RLM/research/project/ for project research...
+
+Folders to check:
+- market/           # Competitor analysis, market data, trends
+- users/            # User interviews, surveys, personas
+- technical/        # Architecture notes, integrations, constraints
+- design/           # Brand guidelines, inspiration, wireframes
+- requirements/     # Stakeholder notes, business rules, compliance
+```
+
+### Step 0.5.2: Report Findings
+
+If research files found, report:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Project Research Detected                                       │
+├─────────────────────────────────────────────────────────────────┤
+│ Found 8 research files in RLM/research/project/:                │
+│                                                                 │
+│ Market Research (3 files):                                      │
+│ ├─► competitors.md - Competitor analysis                        │
+│ ├─► market-size.md - TAM/SAM/SOM data                          │
+│ └─► trends.md - Industry trends                                 │
+│                                                                 │
+│ User Research (2 files):                                        │
+│ ├─► interviews/user-001.txt                                     │
+│ └─► personas.md - Existing personas                             │
+│                                                                 │
+│ Design Research (3 files):                                      │
+│ ├─► brand-guidelines.md                                         │
+│ ├─► color-palettes.md                                          │
+│ └─► inspiration/ (5 images)                                     │
+├─────────────────────────────────────────────────────────────────┤
+│ ✓ Will incorporate into discovery process                       │
+│ ✓ Web research will supplement (not replace) your materials     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+If no research found:
+```
+No project research found in RLM/research/project/
+Proceeding with standard discovery (will perform web research if available).
+```
+
+### Step 0.5.3: Load Research Context
+
+For each research file found:
+1. Read the file content
+2. Extract key insights
+3. Note the source for attribution in PRD
+
+Store insights for use in subsequent phases:
+- **Market insights** → Use in Phase 2 (Research) and Phase 4 (PRD market section)
+- **User insights** → Use in Phase 3 (skip questions already answered) and Phase 4 (personas)
+- **Technical insights** → Use in Phase 3 (pre-fill constraints) and Phase 4 (tech requirements)
+- **Design insights** → Use in Round 4 questions and Phase 4 (design section)
+- **Requirements** → Use in Phase 4 (functional/non-functional requirements)
+
+### Step 0.5.4: Adjust Question Strategy
+
+If project research provides answers to discovery questions:
+- **Skip** questions that are fully answered by research
+- **Confirm** pre-filled answers with user: "Based on your research, I see [X]. Is this correct?"
+- **Supplement** partially answered questions with follow-ups
+
+Example:
+```
+Based on your research files, I found:
+- Target users: "Small business owners, 25-45, tech-savvy" (from users/personas.md)
+- Competitors: Stripe, Square, PayPal (from market/competitors.md)
+- Technical constraint: Must integrate with QuickBooks (from technical/integrations.md)
+
+I'll skip questions about these topics unless you'd like to revise them.
+Remaining questions will focus on: [list remaining gaps]
+```
+
+---
+
 ## Phase 1: Idea Intake & Industry Detection
 
 If the user hasn't provided an idea yet, ask:
@@ -58,10 +146,29 @@ Summarize your understanding including the detected industry and confirm with th
 
 ---
 
-## Phase 2: Research & Problem Validation (If Web Search Available)
+## Phase 2: Research & Problem Validation
 
-If you have web search capabilities, research:
-1. **Competitors**: What similar products exist?
+### Step 2.1: Use Project Research First
+
+If project research was found in Phase 0.5, prioritize it:
+
+```
+Research Priority Order:
+1. Project research (RLM/research/project/) - HIGHEST
+2. Previous RLM outputs (existing PRD, specs) - SECOND
+3. Web research - SUPPLEMENTS GAPS ONLY
+```
+
+For each research area, check project research first:
+- **Competitors**: Check `market/competitors.md` before web search
+- **Market data**: Check `market/market-size.md`, `market/trends.md`
+- **User insights**: Check `users/` folder for interviews, personas
+- **Technical context**: Check `technical/` folder for constraints
+
+### Step 2.2: Web Research (Supplements Gaps)
+
+If you have web search capabilities AND gaps remain, research:
+1. **Competitors**: What similar products exist? (if not in project research)
 2. **Best Practices**: What are industry standards for this type of product?
 3. **Technology Trends**: What technologies are commonly used?
 4. **Market Gaps**: What opportunities exist?

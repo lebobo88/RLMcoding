@@ -20,6 +20,60 @@ Once you have the PRD, read it completely.
 
 ---
 
+## Phase 1.5: Detect Project Type (Auto-Design Detection)
+
+Before creating specs, determine if this project requires design phases.
+
+### Step 1.5.1: Run Project Type Detection
+
+Execute the detection protocol from `RLM/prompts/00-DETECT-PROJECT-TYPE.md`:
+
+1. Scan PRD for UI indicators (+1 each):
+   - "user interface", "UI", "frontend"
+   - "screen", "page", "view", "route"
+   - "button", "form", "input", "modal"
+   - React, Vue, Angular, Next.js, Svelte
+   - "responsive", "mobile", "tablet"
+   - "dashboard", "layout", "navigation"
+
+2. Scan PRD for Non-UI indicators (-1 each):
+   - "CLI", "command line", "terminal"
+   - "API only", "headless", "backend only"
+   - "library", "package", "SDK"
+
+3. Calculate Net Score = UI indicators - Non-UI indicators
+
+### Step 1.5.2: Classify Project
+
+| Net Score | Classification | DESIGN_REQUIRED |
+|-----------|---------------|-----------------|
+| >= 3 | UI Project | **true** |
+| <= -2 | Non-UI Project | **false** |
+| -1 to 2 | Ambiguous | Ask user |
+
+### Step 1.5.3: Report Detection
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Project Type Detection                                          │
+├─────────────────────────────────────────────────────────────────┤
+│ UI Indicators: [X] | Non-UI Indicators: [Y] | Net Score: [Z]   │
+│                                                                 │
+│ Classification: [UI PROJECT / NON-UI PROJECT]                   │
+│ DESIGN_REQUIRED: [true/false]                                   │
+│                                                                 │
+│ Design phases will be [included/skipped].                       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Step 1.5.4: Store Classification
+
+This classification will be stored in:
+- `RLM/specs/constitution.md` (Project Classification section)
+- `RLM/progress/cc-config.json` (design settings)
+
+---
+
 ## Phase 2: Validate PRD Completeness
 
 Check that the PRD contains:
@@ -129,6 +183,35 @@ interface [Resource] {
 
 ## Implementation Notes
 [Any special considerations for implementation]
+
+## Design Requirements (if DESIGN_REQUIRED)
+{{IF DESIGN_REQUIRED == true}}
+
+### UI Components
+| Component | States Required | Accessibility |
+|-----------|-----------------|---------------|
+| [Component] | 8 states | ARIA labels, keyboard nav |
+
+### User Flow
+[Describe the step-by-step user interaction]
+
+### Screen Layouts
+[Reference to design spec or description of layouts]
+
+### Design Tokens to Use
+- Colors: `--color-primary`, `--color-secondary`
+- Spacing: `--space-md`, `--space-lg`
+- Typography: `--font-heading`, `--font-body`
+
+### Animation Requirements
+- Animation Tier: [MINIMAL/MODERATE/RICH]
+- Transitions: [List key transitions]
+
+### Accessibility Requirements
+- WCAG 2.1 Level: AA (minimum)
+- Focus management: [Details]
+- Screen reader: [Details]
+{{ENDIF}}
 ```
 
 Create specs for ALL features in the PRD.

@@ -1,0 +1,52 @@
+{
+  "session_id": "SESSION-YYYY-MM-DD-NNN",
+  "started_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "mode": "implement|implement-all|cc-implement",
+  "config": {
+    "reporting_mode": "both",
+    "realtime_enabled": true,
+    "logging_enabled": true,
+    "granularity": "detailed"
+  },
+  "entries": [
+    {
+      "timestamp": "YYYY-MM-DDTHH:MM:SSZ",
+      "task": "TASK-XXX",
+      "step": "loading_context|writing_tests|implementing_code|running_tests|quality_checks",
+      "step_number": 1,
+      "percentage": 10,
+      "tokens": {
+        "input": 0,
+        "output": 0
+      },
+      "cumulative": {
+        "input": 0,
+        "output": 0
+      },
+      "elapsed_ms": 0,
+      "notes": "Description of what was done"
+    }
+  ],
+  "tasks_completed": [],
+  "tasks_blocked": [],
+  "files_changed": {
+    "created": [],
+    "modified": []
+  },
+  "tests_added": {
+    "count": 0,
+    "assertions": 0
+  },
+  "summary": {
+    "total_tokens": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "tasks_completed": 0,
+    "tasks_blocked": 0,
+    "avg_tokens_per_task": 0,
+    "efficiency_rating": "excellent|good|fair|poor",
+    "duration_ms": 0
+  },
+  "completed_at": null,
+  "status": "in_progress|completed|paused|error"
+}

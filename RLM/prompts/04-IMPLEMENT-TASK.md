@@ -176,39 +176,103 @@ Continue the TDD cycle until all acceptance criteria are met.
 
 ---
 
-## Phase 5: Quality Checks
+## Phase 5: Quality Checks (Enhanced with Review)
 
-After implementation complete, run quality checks:
+After implementation complete, run quality checks AND integrated review:
 
-### 5.1 All Tests Pass
+### 5.1 Automated Checks
+
 ```bash
+# All tests pass
 npm test  # or equivalent
-```
 
-### 5.2 Linting
-```bash
+# Linting clean
 npm run lint  # or equivalent
-```
 
-If linting errors, fix them.
-
-### 5.3 Type Checking (if TypeScript)
-```bash
+# Type checking (if TypeScript)
 npm run typecheck  # or npx tsc --noEmit
 ```
 
-### 5.4 Security Check (basic)
-- No hardcoded secrets
-- No SQL injection vulnerabilities
-- Input validation present
-- Proper error handling (no stack traces exposed)
+If any automated checks fail, fix before proceeding.
 
-### 5.5 Constitution Compliance
-Verify implementation follows:
-- Naming conventions from constitution
-- File structure from constitution
-- Error handling patterns from constitution
-- Documentation requirements from constitution
+### 5.2 Security Check
+- [ ] No hardcoded secrets
+- [ ] No SQL injection vulnerabilities
+- [ ] Input validation present
+- [ ] Proper error handling (no stack traces exposed)
+- [ ] No sensitive data in logs
+- [ ] HTTPS/TLS for external calls
+
+### 5.3 Constitution Compliance
+- [ ] Naming conventions from constitution
+- [ ] File structure from constitution
+- [ ] Error handling patterns from constitution
+- [ ] Documentation requirements from constitution
+
+### 5.4 Design Compliance (if DESIGN_REQUIRED)
+
+Check if project has UI components (read from constitution.md):
+```
+If DESIGN_REQUIRED == true:
+```
+
+- [ ] Design tokens used (no hardcoded colors, spacing, typography)
+- [ ] All 8 component states implemented (default, hover, focus, active, disabled, loading, error, empty)
+- [ ] ARIA attributes present for accessibility
+- [ ] Keyboard navigation works
+- [ ] Responsive at all breakpoints defined in design system
+- [ ] Animation tier respected (MINIMAL/MODERATE/RICH)
+
+### 5.5 Quick Review Checklist
+
+Before marking task complete, verify:
+
+**Code Quality:**
+- [ ] Functions are < 50 lines
+- [ ] No unused imports or variables
+- [ ] Comments explain "why", not "what"
+- [ ] Error messages are helpful
+
+**Test Quality:**
+- [ ] Tests cover happy path
+- [ ] Tests cover edge cases (null, empty, boundary values)
+- [ ] Tests cover error scenarios
+- [ ] Test names describe behavior, not implementation
+
+**Documentation:**
+- [ ] Public APIs have JSDoc/docstrings
+- [ ] Complex logic has inline comments
+- [ ] README updated if API changed
+
+### 5.6 Review Gate
+
+**AUTO mode**:
+- Run all checks programmatically
+- Log results to progress log
+- Continue if all pass
+- Pause and report if any fail
+
+**SUPERVISED mode**:
+- Show checklist summary
+- Report any issues found
+- Ask: "All checks passed. Proceed to completion? (yes/no)"
+
+**MANUAL mode**:
+- Walk through each checklist item
+- Explain what was checked
+- Wait for explicit approval
+
+### 5.7 Handle Issues
+
+If any critical issues found during review:
+1. Fix the issue before completing task
+2. Re-run affected checks
+3. Log issues that were fixed:
+   ```
+   Review Issues Fixed:
+   - [SECURITY] Added input sanitization to user input field
+   - [DESIGN] Added missing focus state to submit button
+   ```
 
 **SUPERVISED/MANUAL**: Report any issues found and propose fixes
 
@@ -253,6 +317,220 @@ Update `RLM/progress/status.json`:
     "TASK-XXX": { "status": "completed", "completedAt": "[timestamp]" }
   }
 }
+```
+
+---
+
+## Phase 6.5: Feature Completion Check (Automatic Verification)
+
+After marking a task complete, check if this completes its parent feature.
+
+### 6.5.1 Check Feature Status
+
+```
+1. Get parent feature ID from task metadata (FTR-XXX)
+2. List all tasks for FTR-XXX:
+   - Scan RLM/tasks/active/ for tasks with feature: FTR-XXX
+   - Scan RLM/tasks/completed/ for tasks with feature: FTR-XXX
+   - Scan RLM/tasks/blocked/ for tasks with feature: FTR-XXX
+
+3. Calculate completion:
+   - Total tasks: [count]
+   - Completed: [count]
+   - Active: [count]
+   - Blocked: [count]
+```
+
+### 6.5.2 Feature Completion Detection
+
+```
+If all tasks for FTR-XXX are completed (active=0, blocked=0):
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🎉 Feature FTR-XXX Complete!                                    │
+├─────────────────────────────────────────────────────────────────┤
+│ All tasks for this feature have been implemented:               │
+│ - TASK-001 ✓                                                   │
+│ - TASK-002 ✓                                                   │
+│ - TASK-003 ✓ (just completed)                                  │
+│                                                                 │
+│ Triggering automatic feature verification...                    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 6.5.3 Automatic Feature Verification
+
+When the last task of a feature completes:
+
+**Step 1: Update Feature Status**
+```json
+// In RLM/progress/status.json
+{
+  "features": {
+    "FTR-XXX": { "status": "verification-pending" }
+  }
+}
+```
+
+**Step 2: Generate E2E Tests**
+
+Read the feature spec at `RLM/specs/features/FTR-XXX/spec.md`:
+- Extract acceptance criteria
+- Generate Playwright tests for each criterion
+- Save tests to `rlm-app/tests/e2e/features/FTR-XXX/`
+
+Test file structure:
+```
+rlm-app/tests/e2e/features/FTR-XXX/
+├── FTR-XXX.functional.test.ts  # Functional tests from acceptance criteria
+├── FTR-XXX.a11y.test.ts        # Accessibility tests (if DESIGN_REQUIRED)
+└── FTR-XXX.visual.test.ts      # Visual regression (if configured)
+```
+
+**Step 3: Run Verification Suite**
+
+```bash
+# Functional tests
+npx playwright test tests/e2e/features/FTR-XXX/FTR-XXX.functional.test.ts
+
+# Accessibility tests (if applicable)
+npx playwright test tests/e2e/features/FTR-XXX/FTR-XXX.a11y.test.ts
+
+# Visual regression (if configured)
+npx playwright test tests/e2e/features/FTR-XXX/FTR-XXX.visual.test.ts
+```
+
+**Step 4: Handle Results**
+
+**If ALL tests PASS:**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ ✅ Feature FTR-XXX VERIFIED                                     │
+├─────────────────────────────────────────────────────────────────┤
+│ Functional tests:    12/12 passed                               │
+│ Accessibility tests: 8/8 passed (WCAG 2.1 AA compliant)        │
+│ Visual regression:   No unexpected changes                      │
+│                                                                 │
+│ Feature status: verified                                        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+Update status:
+```json
+{
+  "features": {
+    "FTR-XXX": {
+      "status": "verified",
+      "verified_at": "[timestamp]",
+      "test_results": {
+        "functional": { "passed": 12, "failed": 0 },
+        "accessibility": { "passed": 8, "failed": 0 },
+        "visual": { "changes": 0 }
+      }
+    }
+  }
+}
+```
+
+**If ANY tests FAIL:**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ ❌ Feature FTR-XXX VERIFICATION FAILED                          │
+├─────────────────────────────────────────────────────────────────┤
+│ Functional tests:    10/12 passed (2 failures)                  │
+│ Accessibility tests: 7/8 passed (1 failure)                     │
+│                                                                 │
+│ Creating bug tasks for failures...                              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Step 5: Create Bug Tasks (on failure)**
+
+For each test failure, create a bug task:
+
+```markdown
+# TASK-XXX-BUG-001: [Test name] - Verification Failure
+
+## Metadata
+- **Feature**: FTR-XXX
+- **Type**: bug
+- **Priority**: critical
+- **Source**: Feature verification
+- **Generation**: [current]
+
+## Description
+Verification test failed for feature FTR-XXX.
+
+## Failure Details
+- **Test**: [Test file and name]
+- **Expected**: [Expected behavior from test]
+- **Actual**: [Actual behavior observed]
+- **Error**: [Error message]
+
+## Reproduction Steps
+1. [Steps from test]
+
+## Acceptance Criteria
+- [ ] Test [test name] passes
+- [ ] No regression in other tests
+
+## Screenshot/Evidence
+[Attach screenshot if available]
+```
+
+Save bug tasks to `RLM/tasks/active/TASK-XXX-BUG-NNN.md`
+
+**Step 6: Update Feature Status (on failure)**
+```json
+{
+  "features": {
+    "FTR-XXX": {
+      "status": "verification-failed",
+      "failed_at": "[timestamp]",
+      "bug_tasks": ["TASK-XXX-BUG-001", "TASK-XXX-BUG-002"],
+      "test_results": {
+        "functional": { "passed": 10, "failed": 2 },
+        "accessibility": { "passed": 7, "failed": 1 }
+      }
+    }
+  }
+}
+```
+
+### 6.5.4 Re-Verification After Bug Fixes
+
+When all bug tasks for a feature are completed:
+1. Automatically trigger re-verification
+2. Run only the previously failed tests
+3. If all pass → mark feature as verified
+4. If still failing → create new bug tasks
+
+### 6.5.5 Feature Status Flow
+
+```
+                    ┌─────────────┐
+                    │ in_progress │
+                    └──────┬──────┘
+                           │ (all tasks completed)
+                           ▼
+               ┌───────────────────────┐
+               │ verification-pending  │
+               └───────────┬───────────┘
+                           │ (run E2E tests)
+            ┌──────────────┴──────────────┐
+            │                             │
+            ▼                             ▼
+      ┌──────────┐              ┌───────────────────┐
+      │ verified │              │ verification-failed│
+      └──────────┘              └─────────┬─────────┘
+                                          │ (fix bugs)
+                                          ▼
+                                ┌───────────────────┐
+                                │ verification-pending│
+                                └───────────────────┘
+                                          │ (re-run tests)
+                                          ▼
+                                     (repeat)
 ```
 
 ---
@@ -342,15 +620,129 @@ If implementation cannot proceed:
 
 ## Token/Progress Tracking
 
-At completion, optionally log:
-```markdown
-## Metrics (Estimated)
-- Context loaded: ~[X] tokens
-- Implementation tokens: ~[X]
-- Total tokens: ~[X]
+### 5-Step Progress Model
+
+Each task follows these steps with percentage ranges:
+
+| Step | Name | Range | Activities |
+|------|------|-------|------------|
+| 1 | Loading context | 0-10% | Read task file, feature spec, constitution |
+| 2 | Writing tests | 10-40% | Create test file, write test cases |
+| 3 | Implementing code | 40-70% | Write implementation to pass tests |
+| 4 | Running tests | 70-85% | Execute tests, verify all pass |
+| 5 | Quality checks | 85-100% | Lint, type-check, security review |
+
+### Real-Time Progress Output
+
+At each step, output progress indicator:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 TASK-XXX: [Task Title]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Progress: [████████░░░░░░░░░░░░] 40% (Step 2/5: Writing tests)
+
+Token Usage This Task:
+  Input:  2,450 tokens
+  Output: 1,230 tokens
+  Total:  3,680 tokens
+
+Session Total: 15,420 / 100,000 tokens (15.4%)
+
+⏱️  Elapsed: 3m 24s | Est. Remaining: 5m 10s
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-This helps track costs over time.
+### Step Transition Reporting
+
+At the start of each step:
+```
+[Step 2/5] Writing tests...
+```
+
+At the end of each step:
+```
+✓ Step 2 complete: 4 tests written (12 assertions)
+```
+
+### Silent Logging (Always Active)
+
+After each step, log to `RLM/progress/token-usage/session-YYYY-MM-DD.json`:
+
+```json
+{
+  "session_id": "SESSION-2024-12-09-001",
+  "started_at": "2024-12-09T10:00:00Z",
+  "entries": [
+    {
+      "timestamp": "2024-12-09T10:05:00Z",
+      "task": "TASK-XXX",
+      "step": "writing_tests",
+      "step_number": 2,
+      "percentage": 40,
+      "tokens": { "input": 1200, "output": 450 },
+      "cumulative": { "input": 5000, "output": 2100 },
+      "elapsed_ms": 45000,
+      "notes": "4 tests written"
+    }
+  ],
+  "summary": {
+    "total_tokens": 0,
+    "tasks_completed": 0,
+    "avg_tokens_per_task": 0
+  }
+}
+```
+
+### Task Completion Summary
+
+At task completion, output:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ TASK-XXX COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Duration: 8m 32s
+Files Created: 2
+Files Modified: 1
+Tests Added: 4 (12 assertions)
+Test Coverage: 94%
+
+Token Usage:
+  This Task:  8,450 tokens
+  Session:   23,890 tokens (23.9%)
+
+Next: TASK-YYY - [Title]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Configuration
+
+Progress reporting is configured in `RLM/progress/cc-config.json`:
+
+```json
+{
+  "reporting": {
+    "mode": "both",
+    "realtime": {
+      "show_token_count": true,
+      "show_progress_bar": true,
+      "update_frequency": "per_step"
+    },
+    "logging": {
+      "enabled": true,
+      "granularity": "detailed"
+    }
+  }
+}
+```
+
+Modes:
+- `realtime` - Show progress output only
+- `silent` - Log to file only
+- `both` - Show output AND log to file (default)
 
 ---
 

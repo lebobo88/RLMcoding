@@ -1,61 +1,23 @@
-# RLM - Research, Lead, Manage
+# RLM - Research, Lead, Manage (v2.6)
 
 ## AI-Powered Software Development Method
 
-RLM transforms raw ideas into production-ready code through a structured workflow that works with **any AI coding agent** in **any IDE**.
+RLM transforms raw ideas into production-ready code through a structured 9-phase pipeline that works with **any AI coding agent** in **any IDE**.
 
-### What's New in v2.5 (Complete Pipeline Integration)
+---
 
-- **9-Phase Pipeline** - Complete `/cc-full` now includes: Discover → Design System → Specs → Feature Design → Tasks → Implement → Quality → Verify → Report
-- **Verifier Sub-Agent** - New agent for E2E testing with Playwright, accessibility (axe-core), visual regression
-- **Design Integration** - Design system and feature design specs integrated into main automation pipeline
-- **Quality Phase** - Combined Design QA + Code Review + Test Coverage in single phase
-- **Two Entry Points** - `/cc-full [idea]` (from zero) or `/cc-full --from-prd` (from existing PRD)
-- **Skip Options** - `--skip-design-research`, `--skip-feature-design`, `--skip-design-qa`, `--skip-verification`
+## Key Features
 
-### What's New in v2.4 (Design Engineering)
-
-- **Designer Sub-Agent** - Specialized agent for UI/UX specifications and design system generation
-- **Design Commands** - `/cc-design [system|component|audit|tokens|spec|qa]` for all design workflows
-- **Design Templates** - Feature design specs, component specs, design QA checklists, design tokens
-- **8 Component States** - Default, Hover, Focus, Active, Disabled, Loading, Error, Empty
-- **117-Point Design QA** - Automated design quality checklist across 7 categories
-- **Framework-Agnostic Tokens** - Design tokens export for Tailwind, MUI, Chakra, Bootstrap, Ant Design
-- **Animation Tiers** - MINIMAL (CSS), MODERATE (Framer Motion), RICH (GSAP)
-- **WCAG 2.1 AA/AAA** - Built-in accessibility standards and validation
-
-### What's New in v2.3 (GitHub Copilot)
-
-- **Copilot Integration** - Templates for `.github/copilot-instructions.md` and AGENTS.md
-- **Custom Agents** - Specialized Copilot agents matching RLM workflow
-- **Prompt Files** - Reusable `.github/prompts/*.prompt.md` for Copilot
-- **Task→Issue Workflow** - Auto-convert RLM tasks to GitHub issues for Copilot
-
-### What's New in v2.2 (Full Automation)
-
-- **Full Automation Pipeline** - `/cc-full [idea]` chains all phases: discover → specs → tasks → parallel implement
-- **Parallel Sub-Agent Spawning** - Up to 10 concurrent coder agents implementing tasks simultaneously
-- **Automatic Context Priming** - Built into all `/cc-*` commands, no manual `/prime-*` needed
-- **Automatic Token Reporting** - Threshold warnings at 50%, 75%, 90% without manual checks
-- **Configuration System** - `/cc-config` for runtime customization (parallel limits, thresholds)
-- **Two Entry Points** - `/cc-discover` (from zero) or `/cc-create-specs` (from PRD)
-
-### What's New in v2.1 (Claude Code Enhanced)
-
-- **Sub-Agent Architecture** - Specialized agents (Research, Architect, Coder, Tester, Reviewer) in isolated context
-- **Context Efficiency** - 0% token pollution via delegation, ~40-60% context reduction
-- **Token Reporting** - Continuous usage tracking with `/cc-tokens` command
-- **Background Agents** - Long-running autonomous tasks via `/cc-background`
-- **Context Priming** - Lightweight `/prime-*` commands load minimal context
-- **Hooks System** - Lifecycle event handlers (pre-commit, post-task, on-error)
-
-### What's New in v2.0
-
-- **Industry Detection** - Automatic SaaS, E-commerce, FinTech, HealthTech, EdTech detection with specialized questions
-- **Opinionated Tech Recommendations** - Specific technology guidance (e.g., "Choose Next.js for SEO-critical apps")
-- **Chain-of-Thought Reasoning** - Structured decision-making with confidence levels
-- **New Templates** - ADR (Architecture Decision Records), Assumption Logs, Tech Comparison Matrix
-- **Enhanced Agents** - Problem-solving frameworks, bug investigation, competitive analysis
+- **9-Phase Pipeline** - Complete automation from idea to verified code
+- **Real-Time Progress** - Visual progress bars, step-by-step updates, token tracking
+- **7 Specialized Agents** - Research, Architect, Designer, Coder, Tester, Reviewer, Verifier
+- **Two Entry Points** - Start from zero (`/cc-full [idea]`) or from PRD (`/cc-full --from-prd`)
+- **TDD by Default** - Test-Driven Development with integrated review
+- **Design System Integration** - Full UI/UX engineering with tokens and accessibility
+- **Context Management** - Automatic checkpointing at 50%, 75%, 90% thresholds
+- **Debug & Reconciliation** - Built-in state validation and repair (`/cc-debug`)
+- **Resume Capability** - Stop and continue anytime without losing progress
+- **IDE Parity** - Works with Claude Code, Cursor, Windsurf, VS Code, Aider, and more
 
 ---
 
@@ -69,7 +31,7 @@ RLM transforms raw ideas into production-ready code through a structured workflo
 Tell your AI: "Read RLM/prompts/01-DISCOVER.md and help me discover specs for: [your idea]"
 ```
 
-Or in Claude Code: `/discover [your idea]`
+Or in Claude Code: `/discover [your idea]` or `/cc-full [your idea]`
 
 ### Path 2: Starting from PRD
 **You have:** An existing PRD (Product Requirements Document)
@@ -79,55 +41,61 @@ Or in Claude Code: `/discover [your idea]`
 Tell your AI: "Read RLM/prompts/02-CREATE-SPECS.md and generate specs from my PRD"
 ```
 
-Or in Claude Code: `/create-specs`
+Or in Claude Code: `/create-specs` or `/cc-full --from-prd`
 
 ---
 
-## Complete Workflow (v2.5)
+## Complete 9-Phase Pipeline
 
 ```
-┌──────────────────────────────────────────────────────────────────────────┐
-│  PATH 1: FROM ZERO                    PATH 2: FROM PRD                   │
-│  ──────────────────                   ───────────────                    │
-│  /cc-full [idea]                      /cc-full --from-prd                │
-│  OR /cc-discover [idea]               OR /cc-create-specs                │
-│       │                                    │                             │
-│       ▼                                    │                             │
-│  Phase 1: DISCOVER ◄───────────────────────┘                             │
-│  [Generate PRD with design requirements]                                 │
-│       │                                                                  │
-│       ▼                                                                  │
-│  Phase 2: DESIGN SYSTEM                                                  │
-│  [/cc-design system → tokens, component library]                         │
-│       │                                                                  │
-│       ▼                                                                  │
-│  Phase 3: SPECS                                                          │
-│  [/cc-create-specs → features, architecture]                             │
-│       │                                                                  │
-│       ▼                                                                  │
-│  Phase 4: FEATURE DESIGN                                                 │
-│  [/cc-design feature FTR-XXX → UI/UX specs for each feature]             │
-│       │                                                                  │
-│       ▼                                                                  │
-│  Phase 5: TASKS                                                          │
-│  [/cc-create-tasks → fine-grained tasks with UI/UX requirements]         │
-│       │                                                                  │
-│       ▼                                                                  │
-│  Phase 6: IMPLEMENT                                                      │
-│  [/cc-implement all → parallel TDD with design tokens]                   │
-│       │                                                                  │
-│       ▼                                                                  │
-│  Phase 7: QUALITY                                                        │
-│  [/cc-design qa + /cc-review + /cc-test]                                 │
-│       │                                                                  │
-│       ▼                                                                  │
-│  Phase 8: VERIFY                                                         │
-│  [/cc-verify FTR-XXX → E2E tests for each feature]                       │
-│       │                                                                  │
-│       ▼                                                                  │
-│  Phase 9: REPORT                                                         │
-│  [Complete Project Summary]                                              │
-└──────────────────────────────────────────────────────────────────────────┘
++------------------------------------------------------------------------------+
+|                         RLM 9-PHASE PIPELINE (v2.6)                          |
++------------------------------------------------------------------------------+
+|                                                                              |
+|  PATH 1: FROM ZERO                    PATH 2: FROM PRD                       |
+|  /cc-full [idea]                      /cc-full --from-prd                    |
+|       |                                    |                                 |
+|       v                                    |                                 |
+|  Phase 1: DISCOVER <-----------------------+                                 |
+|  [PRD.md + constitution.md with design requirements]                         |
+|  (Auto-detects research in RLM/research/project/)                            |
+|       |                                                                      |
+|       v                                                                      |
+|  Phase 2: DESIGN SYSTEM (UI projects only)                                   |
+|  [/cc-design system -> tokens, component library]                            |
+|  (Auto-detected: UI score >= 3)                                              |
+|       |                                                                      |
+|       v                                                                      |
+|  Phase 3: SPECIFICATIONS                                                     |
+|  [/cc-create-specs -> features, architecture]                                |
+|       |                                                                      |
+|       v                                                                      |
+|  Phase 4: FEATURE DESIGN (UI projects only)                                  |
+|  [/cc-design feature FTR-XXX -> UI/UX specs]                                 |
+|       |                                                                      |
+|       v                                                                      |
+|  Phase 5: TASKS                                                              |
+|  [/cc-create-tasks -> fine-grained tasks with checkpoint tracking]           |
+|  (Incremental: only creates tasks for NEW features)                          |
+|       |                                                                      |
+|       v                                                                      |
+|  Phase 6: IMPLEMENTATION                                                     |
+|  [/cc-implement all -> parallel TDD with 5-step progress]                    |
+|  (Real-time progress + integrated review per task)                           |
+|       |                                                                      |
+|       v                                                                      |
+|  Phase 7: QUALITY                                                            |
+|  [/cc-design qa + /cc-review + /cc-test]                                     |
+|       |                                                                      |
+|       v                                                                      |
+|  Phase 8: VERIFICATION                                                       |
+|  [/cc-verify FTR-XXX -> E2E tests per feature (auto-triggered)]              |
+|       |                                                                      |
+|       v                                                                      |
+|  Phase 9: REPORT                                                             |
+|  [Complete project summary with token efficiency metrics]                    |
+|                                                                              |
++------------------------------------------------------------------------------+
 ```
 
 ---
@@ -137,39 +105,45 @@ Or in Claude Code: `/create-specs`
 ### Claude Code (Recommended)
 
 **Standard Commands** (IDE-agnostic):
-- `/discover [idea]` - Start from zero
-- `/create-specs` - Generate specs from PRD
-- `/create-tasks` - Break features into tasks
-- `/implement TASK-001` - Implement single task
-- `/implement all` - Implement all tasks
-- `/implement resume` - Resume interrupted session
+| Command | Purpose |
+|---------|---------|
+| `/discover [idea]` | Transform idea into PRD |
+| `/create-specs` | Generate specs from PRD |
+| `/create-tasks` | Break features into tasks |
+| `/implement TASK-XXX` | Implement single task |
+| `/implement all` | Implement all tasks |
+| `/implement resume` | Resume interrupted session |
 
-**Enhanced Commands** (v2.5 - Complete 9-phase pipeline):
-- `/cc-full [idea]` - **Complete automation**: idea → code (9 phases)
-- `/cc-full --from-prd` - Start from existing PRD (skips discover)
-- `/cc-discover [idea]` - Discovery with delegated research (Phase 1)
-- `/cc-design system` - Generate design system (Phase 2)
-- `/cc-create-specs` - Generate specs from PRD (Phase 3)
-- `/cc-design feature FTR-XXX` - Feature design specs (Phase 4)
-- `/cc-create-tasks` - Break features into tasks (Phase 5)
-- `/cc-implement [task|all|resume]` - TDD with parallel coder sub-agents (Phase 6)
-- `/cc-design qa [scope]` - 117-point design QA (Phase 7)
-- `/cc-review [scope]` - Code review with reviewer sub-agent (Phase 7)
-- `/cc-test [scope]` - Testing with tester sub-agent (Phase 7)
-- `/cc-verify FTR-XXX` - E2E verification per feature (Phase 8)
-- `/cc-architect` - Architecture with isolated context
-- `/cc-background [task]` - Spawn autonomous background agent
-- `/cc-tokens` - View token usage summary
-- `/cc-config [setting] [value]` - Configure workflow settings
+**Enhanced Commands** (Complete 9-phase pipeline):
+| Command | Phase | Purpose |
+|---------|-------|---------|
+| `/cc-full [idea]` | 1-9 | **Complete automation**: idea -> verified code |
+| `/cc-full --from-prd` | 2-9 | Start from existing PRD |
+| `/cc-discover [idea]` | 1 | Discovery with research agent |
+| `/cc-design system` | 2 | Generate design system |
+| `/cc-create-specs` | 3 | Generate specs from PRD |
+| `/cc-design feature FTR-XXX` | 4 | Feature UI/UX specs |
+| `/cc-create-tasks` | 5 | Break features into tasks |
+| `/cc-implement [task\|all]` | 6 | TDD with parallel agents |
+| `/cc-design qa` | 7 | 117-point design QA |
+| `/cc-review` | 7 | Code review |
+| `/cc-test` | 7 | Testing with coverage |
+| `/cc-verify FTR-XXX` | 8 | E2E feature verification |
+| `/cc-debug` | - | Diagnose and fix state issues |
+| `/cc-tokens` | - | View token usage summary |
+| `/cc-config` | - | Configure workflow settings |
 
-**Context Primers** (manual use - auto-priming built into `/cc-*` commands):
-- `/prime-feature [FTR-XXX]` - Feature development context
-- `/prime-task [TASK-XXX]` - Single task TDD context
-- `/prime-bug` - Bug investigation frameworks
-- `/prime-review` - Code review checklists
-- `/prime-design` - Design system and UI/UX context (v2.4)
+**New Commands**:
+| Command | Purpose |
+|---------|---------|
+| `/cc-debug` | Full diagnostic scan and reconciliation |
+| `/cc-debug quick` | Fast scan for common issues |
+| `/cc-debug --auto-fix` | Auto-fix safe issues |
+| `/rlm-full [idea]` | Standard prompt pipeline (non-Claude Code) |
+| `/rlm-full --from-prd` | Start standard pipeline from PRD |
 
 ### Cursor, Windsurf, VS Code + Copilot, Aider, or Any Other AI
+
 Copy the prompt content from `RLM/prompts/` into your AI chat:
 
 1. **Discovery**: Copy `RLM/prompts/01-DISCOVER.md`
@@ -181,6 +155,36 @@ Or simply tell your AI:
 ```
 Read and follow RLM/prompts/[prompt-name].md
 ```
+
+---
+
+## Real-Time Progress (v2.6)
+
+During implementation, you'll see live progress updates:
+
+```
++------------------------------------------------------------------+
+| TASK-003: Implement user authentication                  [3/8]   |
++------------------------------------------------------------------+
+
+Progress: [========--------] 40% (Step 2/5: Writing tests)
+
+Token Usage This Task:
+  Input:  2,450 tokens | Output: 1,230 tokens | Total: 3,680
+
+Session Total: 15,420 / 100,000 tokens (15.4%)
++------------------------------------------------------------------+
+```
+
+### 5-Step Progress Model
+
+| Step | Phase | Progress |
+|------|-------|----------|
+| 1 | Load specs and context | 0-20% |
+| 2 | Write tests (TDD Red) | 20-40% |
+| 3 | Implement code (TDD Green) | 40-70% |
+| 4 | Run tests and fix | 70-85% |
+| 5 | Quality checks and review | 85-100% |
 
 ---
 
@@ -196,22 +200,107 @@ When implementing tasks, choose your level of control:
 
 ---
 
+## Context Management
+
+RLM automatically manages context at these thresholds:
+
+| Threshold | Action |
+|-----------|--------|
+| **50%** | Save checkpoint, log warning, continue |
+| **75%** | Save checkpoint, suggest wrapping up |
+| **90%** | Save checkpoint, complete current task only, pause |
+
+Use `/implement resume` or read `RLM/prompts/06-RESUME.md` to continue.
+
+---
+
+## Debug & Reconciliation
+
+Run diagnostics to detect and fix state issues:
+
+```bash
+/cc-debug              # Full diagnostic scan
+/cc-debug quick        # Fast scan (common issues only)
+/cc-debug --auto-fix   # Auto-fix safe issues
+```
+
+**Issues Detected**:
+- Orphan tasks (no parent feature)
+- Missing tasks (incomplete feature coverage)
+- Status mismatches (file vs status.json)
+- Checkpoint drift
+- Broken dependencies
+- Duplicate IDs
+
+---
+
 ## Key Directories
 
 | Directory | Purpose |
 |-----------|---------|
 | `RLM/prompts/` | Copy-paste prompt templates for any AI |
-| `RLM/templates/` | Document templates (PRD, specs, tasks, ADRs) |
+| `RLM/templates/` | Document templates (PRD, specs, tasks, design) |
 | `RLM/specs/` | Generated specifications |
+| `RLM/specs/design/` | Design system, tokens, components |
 | `RLM/tasks/active/` | Tasks ready for implementation |
 | `RLM/tasks/completed/` | Finished tasks |
-| `RLM/progress/` | Progress tracking and reports |
+| `RLM/progress/` | Progress tracking, checkpoints, logs |
+| `RLM/research/project/` | Auto-detected project research |
 | `RLM/agents/` | AI agent role definitions |
 | `RLM/docs/` | Full documentation |
 
 ---
 
-## Design Templates (v2.4)
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `RLM/START-HERE.md` | This file - entry point |
+| `RLM/specs/PRD.md` | Product Requirements Document |
+| `RLM/specs/constitution.md` | Project standards |
+| `RLM/specs/design/design-system.md` | Design system |
+| `RLM/tasks/INDEX.md` | Task overview |
+| `RLM/progress/status.json` | Current state |
+| `RLM/progress/checkpoint.json` | Incremental tracking |
+| `RLM/progress/cc-config.json` | Configuration |
+
+---
+
+## Project Research
+
+Place research documents in `RLM/research/project/` to auto-populate PRD sections:
+
+```
+RLM/research/project/
++-- competitor-analysis.md
++-- market-research.md
++-- user-interviews.md
++-- technical-research.md
++-- requirements-notes.md
+```
+
+The discovery phase automatically detects and uses this research.
+
+---
+
+## Prompts Reference
+
+| Prompt | Purpose | Use When |
+|--------|---------|----------|
+| `01-DISCOVER.md` | Transform idea into PRD | Starting a new project |
+| `02-CREATE-SPECS.md` | Generate specs from PRD | Have PRD, need specs |
+| `03-CREATE-TASKS.md` | Break features into tasks | Specs ready, need tasks |
+| `04-IMPLEMENT-TASK.md` | Implement single task (TDD) | Ready to code one task |
+| `05-IMPLEMENT-ALL.md` | Implement all active tasks | Ready to code everything |
+| `06-RESUME.md` | Resume interrupted work | Continuing previous session |
+| `07-TEST.md` | Run and fix tests | Validating implementation |
+| `08-REPORT.md` | Generate progress report | Check project status |
+
+---
+
+## Templates
+
+### Design Templates
 
 | Template | Purpose |
 |----------|---------|
@@ -222,7 +311,7 @@ When implementing tasks, choose your level of control:
 | `design-qa-checklist.md` | 117-point design QA checklist |
 | `ux-research-template.md` | UX research and user testing |
 
-## ADR Templates (v2.0)
+### ADR Templates
 
 | Template | Purpose |
 |----------|---------|
@@ -232,27 +321,16 @@ When implementing tasks, choose your level of control:
 
 ---
 
-## Prompts Reference
+## Token Efficiency
 
-| Prompt | Purpose | Use When |
-|--------|---------|----------|
-| `01-DISCOVER.md` | Transform idea into PRD with tech recommendations | Starting a new project |
-| `02-CREATE-SPECS.md` | Generate specs from PRD | Have PRD, need specs |
-| `03-CREATE-TASKS.md` | Break features into tasks | Specs ready, need tasks |
-| `04-IMPLEMENT-TASK.md` | Implement single task (TDD) | Ready to code one task |
-| `05-IMPLEMENT-ALL.md` | Implement all active tasks | Ready to code everything |
-| `06-RESUME.md` | Resume interrupted work | Continuing previous session |
-| `07-TEST.md` | Run and fix tests | Validating implementation |
-| `08-REPORT.md` | Generate progress report | Check project status |
+Track token usage with efficiency ratings:
 
-### Discovery Phase Enhancements (v2.0)
-
-The discovery process now includes:
-- **Industry Detection**: Automatically identifies SaaS B2B/B2C, E-commerce, FinTech, HealthTech, EdTech, Marketplace
-- **Industry-Specific Questions**: Asks relevant questions based on detected industry
-- **Technology Recommendations**: Provides opinionated stack recommendations with confidence levels
-- **5 Whys Analysis**: Root cause validation for complex problems
-- **SWOT Analysis**: Competitive positioning template
+| Rating | Tokens/Task | Description |
+|--------|-------------|-------------|
+| Excellent | < 10,000 | Simple, well-defined tasks |
+| Good | 10,000-20,000 | Normal complexity |
+| Fair | 20,000-35,000 | Complex or some rework |
+| Poor | > 35,000 | Consider splitting task |
 
 ---
 
@@ -260,12 +338,12 @@ The discovery process now includes:
 
 - [User Guide](docs/USER-GUIDE.md) - Complete step-by-step guide
 - [Quick Reference](docs/QUICK-REFERENCE.md) - One-page cheat sheet
+- [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) - Sub-agent workflow guide
 - [Template Reference](docs/TEMPLATE-REFERENCE.md) - How to use templates
 - [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions
-- [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) - v2.5 Sub-agent workflow guide
-- [UI Framework Reference](docs/UI-FRAMEWORK-REFERENCE.md) - Design token implementation (v2.4)
-- [Design Patterns Library](docs/DESIGN-PATTERNS-LIBRARY.md) - UI/UX pattern reference (v2.4)
-- [Accessibility Guide](docs/ACCESSIBILITY-GUIDE.md) - WCAG compliance guide (v2.4)
+- [UI Framework Reference](docs/UI-FRAMEWORK-REFERENCE.md) - Design token implementation
+- [Design Patterns Library](docs/DESIGN-PATTERNS-LIBRARY.md) - UI/UX pattern reference
+- [Accessibility Guide](docs/ACCESSIBILITY-GUIDE.md) - WCAG compliance guide
 - [What's New](docs/WHATS-NEW.md) - Version changelog
 
 ---
@@ -278,7 +356,7 @@ Read RLM/prompts/01-DISCOVER.md and help me discover specs for:
 "Build a habit tracking app with social accountability features"
 ```
 
-**Step 2:** Answer the clarifying questions (the AI will ask ~12 questions in 3 rounds)
+**Step 2:** Answer the clarifying questions (the AI will ask ~12-18 questions in 3-4 rounds)
 
 **Step 3:** Review the generated PRD at `RLM/specs/PRD.md`
 
@@ -303,5 +381,6 @@ Implement TASK-001 in SUPERVISED mode
 ## Need Help?
 
 1. Read `RLM/docs/USER-GUIDE.md` for detailed instructions
-2. Check `RLM/docs/TROUBLESHOOTING.md` for common issues
-3. Review the prompts in `RLM/prompts/` - they contain detailed instructions
+2. Run `/cc-debug quick` to check for state issues
+3. Check `RLM/docs/TROUBLESHOOTING.md` for common issues
+4. Review the prompts in `RLM/prompts/` - they contain detailed instructions

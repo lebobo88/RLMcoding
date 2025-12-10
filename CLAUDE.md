@@ -35,7 +35,7 @@ Use these Claude Code slash commands for the standard RLM workflow:
 | `/implement all` | Implement all active tasks |
 | `/implement resume` | Resume interrupted session |
 
-### Claude Code Enhanced Commands (v2.5)
+### Claude Code Enhanced Commands (v2.6)
 
 Complete 9-phase pipeline with full automation:
 
@@ -55,8 +55,25 @@ Complete 9-phase pipeline with full automation:
 | `/cc-verify FTR-XXX` | 8 | **Feature verification**: E2E tests | Verifier |
 | `/cc-architect` | - | Architecture design with isolated context | Architect |
 | `/cc-background [task]` | - | Spawn autonomous background agent | Background |
-| `/cc-tokens` | - | Display token usage (auto in v2.5) | - |
+| `/cc-tokens` | - | Display token usage (auto in v2.6) | - |
 | `/cc-config [setting] [value]` | - | Configure workflow settings | - |
+| `/cc-debug [quick\|--auto-fix]` | - | **Diagnose and fix state issues** | - |
+| `/rlm-full [idea\|resume]` | All | **Standard prompt pipeline** (non-CC) | - |
+
+**v2.6 Features** (NEW):
+- **Real-Time Progress Reporting** - Visual progress bars, step-by-step updates, token tracking
+- **5-Step Progress Model** - Loading → Writing Tests → Implementing → Running Tests → Quality Checks
+- **Configurable Reporting** - `realtime`, `silent`, or `both` modes via cc-config.json
+- **Token Efficiency Tracking** - Per-task and session metrics with efficiency ratings
+- **Session Logging** - Detailed JSON logs in `RLM/progress/token-usage/`
+- **Checkpoint System** - Incremental task creation with generation tracking
+- **Global Debug Command** - `/cc-debug` for state reconciliation (10 issue types)
+- **Auto Project Research** - Detects research in `RLM/research/project/`
+- **Auto Design Detection** - UI vs Non-UI classification sets `DESIGN_REQUIRED`
+- **Context Window Management** - Auto-checkpoint at 50/75/90%, smart truncation
+- **Integrated Review/Verify** - Per-task review, auto feature verification
+- **IDE/Copilot Parity** - Shared instructions in `RLM/templates/ide-agents/`
+- **Standard Pipeline** - `/rlm-full` for non-CC environments with same automation
 
 **v2.5 Features**:
 - **9-Phase Pipeline** - Discover → Design System → Specs → Feature Design → Tasks → Implement → Quality → Verify → Report
@@ -105,7 +122,7 @@ Comprehensive UI/UX engineering with design system management:
 
 ```
 RLM/
-├── prompts/        # Workflow prompts (01-DISCOVER through 08-REPORT)
+├── prompts/        # Workflow prompts (00-* detection, 01-08 workflow)
 ├── specs/          # Generated specifications
 │   ├── PRD.md              # Product Requirements Document
 │   ├── constitution.md     # Project standards
@@ -139,16 +156,26 @@ RLM/
 │   ├── cc-create-specs.md # Specs from PRD (v2.2)
 │   ├── cc-create-tasks.md # Task breakdown (v2.2)
 │   ├── cc-config.md      # Configuration management (v2.2)
+│   ├── cc-debug.md       # Debug/reconciliation (v2.6)
+│   ├── rlm-full.md       # Standard pipeline command (v2.6)
 │   ├── cc-*.md           # Other enhanced workflow commands
 │   └── prime-*.md        # Context priming commands (manual)
 └── hooks/            # Lifecycle event handlers
     └── hooks.json        # Hook configuration
 
 RLM/progress/
-├── cc-config.json    # Workflow configuration (v2.2)
+├── cc-config.json    # Workflow configuration (v2.6)
+├── checkpoint.json   # Incremental task tracking (v2.6)
 ├── token-usage/      # Token usage logs
 ├── bundles/          # Context bundles for resume
 └── background/       # Background agent results
+
+RLM/research/
+└── project/          # Project research for auto-detection (v2.6)
+
+RLM/templates/ide-agents/shared/  # IDE parity (v2.6)
+├── rlm-core-instructions.md      # Core workflow instructions
+└── token-tracking.md             # Token estimation for IDEs
 ```
 
 ### RLM Web App Structure
@@ -273,7 +300,7 @@ Sub-agents in `.claude/agents/` operate in isolated context windows for efficien
 | **Reviewer** | Code review, security, design compliance | 7 | Read, Grep, Glob |
 | **Verifier** | E2E testing, accessibility, visual regression | 8 | Read, Write, Edit, Bash, Glob, Grep |
 
-### Key Concepts (v2.5)
+### Key Concepts (v2.6)
 
 - **9-Phase Pipeline**: Complete automation from idea to verified code
 - **Context Isolation**: Sub-agents have 0% token pollution to primary context
@@ -283,9 +310,15 @@ Sub-agents in `.claude/agents/` operate in isolated context windows for efficien
 - **Two Entry Points**: `/cc-full [idea]` (from zero) or `/cc-full --from-prd` (from PRD)
 - **Skip Options**: `--skip-design-research`, `--skip-feature-design`, `--skip-design-qa`, `--skip-verification`
 - **Configuration**: `/cc-config` for runtime customization
+- **Checkpoint System**: Generation-based tracking prevents duplicate task creation
+- **Debug Command**: `/cc-debug` diagnoses 10 issue types with interactive fixes
+- **Auto Research**: Discovery phase detects `RLM/research/project/` folder
+- **Context Management**: Auto-checkpoint at thresholds, smart truncation by tier
+- **IDE Parity**: Shared instructions work across Cursor, Windsurf, Continue.dev, Copilot
 
 See `RLM/prompts/CC-ORCHESTRATION.md` for full orchestration protocol.
 See `RLM/docs/CLAUDE-CODE-GUIDE.md` for complete Claude Code workflow guide.
+See `RLM/docs/WHATS-NEW.md` for v2.6 release notes.
 
 ## Design System Integration (v2.4)
 

@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "project_id": null,
+  "description": "Tracks feature and task creation checkpoints to enable incremental additions without overwriting existing work",
+  "checkpoints": [],
+  "current_generation": 0,
+  "all_features": [],
+  "all_tasks": [],
+  "last_updated": null
+}

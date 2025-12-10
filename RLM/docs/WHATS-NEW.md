@@ -2,9 +2,433 @@
 
 ---
 
+# v2.6 - Enhanced Progress, Debugging & IDE Parity
+
+**Release Date**: December 2025
+
+This release adds comprehensive progress tracking, context management, debugging tools, and feature parity across all development environments (Claude Code, IDE agents, GitHub Copilot).
+
+## Summary of v2.6 Changes
+
+### 9 Enhancements Implemented
+
+| # | Enhancement | Category |
+|---|-------------|----------|
+| 1 | IDE/Copilot Feature Parity | Parity & Automation |
+| 2 | Auto-Detected Design Agent | Integration |
+| 3 | Token/Progress Reporting | Core Infrastructure |
+| 4 | Context Window Management | Integration |
+| 5 | Automated Modes for Non-CC Methods | Parity & Automation |
+| 6 | Integrated Review/Verify | Integration |
+| 7 | Checkpoint System | Core Infrastructure |
+| 8 | Global Debug Command | Core Infrastructure |
+| 9 | Auto Project Research | Core Infrastructure |
+
+---
+
+### Enhancement #3: Token/Progress Reporting
+
+Real-time progress visualization with token tracking:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 TASK-XXX: [Task Title]                    [3/8 tasks]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Progress: [████████░░░░░░░░░░░░] 40% (Step 2/5: Writing tests)
+
+Token Usage This Task:
+  Input:  2,450 tokens
+  Output: 1,230 tokens
+  Total:  3,680 tokens
+
+Session Total: 35,420 / 100,000 tokens (35.4%)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**5-Step Progress Model**:
+1. Loading specs and context
+2. Writing tests (TDD red phase)
+3. Implementing code (TDD green phase)
+4. Running tests and fixing failures
+5. Quality checks and review
+
+**Reporting Modes** (configurable via `cc-config.json`):
+- `realtime` - Visual progress bars only
+- `silent` - JSON logging only
+- `both` - Visual + JSON logging (default)
+
+**Efficiency Ratings**:
+| Rating | Tokens/Task | Interpretation |
+|--------|-------------|----------------|
+| Excellent | < 10,000 | Simple task, well-defined |
+| Good | 10-20,000 | Normal complexity |
+| Fair | 20-35,000 | Complex or some rework |
+| Poor | > 35,000 | Consider splitting task |
+
+---
+
+### Enhancement #7: Checkpoint System
+
+Incremental feature detection prevents overwriting existing tasks:
+
+**Checkpoint File** (`RLM/progress/checkpoint.json`):
+```json
+{
+  "version": "1.0",
+  "current_generation": 3,
+  "checkpoints": [
+    {
+      "timestamp": "2025-12-09T10:00:00Z",
+      "generation": 1,
+      "features_created": ["FTR-001", "FTR-002"],
+      "tasks_created": ["TASK-001", "TASK-002", "TASK-003"]
+    }
+  ],
+  "all_features": ["FTR-001", "FTR-002", "FTR-003"],
+  "all_tasks": ["TASK-001", "TASK-002", "TASK-003", "TASK-004"]
+}
+```
+
+**Generation-Based Tracking**:
+- Each task includes `generation` field in metadata
+- New tasks get next generation number
+- `/create-tasks` only creates tasks for NEW features
+- Prevents duplicate task creation on re-runs
+
+---
+
+### Enhancement #8: Global Debug Command
+
+New `/cc-debug` command for state reconciliation:
+
+```bash
+/cc-debug              # Full diagnostic scan
+/cc-debug quick        # Fast scan (common issues only)
+/cc-debug --auto-fix   # Automatically fix safe issues
+/cc-debug --type=orphan-tasks  # Scan specific issue type
+```
+
+**10 Issue Types Detected**:
+| Type | Description |
+|------|-------------|
+| `orphan-tasks` | Tasks with no parent feature |
+| `missing-tasks` | Features with incomplete task coverage |
+| `status-mismatch` | Task file status vs status.json |
+| `checkpoint-drift` | Checkpoint out of sync with actual files |
+| `broken-deps` | Tasks referencing non-existent dependencies |
+| `duplicate-ids` | Multiple tasks with same ID |
+| `missing-specs` | Tasks referencing missing feature specs |
+| `stale-progress` | Progress files older than 24 hours |
+| `blocked-loop` | Circular blocking dependencies |
+| `incomplete-metadata` | Tasks missing required fields |
+
+**Interactive Fix Mode**:
+```
+Issue #3: status-mismatch
+TASK-005 shows 'in_progress' in file but 'pending' in status.json
+
+Options:
+[1] Use file status (in_progress)
+[2] Use status.json status (pending)
+[3] Skip this issue
+[4] Skip all status-mismatch issues
+
+Enter choice (1-4):
+```
+
+---
+
+### Enhancement #9: Auto Project Research
+
+Automatically detects and uses research from `RLM/research/project/`:
+
+**Folder Structure**:
+```
+RLM/research/project/
+├── competitor-analysis.md
+├── market-research.md
+├── user-interviews.md
+├── technical-research.md
+└── requirements-notes.md
+```
+
+**Auto-Detection Behavior**:
+1. Discovery phase checks for `RLM/research/project/` folder
+2. If found, reads all markdown files
+3. Pre-fills PRD sections from research
+4. Reduces question rounds (answers already known)
+5. Asks user to confirm pre-filled answers
+
+**Priority Order**:
+1. Project research (`RLM/research/project/`)
+2. Previous RLM outputs (if re-running)
+3. Web research (if enabled)
+
+---
+
+### Enhancement #6: Integrated Review/Verify
+
+Review and verification integrated into implementation:
+
+**Per-Task Review Checklist** (Phase 5.1-5.7):
+- [ ] All acceptance criteria met
+- [ ] All tests pass (`npm test`)
+- [ ] Linting clean (`npm run lint`)
+- [ ] Type checking passes (`npm run build`)
+- [ ] No security issues
+- [ ] Constitution compliance
+- [ ] Design tokens used (if UI)
+
+**Automatic Feature Verification** (Phase 6.5):
+```
+When task completes:
+1. Check if all tasks for feature are done
+2. If yes, trigger feature verification
+3. Generate E2E tests from acceptance criteria
+4. Run tests (functional + accessibility)
+5. Create bug tasks if failures
+6. Mark feature as verified if passing
+```
+
+---
+
+### Enhancement #2: Auto-Detected Design Agent
+
+Automatic UI vs Non-UI project classification:
+
+**Detection Prompt** (`00-DETECT-PROJECT-TYPE.md`):
+- Analyzes PRD for UI indicators
+- Scores based on 10 UI indicators vs 10 Non-UI indicators
+- Sets `DESIGN_REQUIRED` flag in `cc-config.json`
+
+**UI Indicators** (+1 each):
+- Frontend, UI, user interface, web app, mobile app
+- Dashboard, screens, pages, forms, buttons
+- Visual, layout, design, responsive, CSS
+- User interaction, click, tap, navigation
+
+**Non-UI Indicators** (-1 each):
+- CLI, command line, terminal, API only
+- Backend, server, service, daemon, worker
+- Library, SDK, package, module
+- Data processing, ETL, pipeline, batch
+
+**Thresholds**:
+- Score ≥ 3: UI Project (DESIGN_REQUIRED = true)
+- Score ≤ -2: Non-UI Project (DESIGN_REQUIRED = false)
+- Between: Ask user for clarification
+
+---
+
+### Enhancement #4: Context Window Management
+
+Automatic checkpointing and smart truncation:
+
+**Checkpoint Thresholds**:
+| Threshold | Action |
+|-----------|--------|
+| 50% | Save checkpoint, log warning, continue |
+| 75% | Save checkpoint, alert user, suggest wrap-up |
+| 90% | Save checkpoint, complete current task ONLY, force pause |
+
+**Smart Truncation Tiers**:
+```
+TIER 1 (Never truncate):
+├─► Current task specification
+├─► Constitution (coding standards)
+├─► Active feature spec
+├─► Recent errors/decisions
+└─► Key decisions log
+
+TIER 2 (Summarize if needed):
+├─► Completed task summaries
+├─► Previous session context
+└─► Design tokens (keep references)
+
+TIER 3 (Truncate first):
+├─► Historical logs
+├─► Verbose tool outputs
+└─► Exploration context
+```
+
+**Phase Transition Protocol**:
+At 65% context with phase change detected:
+1. Continue with current context
+2. Reset context for next phase (recommended)
+3. Save checkpoint and pause
+
+---
+
+### Enhancement #5: Automated Modes for Non-CC Methods
+
+New `/rlm-full` command for standard prompts:
+
+```bash
+/rlm-full [idea]              # Start from scratch
+/rlm-full --from-prd          # Start from existing PRD
+/rlm-full --from-specs        # Start from existing specs
+/rlm-full resume              # Resume from checkpoint
+/rlm-full --auto              # Force AUTO mode
+/rlm-full --supervised        # Force SUPERVISED mode
+/rlm-full --manual            # Force MANUAL mode
+```
+
+**10-Phase Pipeline**:
+1. Project Detection → DESIGN_REQUIRED flag
+2. Discovery → PRD.md, constitution.md
+3. Design System → tokens, components (if UI)
+4. Specifications → Feature specs, architecture
+5. Feature Design → UI/UX specs (if UI)
+6. Tasks → Fine-grained tasks
+7. Implementation → TDD with review
+8. Quality → Design QA + Code Review + Tests
+9. Verification → E2E per feature
+10. Report → Final summary
+
+**State Management**:
+- Pipeline state saved to `RLM/progress/pipeline-state.json`
+- Resume capability at any phase
+- Error recovery with retry/skip options
+
+---
+
+### Enhancement #1: IDE/Copilot Feature Parity
+
+Shared instructions for all IDE agents:
+
+**New Files**:
+```
+RLM/templates/ide-agents/shared/
+├── rlm-core-instructions.md   # Core workflow instructions
+└── token-tracking.md          # Token estimation for IDEs
+```
+
+**IDE Token Estimation**:
+```json
+{
+  "estimation": {
+    "chars_per_token": 4,
+    "overhead_multiplier": 1.15,
+    "context_overhead": 2000
+  }
+}
+```
+
+**Formula**: `estimated_tokens = (character_count / 4) * 1.15 + context_overhead`
+
+**Supported IDEs**:
+- Cursor
+- Windsurf
+- Continue.dev
+- VS Code (with Copilot)
+- Generic IDE (estimation-based)
+
+---
+
+## New Commands (v2.6)
+
+| Command | Purpose |
+|---------|---------|
+| `/cc-debug` | Diagnose and fix state inconsistencies |
+| `/cc-debug quick` | Fast scan for common issues |
+| `/cc-debug --auto-fix` | Automatically fix safe issues |
+| `/rlm-full [idea]` | Full pipeline with standard prompts |
+
+---
+
+## Files Created (v2.6)
+
+| File | Purpose |
+|------|---------|
+| `RLM/progress/checkpoint.json` | Incremental task tracking |
+| `.claude/commands/cc-debug.md` | Debug/reconciliation command |
+| `RLM/research/project/README.md` | Project research documentation |
+| `RLM/prompts/00-DETECT-PROJECT-TYPE.md` | UI/Non-UI detection |
+| `RLM/prompts/00-FULL-PIPELINE.md` | Pipeline orchestration |
+| `.claude/commands/rlm-full.md` | Standard pipeline command |
+| `RLM/templates/ide-agents/shared/rlm-core-instructions.md` | IDE instructions |
+| `RLM/templates/ide-agents/shared/token-tracking.md` | IDE token tracking |
+
+---
+
+## Files Modified (v2.6)
+
+| File | Changes |
+|------|---------|
+| `RLM/progress/cc-config.json` | Added debug, research, design, context_management sections |
+| `RLM/prompts/03-CREATE-TASKS.md` | Added Phase 0 (checkpoint), Phase 8 (update checkpoint) |
+| `.claude/commands/cc-create-tasks.md` | Added checkpoint loading/saving |
+| `RLM/prompts/01-DISCOVER.md` | Added Phase 0.5 (research detection) |
+| `RLM/prompts/02-CREATE-SPECS.md` | Added Phase 1.5 (design detection) |
+| `RLM/prompts/04-IMPLEMENT-TASK.md` | Added Phase 5 (review), Phase 6.5 (verification) |
+| `.claude/commands/cc-implement.md` | Added integrated review and verification |
+| `RLM/prompts/05-IMPLEMENT-ALL.md` | Added Phase 4.6 (context management) |
+
+---
+
+## New Configuration Options (v2.6)
+
+Added to `RLM/progress/cc-config.json`:
+
+```json
+{
+  "version": "2.6",
+  "debug": {
+    "auto_fix_safe": true,
+    "archive_logs_after_days": 30,
+    "warn_on_stale_checkpoint_hours": 24,
+    "run_on_startup": false
+  },
+  "research": {
+    "project_research_path": "RLM/research/project",
+    "auto_detect": true,
+    "priority_order": ["project", "previous_outputs", "web"],
+    "confirm_prefilled_answers": true
+  },
+  "design": {
+    "auto_detect": true,
+    "ui_indicators_threshold": 3,
+    "non_ui_indicators_threshold": -2
+  },
+  "context_management": {
+    "auto_checkpoint": {
+      "enabled": true,
+      "thresholds": [0.5, 0.75, 0.9]
+    },
+    "smart_truncation": {
+      "enabled": true,
+      "start_at": 0.75
+    },
+    "phase_reset": {
+      "suggest_at": 0.6,
+      "force_at": 0.85
+    }
+  }
+}
+```
+
+---
+
+## Migration from v2.5
+
+No migration required. v2.6 is additive:
+- All v2.5 features continue to work
+- New checkpoint system initializes automatically
+- `/cc-debug` available for troubleshooting
+- IDE templates can be copied to any project
+- `/rlm-full` provides alternative to `/cc-full`
+
+**Recommended Actions**:
+1. Run `/cc-debug quick` to verify project state
+2. Review `cc-config.json` for new settings
+3. Place any existing research in `RLM/research/project/`
+
+---
+
 # v2.5 - Complete Pipeline Integration
 
-**Release Date**: December 2024
+**Release Date**: December 2025
 
 This release integrates design, verification, and quality phases into the complete `/cc-full` automation pipeline, creating a unified 9-phase workflow from idea to verified production code.
 

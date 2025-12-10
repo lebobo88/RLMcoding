@@ -1,0 +1,202 @@
+[
+  {
+    "id": "idea-001",
+    "subject": "Weathered barn doors with peeling paint",
+    "composition": "Close-up detail shot focusing on texture and patterns",
+    "lighting": "Side lighting during golden hour to emphasize texture",
+    "technique": "Use a macro lens or close-focus to capture paint details",
+    "locations": ["rural"]
+  },
+  {
+    "id": "idea-002",
+    "subject": "Morning mist over farm fields",
+    "composition": "Wide landscape with rule of thirds, horizon in lower third",
+    "lighting": "Early morning soft light with sun breaking through fog",
+    "technique": "Use a tripod and longer exposure for dreamy mist effect",
+    "locations": ["rural"]
+  },
+  {
+    "id": "idea-003",
+    "subject": "Lone tree silhouette against sunset sky",
+    "composition": "Center subject with dramatic sky filling the frame",
+    "lighting": "Backlit during sunset for strong silhouette",
+    "technique": "Expose for the sky to create pure black silhouette",
+    "locations": ["rural", "suburban"]
+  },
+  {
+    "id": "idea-004",
+    "subject": "Reflections in rain puddles",
+    "composition": "Low angle showing reflection with subject above",
+    "lighting": "Overcast for even lighting without harsh shadows",
+    "technique": "Get low to the ground, use live view for composition",
+    "locations": ["urban", "suburban"]
+  },
+  {
+    "id": "idea-005",
+    "subject": "Geometric patterns in modern architecture",
+    "composition": "Abstract composition emphasizing lines and shapes",
+    "lighting": "Midday harsh light creating strong shadows",
+    "technique": "Convert to black and white for maximum contrast",
+    "locations": ["urban"]
+  },
+  {
+    "id": "idea-006",
+    "subject": "Street vendor's hands at work",
+    "composition": "Tight crop on hands and their craft",
+    "lighting": "Available light, preferably window or shade",
+    "technique": "Use fast shutter speed to freeze motion",
+    "locations": ["urban"]
+  },
+  {
+    "id": "idea-007",
+    "subject": "Abandoned shopping cart in empty lot",
+    "composition": "Environmental portrait with negative space",
+    "lighting": "Blue hour for moody atmosphere",
+    "technique": "Long exposure to smooth any clouds",
+    "locations": ["suburban", "urban"]
+  },
+  {
+    "id": "idea-008",
+    "subject": "Wildflowers along country road",
+    "composition": "Leading line of road with flowers as foreground",
+    "lighting": "Golden hour warm side light",
+    "technique": "Use small aperture for deep focus front to back",
+    "locations": ["rural"]
+  },
+  {
+    "id": "idea-009",
+    "subject": "Neon signs reflected in windows",
+    "composition": "Double exposure effect through glass",
+    "lighting": "Night photography with ambient neon",
+    "technique": "Manual focus on the reflection layer",
+    "locations": ["urban"]
+  },
+  {
+    "id": "idea-010",
+    "subject": "Kids playing in sprinklers",
+    "composition": "Action shot with water droplets frozen",
+    "lighting": "Backlit by afternoon sun through water",
+    "technique": "High shutter speed (1/1000+), burst mode",
+    "locations": ["suburban"]
+  },
+  {
+    "id": "idea-011",
+    "subject": "Rows of mailboxes on country road",
+    "composition": "Repetition pattern with shallow depth of field",
+    "lighting": "Soft morning light",
+    "technique": "Wide aperture to isolate one mailbox",
+    "locations": ["rural", "suburban"]
+  },
+  {
+    "id": "idea-012",
+    "subject": "Steam rising from manhole covers",
+    "composition": "Street scene with steam as leading element",
+    "lighting": "Cold morning with backlight through steam",
+    "technique": "Underexpose slightly to make steam pop",
+    "locations": ["urban"]
+  },
+  {
+    "id": "idea-013",
+    "subject": "Rustic fence posts with barbed wire",
+    "composition": "Diagonal line through frame with bokeh background",
+    "lighting": "Rim lighting at sunrise/sunset",
+    "technique": "Focus on wire detail with wide aperture",
+    "locations": ["rural"]
+  },
+  {
+    "id": "idea-014",
+    "subject": "Suburban homes in symmetrical rows",
+    "composition": "Drone or elevated perspective for patterns",
+    "lighting": "Midday for even exposure across rooftops",
+    "technique": "Use a longer lens to compress perspective",
+    "locations": ["suburban"]
+  },
+  {
+    "id": "idea-015",
+    "subject": "Fire hydrant with unique character",
+    "composition": "Environmental portrait at street level",
+    "lighting": "Side light to show texture and wear",
+    "technique": "Include surrounding context for story",
+    "locations": ["urban", "suburban"]
+  },
+  {
+    "id": "idea-016",
+    "subject": "Laundry hanging on clothesline",
+    "composition": "Colorful patterns against blue sky",
+    "lighting": "Bright sunny day with blue sky backdrop",
+    "technique": "Slightly underexpose sky for saturation",
+    "locations": ["rural", "suburban"]
+  },
+  {
+    "id": "idea-017",
+    "subject": "Shadows of pedestrians on sidewalk",
+    "composition": "Graphic shadow patterns only, no people",
+    "lighting": "Low sun angle for long dramatic shadows",
+    "technique": "High contrast processing, crop to abstract",
+    "locations": ["urban"]
+  },
+  {
+    "id": "idea-018",
+    "subject": "Old gas station pumps",
+    "composition": "Nostalgic environmental portrait",
+    "lighting": "Overcast for vintage feel",
+    "technique": "Add slight grain and muted colors in post",
+    "locations": ["rural", "suburban"]
+  },
+  {
+    "id": "idea-019",
+    "subject": "Birds on telephone wires",
+    "composition": "Minimalist with negative space sky",
+    "lighting": "Any time, silhouette against bright sky",
+    "technique": "Wait for interesting bird arrangement",
+    "locations": ["rural", "suburban", "urban"]
+  },
+  {
+    "id": "idea-020",
+    "subject": "Graffiti art on alley walls",
+    "composition": "Full frame to capture entire piece",
+    "lighting": "Shade or overcast to avoid glare",
+    "technique": "Correct perspective for straight lines",
+    "locations": ["urban"]
+  },
+  {
+    "id": "idea-021",
+    "subject": "Farmer's market produce displays",
+    "composition": "Overhead flat lay of colorful arrangement",
+    "lighting": "Open shade or morning market light",
+    "technique": "Use a step ladder for true overhead angle",
+    "locations": ["suburban", "urban"]
+  },
+  {
+    "id": "idea-022",
+    "subject": "Window light portrait in cafe",
+    "composition": "Subject by window with soft falloff",
+    "lighting": "Large window as main light source",
+    "technique": "Expose for highlights, let shadows go deep",
+    "locations": ["urban", "suburban"]
+  },
+  {
+    "id": "idea-023",
+    "subject": "Tractor in golden wheat field",
+    "composition": "Wide environmental with tractor as focal point",
+    "lighting": "Golden hour with warm tones",
+    "technique": "Use polarizer to deepen blue sky",
+    "locations": ["rural"]
+  },
+  {
+    "id": "idea-024",
+    "subject": "Ice cream truck with waiting children",
+    "composition": "Documentary style candid moment",
+    "lighting": "Afternoon summer light",
+    "technique": "Pre-focus and wait for decisive moment",
+    "locations": ["suburban"]
+  },
+  {
+    "id": "idea-025",
+    "subject": "Stacked firewood patterns",
+    "composition": "Abstract texture filling entire frame",
+    "lighting": "Side light to emphasize circular patterns",
+    "technique": "Get close for abstract, back up for context",
+    "locations": ["rural", "suburban"]
+  }
+]

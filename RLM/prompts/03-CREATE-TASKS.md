@@ -9,6 +9,110 @@ You are the RLM Task Planner. Your job is to decompose features into small, focu
 
 ---
 
+## Phase 0: Load Checkpoint (Incremental Detection)
+
+Before creating tasks, check for existing work to avoid overwriting.
+
+### Step 0.1: Read Checkpoint
+
+Read `RLM/progress/checkpoint.json`:
+
+```json
+{
+  "version": "1.0",
+  "project_id": null,
+  "checkpoints": [
+    {
+      "timestamp": "2024-12-09T10:00:00Z",
+      "generation": 1,
+      "features_added": ["FTR-001", "FTR-002"],
+      "tasks_created": ["TASK-001", "TASK-002", "TASK-003"],
+      "task_range": { "start": 1, "end": 3 }
+    }
+  ],
+  "current_generation": 1,
+  "all_features": ["FTR-001", "FTR-002"],
+  "all_tasks": ["TASK-001", "TASK-002", "TASK-003"],
+  "last_updated": "2024-12-09T10:00:00Z"
+}
+```
+
+### Step 0.2: Scan Existing Tasks
+
+Scan `RLM/tasks/active/` and `RLM/tasks/completed/` for existing task files:
+
+```
+Existing Tasks Found:
+- RLM/tasks/active/TASK-001.md → FTR-001
+- RLM/tasks/active/TASK-002.md → FTR-001
+- RLM/tasks/completed/TASK-003.md → FTR-001
+```
+
+### Step 0.3: Compare Features
+
+Compare features in `RLM/specs/features/*/spec.md` with `all_features` in checkpoint:
+
+| Feature | In Checkpoint | In Specs | Action |
+|---------|---------------|----------|--------|
+| FTR-001 | ✓ | ✓ | Skip (already has tasks) |
+| FTR-002 | ✓ | ✓ | Skip (already has tasks) |
+| FTR-003 | ✗ | ✓ | **CREATE NEW TASKS** |
+| FTR-004 | ✗ | ✓ | **CREATE NEW TASKS** |
+
+### Step 0.4: Report Detection Results
+
+```
+## Incremental Task Detection
+
+### Existing Work Found:
+- Generation: 1
+- Features with tasks: FTR-001, FTR-002
+- Existing tasks: TASK-001 through TASK-003
+
+### New Features Detected:
+- FTR-003: [Feature Name] (needs tasks)
+- FTR-004: [Feature Name] (needs tasks)
+
+### Action Plan:
+- Will create tasks for: FTR-003, FTR-004
+- Will NOT overwrite: FTR-001, FTR-002 tasks
+- Next task ID: TASK-004
+- New generation: 2
+```
+
+### Step 0.5: Determine Next IDs
+
+Calculate the next available task ID:
+- If checkpoint exists: `max(all_tasks) + 1`
+- If no checkpoint: Start at TASK-001
+
+```
+Next available ID: TASK-004
+Generation for new tasks: 2
+```
+
+### Step 0.6: User Confirmation
+
+Ask the user:
+> "I found existing tasks (generation 1) for FTR-001, FTR-002.
+>
+> I will create NEW tasks for: FTR-003, FTR-004
+> Starting at: TASK-004
+>
+> Options:
+> 1. **Proceed** - Create tasks for new features only (recommended)
+> 2. **Regenerate all** - Delete all tasks and start fresh (WARNING: destructive)
+> 3. **Cancel** - Exit without changes
+>
+> Choose an option (1/2/3):"
+
+If user chooses "Regenerate all":
+- Warn: "This will delete all existing tasks. Are you sure? (yes/no)"
+- If confirmed, reset checkpoint and delete task files
+- Start task numbering from TASK-001
+
+---
+
 ## Phase 1: Load Specifications
 
 Read these files:
@@ -131,6 +235,7 @@ Use this format for each task:
 - **Priority**: critical | high | medium | low
 - **Estimated Effort**: 1-2 hours | 2-4 hours | 4+ hours
 - **Dependencies**: TASK-YYY, TASK-ZZZ (or "None")
+- **Generation**: [Number] (from checkpoint, tracks incremental additions)
 
 ## Description
 [Clear, concise description of what needs to be done]
@@ -282,6 +387,74 @@ Update `RLM/progress/status.json`:
 
 ---
 
+## Phase 8: Update Checkpoint
+
+After all tasks are created, update `RLM/progress/checkpoint.json`:
+
+### Step 8.1: Create Checkpoint Entry
+
+Add a new checkpoint entry for this generation:
+
+```json
+{
+  "timestamp": "[ISO-8601 timestamp]",
+  "generation": [new_generation_number],
+  "features_added": ["FTR-003", "FTR-004"],
+  "tasks_created": ["TASK-004", "TASK-005", "TASK-006", "TASK-007"],
+  "task_range": { "start": 4, "end": 7 }
+}
+```
+
+### Step 8.2: Update Checkpoint File
+
+Update the full `RLM/progress/checkpoint.json`:
+
+```json
+{
+  "version": "1.0",
+  "project_id": "[project_name]",
+  "description": "Tracks feature and task creation checkpoints",
+  "checkpoints": [
+    { /* previous checkpoint entries */ },
+    {
+      "timestamp": "2024-12-09T14:00:00Z",
+      "generation": 2,
+      "features_added": ["FTR-003", "FTR-004"],
+      "tasks_created": ["TASK-004", "TASK-005", "TASK-006", "TASK-007"],
+      "task_range": { "start": 4, "end": 7 }
+    }
+  ],
+  "current_generation": 2,
+  "all_features": ["FTR-001", "FTR-002", "FTR-003", "FTR-004"],
+  "all_tasks": ["TASK-001", "TASK-002", "TASK-003", "TASK-004", "TASK-005", "TASK-006", "TASK-007"],
+  "last_updated": "2024-12-09T14:00:00Z"
+}
+```
+
+### Step 8.3: Log Checkpoint Update
+
+Report checkpoint creation:
+
+```
+## Checkpoint Updated
+
+### Generation 2 Created:
+- Features added: FTR-003, FTR-004
+- Tasks created: TASK-004 through TASK-007 (4 tasks)
+- Total tasks in project: 7
+- Total features: 4
+
+### Checkpoint History:
+| Gen | Date | Features | Tasks |
+|-----|------|----------|-------|
+| 1 | 2024-12-09 | FTR-001, FTR-002 | TASK-001 - TASK-003 |
+| 2 | 2024-12-09 | FTR-003, FTR-004 | TASK-004 - TASK-007 |
+
+Next incremental run will start at: TASK-008
+```
+
+---
+
 ## Notes for AI
 
 - Every task must have clear acceptance criteria
@@ -291,3 +464,7 @@ Update `RLM/progress/status.json`:
 - Include estimated effort to help with planning
 - Mark critical path tasks clearly
 - Group related tasks logically
+- **Always check checkpoint before creating tasks** (Phase 0)
+- **Never overwrite existing tasks** unless user explicitly confirms regeneration
+- **Update checkpoint after task creation** (Phase 8) to track generations
+- Include generation number in each task's metadata

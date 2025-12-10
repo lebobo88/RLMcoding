@@ -1,38 +1,39 @@
-# RLM Quick Reference (v2.5)
+# RLM Quick Reference (v2.6)
 
 ## Complete Workflow Diagram
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
-│                        RLM PIPELINE (v2.5)                                  │
+│                        RLM 9-PHASE PIPELINE (v2.6)                          │
 ├────────────────────────────────────────────────────────────────────────────┤
 │                                                                            │
 │  PATH 1: FROM ZERO              PATH 2: FROM PRD                           │
 │  /cc-full [idea]                /cc-full --from-prd                        │
+│  /rlm-full [idea]               /rlm-full --from-prd                       │
 │       │                              │                                     │
 │       ▼                              │                                     │
 │  Phase 1: DISCOVER ◄─────────────────┘                                     │
-│       │                                                                    │
+│       │   (Auto-detects research in RLM/research/project/)                 │
 │       ▼                                                                    │
-│  Phase 2: DESIGN SYSTEM ─────► /cc-design system                           │
-│       │                                                                    │
+│  Phase 2: DESIGN SYSTEM ─────► /cc-design system (if UI)                   │
+│       │   (Auto-detected: UI vs Non-UI classification)                     │
 │       ▼                                                                    │
 │  Phase 3: SPECS ─────────────► /cc-create-specs                            │
 │       │                                                                    │
 │       ▼                                                                    │
-│  Phase 4: FEATURE DESIGN ────► /cc-design feature FTR-XXX                  │
+│  Phase 4: FEATURE DESIGN ────► /cc-design feature FTR-XXX (if UI)          │
 │       │                                                                    │
 │       ▼                                                                    │
-│  Phase 5: TASKS ─────────────► /cc-create-tasks                            │
+│  Phase 5: TASKS ─────────────► /cc-create-tasks (checkpoint system)        │
 │       │                                                                    │
 │       ▼                                                                    │
-│  Phase 6: IMPLEMENT ─────────► /cc-implement all (parallel)                │
-│       │                                                                    │
+│  Phase 6: IMPLEMENT ─────────► /cc-implement all (parallel + progress)     │
+│       │   (Integrated review per task, 5-step progress reporting)          │
 │       ▼                                                                    │
 │  Phase 7: QUALITY ───────────► /cc-design qa + /cc-review + /cc-test       │
 │       │                                                                    │
 │       ▼                                                                    │
-│  Phase 8: VERIFY ────────────► /cc-verify FTR-XXX                          │
+│  Phase 8: VERIFY ────────────► /cc-verify FTR-XXX (auto-triggered)         │
 │       │                                                                    │
 │       ▼                                                                    │
 │  Phase 9: REPORT                                                           │
@@ -40,9 +41,9 @@
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Commands (Claude Code)
+## Commands
 
-### Standard Commands
+### Standard Commands (Any IDE)
 
 | Command | Purpose | Prompt File |
 |---------|---------|-------------|
@@ -53,7 +54,7 @@
 | `/implement all` | Implement all tasks | `05-IMPLEMENT-ALL.md` |
 | `/implement resume` | Resume previous session | `06-RESUME.md` |
 
-### Enhanced Commands (v2.5)
+### Enhanced Commands (Claude Code v2.6)
 
 | Command | Phase | Purpose |
 |---------|-------|---------|
@@ -70,6 +71,17 @@
 | `/cc-test` | 7 | Testing with coverage |
 | `/cc-verify FTR-XXX` | 8 | E2E feature verification |
 
+### New Commands (v2.6)
+
+| Command | Purpose |
+|---------|---------|
+| `/cc-debug` | Full diagnostic scan and reconciliation |
+| `/cc-debug quick` | Fast scan for common issues |
+| `/cc-debug --auto-fix` | Auto-fix safe issues |
+| `/rlm-full [idea]` | Standard prompt pipeline (non-CC) |
+| `/rlm-full --from-prd` | Start standard pipeline from PRD |
+| `/rlm-full resume` | Resume standard pipeline |
+
 ## For Other IDEs
 
 Copy prompt or tell AI:
@@ -85,28 +97,29 @@ Read RLM/prompts/[prompt-name].md and follow it
 | **SUPERVISED** | Guided | Key decisions |
 | **MANUAL** | Step-by-step | Every action |
 
-## Sub-Agents (v2.5)
+## Sub-Agents
 
-| Agent | Purpose | Used In |
-|-------|---------|---------|
-| Research | Web research, competitors | Phase 1 |
-| Architect | Tech decisions, ADRs | Phase 1, 3 |
-| Designer | Design system, UI/UX specs | Phase 2, 4, 7 |
-| Coder | TDD implementation | Phase 6 |
-| Tester | Test coverage | Phase 7 |
-| Reviewer | Code review, security | Phase 7 |
-| Verifier | E2E tests, accessibility | Phase 8 |
+| Agent | Purpose | Phase |
+|-------|---------|-------|
+| Research | Web research, competitors | 1 |
+| Architect | Tech decisions, ADRs | 1, 3 |
+| Designer | Design system, UI/UX specs | 2, 4, 7 |
+| Coder | TDD implementation | 6 |
+| Tester | Test coverage | 7 |
+| Reviewer | Code review, security | 7 |
+| Verifier | E2E tests, accessibility | 8 |
 
 ## Key Directories
 
 | Directory | Contents |
 |-----------|----------|
-| `RLM/prompts/` | Workflow prompts (copy to AI) |
+| `RLM/prompts/` | Workflow prompts |
 | `RLM/specs/` | PRD, constitution, feature specs |
 | `RLM/specs/design/` | Design system, tokens, components |
 | `RLM/tasks/active/` | Pending tasks |
 | `RLM/tasks/completed/` | Done tasks |
-| `RLM/progress/` | Status, logs, QA reports, verification |
+| `RLM/progress/` | Status, checkpoint, logs, config |
+| `RLM/research/project/` | Auto-detected project research |
 
 ## Key Files
 
@@ -118,6 +131,8 @@ Read RLM/prompts/[prompt-name].md and follow it
 | `RLM/specs/design/design-system.md` | Design system |
 | `RLM/tasks/INDEX.md` | Task overview |
 | `RLM/progress/status.json` | Current state |
+| `RLM/progress/checkpoint.json` | Incremental tracking |
+| `RLM/progress/cc-config.json` | Configuration |
 
 ## Task Lifecycle
 
@@ -126,7 +141,7 @@ pending → in_progress → completed
                     ↘ blocked
 ```
 
-## Feature Lifecycle (v2.5)
+## Feature Lifecycle
 
 ```
 in_progress → verification-pending → verified
@@ -136,18 +151,34 @@ in_progress → verification-pending → verified
               (fix bugs, retry)
 ```
 
-## TDD Cycle
+## 5-Step Progress Model (v2.6)
 
 ```
-1. Write Test (Red)
-2. Run Test (Fails)
-3. Write Code (Green)
-4. Run Test (Passes)
-5. Refactor
-6. Repeat
+Step 1: Load specs and context      (0-20%)
+Step 2: Write tests (TDD Red)       (20-40%)
+Step 3: Implement code (TDD Green)  (40-70%)
+Step 4: Run tests and fix           (70-85%)
+Step 5: Quality checks and review   (85-100%)
 ```
 
-## Output by Phase (v2.5)
+## Context Thresholds
+
+| Threshold | Action |
+|-----------|--------|
+| 50% | Save checkpoint, log warning, continue |
+| 75% | Save checkpoint, suggest wrap-up |
+| 90% | Save checkpoint, complete current task only, pause |
+
+## Token Efficiency Ratings
+
+| Rating | Tokens/Task | Interpretation |
+|--------|-------------|----------------|
+| Excellent | < 10,000 | Simple task |
+| Good | 10-20,000 | Normal complexity |
+| Fair | 20-35,000 | Complex or rework |
+| Poor | > 35,000 | Consider splitting |
+
+## Output by Phase
 
 | Phase | Command | Creates |
 |-------|---------|---------|
@@ -155,11 +186,26 @@ in_progress → verification-pending → verified
 | 2. Design | `/cc-design system` | design-system.md, tokens/ |
 | 3. Specs | `/cc-create-specs` | features/, architecture/ |
 | 4. Feature Design | `/cc-design feature` | FTR-XXX/design-spec.md |
-| 5. Tasks | `/cc-create-tasks` | tasks/active/*.md, INDEX.md |
+| 5. Tasks | `/cc-create-tasks` | tasks/active/*.md, checkpoint.json |
 | 6. Implement | `/cc-implement` | Source code, tests |
 | 7. Quality | `/cc-design qa` | design-qa/, reviews/ |
 | 8. Verify | `/cc-verify` | verification/, e2e tests |
 | 9. Report | auto | progress/reports/ |
+
+## Debug Issues Detected
+
+| Issue Type | Description |
+|------------|-------------|
+| `orphan-tasks` | Tasks with no parent feature |
+| `missing-tasks` | Features with incomplete coverage |
+| `status-mismatch` | File status vs status.json |
+| `checkpoint-drift` | Checkpoint out of sync |
+| `broken-deps` | Non-existent dependencies |
+| `duplicate-ids` | Same ID used twice |
+| `missing-specs` | Tasks referencing missing specs |
+| `stale-progress` | Progress files > 24h old |
+| `blocked-loop` | Circular blocking dependencies |
+| `incomplete-metadata` | Missing required fields |
 
 ## Quick Troubleshooting
 
@@ -167,10 +213,11 @@ in_progress → verification-pending → verified
 |-------|----------|
 | AI doesn't know RLM | "Read RLM/START-HERE.md" |
 | Missing PRD | Run `/cc-discover` first |
-| Missing design system | Run `/cc-design system` first |
-| Can't resume | Check status.json |
-| Tasks too big | Request finer granularity |
-| Design QA failing | Fix issues, run `/cc-design qa` again |
+| Missing design system | Run `/cc-design system` |
+| Can't resume | Check status.json or checkpoint.json |
+| State inconsistent | Run `/cc-debug quick` |
+| Context overflow | Session auto-saved, use `/implement resume` |
+| Tasks overwritten | Use checkpoint system (auto in v2.6) |
 
 ## Document Locations
 
@@ -181,14 +228,11 @@ Specifications:
   RLM/specs/features/FTR-XXX/spec.md
   RLM/specs/features/FTR-XXX/design-spec.md
   RLM/specs/architecture/overview.md
-  RLM/specs/epics/breakdown.md
 
-Design (v2.5):
+Design:
   RLM/specs/design/design-system.md
   RLM/specs/design/tokens/tokens.json
-  RLM/specs/design/tokens/[framework exports]
   RLM/specs/design/components/[name].md
-  RLM/specs/design/research/
 
 Tasks:
   RLM/tasks/active/TASK-XXX.md
@@ -197,10 +241,14 @@ Tasks:
 
 Progress:
   RLM/progress/status.json
-  RLM/progress/logs/TASK-XXX.md
-  RLM/progress/design-qa/
+  RLM/progress/checkpoint.json
+  RLM/progress/cc-config.json
+  RLM/progress/token-usage/
+  RLM/progress/bundles/
   RLM/progress/verification/
-  RLM/progress/reviews/
+
+Research:
+  RLM/research/project/
 ```
 
 ## Design Quick Reference
@@ -231,7 +279,7 @@ Disabled ← Loading ← Error ← Empty
 | Performance | 12 | 11+ |
 | **Total** | **117** | **≥105** |
 
-## Verification Tests (v2.5)
+## Verification Tests
 
 | Type | Tool | Checks |
 |------|------|--------|
@@ -241,9 +289,18 @@ Disabled ← Loading ← Error ← Empty
 
 ## Skip Options for /cc-full
 
-```
+```bash
 --skip-design-research    # Skip UX research phase
 --skip-feature-design     # Skip feature design specs
 --skip-design-qa          # Skip design QA checks
 --skip-verification       # Skip E2E verification
+```
+
+## Configuration Options
+
+```bash
+/cc-config parallel_limit 8          # Concurrent sub-agents
+/cc-config automation_level auto     # Full autonomy
+/cc-config reporting.mode both       # realtime + silent
+/cc-config design.auto_detect true   # Auto UI/Non-UI
 ```

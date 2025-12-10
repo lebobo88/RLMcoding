@@ -14,11 +14,47 @@ This command automatically loads:
 ### Step 1: Verify Specs Exist
 ```
 Check: RLM/specs/features/ has content?
-├─► YES: Proceed to Step 2
+├─► YES: Proceed to Step 1.5
 └─► NO: Error - "No feature specs found. Run /cc-create-specs first."
 ```
 
-### Step 2: Load All Features
+### Step 1.5: Load Checkpoint (Incremental Detection)
+
+Check for existing work to avoid overwriting:
+
+```
+Read: RLM/progress/checkpoint.json
+
+If checkpoint exists:
+├─► Load all_features list
+├─► Load all_tasks list
+├─► Determine current_generation
+└─► Calculate next_task_id
+
+Compare features in specs vs checkpoint:
+├─► Features in both: SKIP (already have tasks)
+├─► Features only in specs: CREATE TASKS (new features)
+└─► Features only in checkpoint: WARN (orphaned tasks)
+
+Report:
+┌─────────────────────────────────────────────────────┐
+│ Incremental Task Detection                          │
+├─────────────────────────────────────────────────────┤
+│ Existing: FTR-001, FTR-002 (6 tasks, gen 1)         │
+│ New:      FTR-003, FTR-004 (need tasks)             │
+│ Next ID:  TASK-007                                  │
+│ New Gen:  2                                         │
+├─────────────────────────────────────────────────────┤
+│ Options:                                            │
+│ 1. Proceed - Create tasks for new features only     │
+│ 2. Regenerate - Delete all and start fresh          │
+│ 3. Cancel                                           │
+└─────────────────────────────────────────────────────┘
+```
+
+If no checkpoint exists, create initial checkpoint and start at TASK-001.
+
+### Step 2: Load All Features (Filtered)
 Read all feature specifications:
 ```bash
 RLM/specs/features/FTR-*/specification.md
@@ -58,6 +94,7 @@ status: pending
 priority: [1-5]
 estimated_tokens: [rough estimate]
 dependencies: [TASK-YYY, TASK-ZZZ]
+generation: [checkpoint generation number]
 ---
 
 # TASK-XXX: [Title]
@@ -106,7 +143,40 @@ Create `RLM/tasks/TASKS-SUMMARY.md`:
 - Recommended parallel limit: X
 ```
 
-### Step 7: Auto-Continue Option
+### Step 7: Update Checkpoint
+
+After task creation, update `RLM/progress/checkpoint.json`:
+
+```
+New checkpoint entry:
+{
+  "timestamp": "[now]",
+  "generation": [incremented],
+  "features_added": ["FTR-003", "FTR-004"],
+  "tasks_created": ["TASK-007", "TASK-008", ...],
+  "task_range": { "start": 7, "end": 12 }
+}
+
+Update totals:
+- current_generation: [incremented]
+- all_features: [append new features]
+- all_tasks: [append new tasks]
+- last_updated: [now]
+```
+
+Report checkpoint update:
+```
+┌─────────────────────────────────────────────────────┐
+│ Checkpoint Updated - Generation 2                   │
+├─────────────────────────────────────────────────────┤
+│ Features added: FTR-003, FTR-004                    │
+│ Tasks created:  TASK-007 through TASK-012 (6 new)   │
+│ Total tasks:    12                                  │
+│ Next run will start at: TASK-013                    │
+└─────────────────────────────────────────────────────┘
+```
+
+### Step 8: Auto-Continue Option
 Ask user:
 ```
 XX tasks created successfully. Start implementation?

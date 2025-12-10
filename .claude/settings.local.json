@@ -20,7 +20,15 @@
       "Bash(git commit:*)",
       "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\docs\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\docs\")",
       "Bash(if not exist \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\fixtures\" mkdir \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\fixtures\")",
-      "Bash(if not exist \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\features\" mkdir \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\features\")"
+      "Bash(if not exist \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\features\" mkdir \"C:\\AiAppDeployments\\RLMcoding\\rlm-app\\tests\\e2e\\features\")",
+      "Bash(tree:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\specs\\research\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\specs\\research\")",
+      "Bash(npm run lint:*)",
+      "Bash(npx playwright:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\research\\project\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\research\\project\")"
     ],
     "deny": [],
     "ask": []

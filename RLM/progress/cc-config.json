@@ -1,15 +1,15 @@
 {
-  "version": "2.2",
+  "version": "2.6",
   "description": "Claude Code Enhanced Workflow Configuration",
 
   "parallel": {
-    "limit": 5,
+    "limit": 10,
     "max_limit": 10,
     "description": "Maximum concurrent sub-agent spawns"
   },
 
   "automation": {
-    "level": "supervised",
+    "level": "auto",
     "options": ["auto", "supervised", "manual"],
     "description": "Default automation level for /cc-full and /cc-implement all"
   },
@@ -30,6 +30,31 @@
     "description": "Automatic token usage tracking and warnings"
   },
 
+  "reporting": {
+    "mode": "both",
+    "options": ["realtime", "silent", "both"],
+    "realtime": {
+      "show_token_count": true,
+      "show_progress_bar": true,
+      "update_frequency": "per_step",
+      "frequency_options": ["per_step", "per_task", "per_batch"]
+    },
+    "logging": {
+      "enabled": true,
+      "granularity": "detailed",
+      "granularity_options": ["summary", "detailed"],
+      "log_path": "RLM/progress/token-usage/"
+    },
+    "progress_steps": {
+      "1_loading": { "name": "Loading context", "range": [0, 10] },
+      "2_testing": { "name": "Writing tests", "range": [10, 40] },
+      "3_implementing": { "name": "Implementing code", "range": [40, 70] },
+      "4_running": { "name": "Running tests", "range": [70, 85] },
+      "5_quality": { "name": "Quality checks", "range": [85, 100] }
+    },
+    "description": "Progress and token reporting during implementation"
+  },
+
   "error_handling": {
     "auto_retry": false,
     "max_retries": 2,
@@ -41,5 +66,76 @@
     "verbose": false,
     "show_sub_agent_progress": true,
     "description": "Output verbosity settings"
+  },
+
+  "debug": {
+    "auto_fix_safe": true,
+    "archive_logs_after_days": 30,
+    "warn_on_stale_checkpoint_hours": 24,
+    "max_dependency_depth": 10,
+    "run_on_startup": false,
+    "description": "Debug and reconciliation settings for /cc-debug"
+  },
+
+  "research": {
+    "project_research_path": "RLM/research/project",
+    "auto_detect": true,
+    "priority_order": ["project", "previous_outputs", "web"],
+    "supported_extensions": [".md", ".txt", ".pdf", ".json", ".csv", ".yaml", ".png", ".jpg", ".svg"],
+    "skip_questions_when_answered": true,
+    "confirm_prefilled_answers": true,
+    "description": "Auto-detection settings for project research folder"
+  },
+
+  "design": {
+    "auto_detect": true,
+    "design_required": null,
+    "detection_score": null,
+    "detection_method": null,
+    "ui_type": null,
+    "force_enabled": false,
+    "force_disabled": false,
+    "ui_indicators_threshold": 3,
+    "non_ui_indicators_threshold": -2,
+    "description": "Auto-detection settings for design agent integration"
+  },
+
+  "context_management": {
+    "auto_checkpoint": {
+      "enabled": true,
+      "thresholds": [0.5, 0.75, 0.9],
+      "save_path": "RLM/progress/bundles/"
+    },
+    "smart_truncation": {
+      "enabled": true,
+      "start_at": 0.75,
+      "preserve_tiers": [1],
+      "archive_path": "RLM/progress/context-archive/"
+    },
+    "phase_reset": {
+      "enabled": true,
+      "suggest_at": 0.6,
+      "force_at": 0.85
+    },
+    "context_tiers": {
+      "tier1_never_truncate": [
+        "current_task_spec",
+        "constitution",
+        "active_feature_spec",
+        "recent_errors",
+        "key_decisions"
+      ],
+      "tier2_summarize_if_needed": [
+        "completed_task_summaries",
+        "previous_session_context",
+        "design_token_details"
+      ],
+      "tier3_truncate_first": [
+        "historical_logs",
+        "verbose_tool_outputs",
+        "exploration_context"
+      ]
+    },
+    "description": "Intelligent context window management with checkpointing and truncation"
   }
 }

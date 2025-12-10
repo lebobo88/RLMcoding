@@ -108,6 +108,35 @@ After sub-agent completes:
 2. Check for any reported blockers
 3. Update task status
 
+### Step 4.5: Integrated Review (Per Task)
+
+After implementation, run review checklist automatically:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ 📋 Quick Review: TASK-XXX                                       │
+├─────────────────────────────────────────────────────────────────┤
+│ ✓ Tests passing:     12/12                                      │
+│ ✓ Linting:           Clean                                      │
+│ ✓ Type checking:     No errors                                  │
+│ ✓ Security:          No issues                                  │
+│ ✓ Constitution:      Compliant                                  │
+│ ✓ Design tokens:     Used correctly (if DESIGN_REQUIRED)        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**If any issues found:**
+1. Sub-agent fixes issues automatically (AUTO mode)
+2. Report to user for approval (SUPERVISED mode)
+3. Log fixes made to progress log
+
+**Review Checklist:**
+- [ ] No hardcoded values (use design tokens)
+- [ ] All 8 component states (if UI component)
+- [ ] Error handling present
+- [ ] Functions < 50 lines
+- [ ] Tests cover edge cases
+
 ### Step 5: Update Progress
 Move completed task:
 ```
@@ -125,8 +154,175 @@ Update `RLM/progress/status.json`:
 
 Log to `RLM/progress/logs/YYYY-MM-DD.md`
 
-### Step 6: Report Token Usage
-Log implementation session metrics.
+### Step 5.5: Feature Verification (Automatic)
+
+After updating progress, check if the completed task was the LAST task for its feature:
+
+```
+Check Feature Completion:
+├─► Get parent feature ID (FTR-XXX) from task metadata
+├─► Count tasks for FTR-XXX: active=0, blocked=0, completed=5
+├─► If all tasks completed → Trigger automatic verification
+└─► If tasks remaining → Continue to next task
+```
+
+**When Feature Completes:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ 🎉 Feature FTR-XXX Complete - Triggering Verification           │
+├─────────────────────────────────────────────────────────────────┤
+│ All 5 tasks implemented. Running verification suite...          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Verification Steps:**
+1. Update feature status: `verification-pending`
+2. Generate E2E tests from acceptance criteria
+3. Run functional tests (Playwright)
+4. Run accessibility tests (axe-core, if DESIGN_REQUIRED)
+5. Run visual regression (if configured)
+
+**Verification Results:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ ✅ Feature FTR-XXX VERIFIED                                     │
+├─────────────────────────────────────────────────────────────────┤
+│ Functional:     12/12 passed                                    │
+│ Accessibility:  8/8 passed                                      │
+│ Visual:         No changes detected                             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+OR
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ ❌ Feature FTR-XXX VERIFICATION FAILED                          │
+├─────────────────────────────────────────────────────────────────┤
+│ Functional:     10/12 passed (2 failures)                       │
+│ Bug tasks created: TASK-XXX-BUG-001, TASK-XXX-BUG-002          │
+│ Feature blocked until bugs fixed.                               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**On Failure:**
+- Create bug tasks in `RLM/tasks/active/`
+- Set feature status to `verification-failed`
+- Continue with other features
+- Re-verify automatically when bug tasks complete
+
+### Step 6: Report Progress & Token Usage
+
+#### Real-Time Progress (if reporting.mode is "realtime" or "both")
+
+During each task, output progress updates at each step:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 TASK-XXX: [Task Title]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Progress: [████████░░░░░░░░░░░░] 40% (Step 2/5: Writing tests)
+
+Token Usage This Task:
+  Input:  2,450 tokens
+  Output: 1,230 tokens
+  Total:  3,680 tokens
+
+Session Total: 15,420 / 100,000 tokens (15.4%)
+
+⏱️  Elapsed: 3m 24s | Est. Remaining: 5m 10s
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+#### 5-Step Progress Model
+
+| Step | Name | Range | Description |
+|------|------|-------|-------------|
+| 1 | Loading context | 0-10% | Read task, feature spec, constitution |
+| 2 | Writing tests | 10-40% | Create test file, write test cases |
+| 3 | Implementing code | 40-70% | Write implementation to pass tests |
+| 4 | Running tests | 70-85% | Execute tests, verify all pass |
+| 5 | Quality checks | 85-100% | Lint, type-check, security review |
+
+#### Silent Logging (Always Active)
+
+After each step, append to session log file:
+
+File: `RLM/progress/token-usage/session-YYYY-MM-DD.json`
+
+```json
+{
+  "session_id": "SESSION-2024-12-09-001",
+  "started_at": "2024-12-09T10:00:00Z",
+  "entries": [
+    {
+      "timestamp": "2024-12-09T10:05:00Z",
+      "task": "TASK-XXX",
+      "step": "writing_tests",
+      "step_number": 2,
+      "percentage": 40,
+      "tokens": { "input": 1200, "output": 450 },
+      "cumulative": { "input": 5000, "output": 2100 },
+      "elapsed_ms": 45000,
+      "notes": "4 tests written"
+    }
+  ],
+  "summary": {
+    "total_tokens": 0,
+    "tasks_completed": 0,
+    "avg_tokens_per_task": 0
+  }
+}
+```
+
+#### Task Completion Report
+
+After each task completes:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ TASK-XXX COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Duration: 8m 32s
+Files Created: 2 | Modified: 1
+Tests Added: 4 (12 assertions)
+
+Token Usage:
+  This Task:  8,450 tokens
+  Session:   23,890 tokens (23.9%)
+
+Next: TASK-YYY - [Title]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+#### Session Summary (at end of all tasks or pause)
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📈 SESSION SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tasks Completed: 5 of 8
+Tasks Blocked: 1
+Duration: 42m 15s
+
+Token Usage:
+  Total:      87,450 tokens (87.5%)
+  Per Task:   17,490 avg
+  Efficiency: Good (under 20k/task)
+
+Files Changed:
+  Created:  12 files
+  Modified: 8 files
+  Tests:    28 test cases
+
+Progress Log: RLM/progress/token-usage/session-2024-12-09.json
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 ## Automation Levels
 
