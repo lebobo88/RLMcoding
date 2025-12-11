@@ -1,4 +1,6 @@
-# Root Cause Analysis Pattern
+# Root Cause Analysis Pattern (RLM v2.7)
+
+> **Part of**: RLM Prompt Pattern Library - See `RLM/START-HERE.md` for workflow overview.
 
 ## Purpose
 Use this pattern for **bug investigation**, **error diagnosis**, and **failure analysis**. It provides a structured approach to identify the underlying cause of problems rather than just treating symptoms.
@@ -145,7 +147,7 @@ Users report intermittent 500 errors when submitting the contact form.
 
 ## Integration with RLM Agents
 
-### Coder Agent
+### Coder Agent (`RLM/prompts/04-IMPLEMENT-TASK.md`)
 When investigating bugs, invoke this pattern:
 ```
 Apply the root-cause-analysis pattern from RLM/prompts/patterns/root-cause-analysis.md to investigate:
@@ -154,7 +156,7 @@ Apply the root-cause-analysis pattern from RLM/prompts/patterns/root-cause-analy
 - Expected behavior: [what should happen]
 ```
 
-### Tester Agent
+### Tester Agent (`RLM/prompts/07-TEST.md`)
 When test failures occur:
 ```
 Use root-cause-analysis to understand:

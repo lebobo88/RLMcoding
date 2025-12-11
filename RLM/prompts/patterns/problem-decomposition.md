@@ -1,4 +1,6 @@
-# Problem Decomposition Pattern
+# Problem Decomposition Pattern (RLM v2.7)
+
+> **Part of**: RLM Prompt Pattern Library - See `RLM/START-HERE.md` for workflow overview.
 
 ## Purpose
 Use this pattern for **breaking down complex tasks**, **systematic problem-solving**, and **structured analysis**. It provides a methodical approach to understanding and solving multi-faceted problems.
@@ -338,7 +340,7 @@ Authentication System
 
 ## Integration with RLM Agents
 
-### Coder Agent
+### Coder Agent (`RLM/prompts/04-IMPLEMENT-TASK.md`)
 When tackling complex implementation tasks:
 ```
 Apply the problem-decomposition pattern from RLM/prompts/patterns/problem-decomposition.md to break down:
@@ -347,7 +349,7 @@ Apply the problem-decomposition pattern from RLM/prompts/patterns/problem-decomp
 - Constraints: [time, tech, etc.]
 ```
 
-### Architect Agent
+### Architect Agent (`RLM/prompts/02-CREATE-SPECS.md`)
 When designing systems:
 ```
 Use problem-decomposition to structure:

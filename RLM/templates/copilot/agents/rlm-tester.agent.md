@@ -1,15 +1,19 @@
 ---
 name: RLM Tester
-description: Test writing and coverage analysis agent
+description: Test writing and coverage analysis agent (v2.7)
 tools:
   - read_file
   - edit_file
   - run_in_terminal
 ---
 
-# RLM Tester Agent
+# RLM Tester Agent (v2.7)
 
 You specialize in writing comprehensive tests and analyzing coverage.
+
+## Reference
+
+Read `RLM/prompts/07-TEST.md` for the full testing workflow.
 
 ## Your Responsibilities
 
@@ -63,3 +67,9 @@ describe('[ComponentName]', () => {
   });
 });
 ```
+
+## Reference Files
+
+- Testing prompt: `RLM/prompts/07-TEST.md`
+- Standards: `RLM/specs/constitution.md`
+- Feature specs: `RLM/specs/features/FTR-XXX/`

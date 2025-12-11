@@ -1,10 +1,19 @@
-# Project Research Folder
+# Project Research Folder (RLM v2.7)
 
 This folder contains pre-collected research materials that will be **automatically detected** and used during the RLM workflow phases.
 
+## Quick Start
+
+Read `RLM/START-HERE.md` for the complete workflow overview.
+
 ## Purpose
 
-Drop any research files here before running `/cc-discover`, `/cc-design`, or `/cc-create-specs`. The AI agents will automatically incorporate this research into their outputs.
+Drop any research files here before running discovery or design phases. The AI agents will automatically incorporate this research into their outputs.
+
+**Commands that use this folder:**
+- Claude Code: `/cc-discover`, `/cc-design system`, `/cc-create-specs`
+- Standard prompts: Read `RLM/prompts/01-DISCOVER.md`
+- Other IDEs: Use equivalent discover/design commands
 
 ## Supported File Types
 
@@ -125,3 +134,12 @@ mv RLM/research/project RLM/research/project-backup-$(date +%Y%m%d)
 # Create empty folder
 mkdir RLM/research/project
 ```
+
+## Related Files
+
+| File | Purpose |
+|------|---------|
+| `RLM/START-HERE.md` | Entry point - workflow overview |
+| `RLM/prompts/01-DISCOVER.md` | Discovery workflow (uses this folder) |
+| `RLM/specs/PRD.md` | Output: Product Requirements Document |
+| `RLM/specs/design/` | Output: Design system |

@@ -1,4 +1,6 @@
-# Comparative Analysis Pattern
+# Comparative Analysis Pattern (RLM v2.7)
+
+> **Part of**: RLM Prompt Pattern Library - See `RLM/START-HERE.md` for workflow overview.
 
 ## Purpose
 Use this pattern for **comparing two or more approaches**, **evaluating alternatives**, and **making informed trade-off decisions**. It provides a structured framework for objective comparison with evidence-based reasoning.
@@ -220,7 +222,7 @@ Use this pattern for **comparing two or more approaches**, **evaluating alternat
 
 ## Integration with RLM Agents
 
-### Architect Agent
+### Architect Agent (`RLM/prompts/02-CREATE-SPECS.md`)
 When evaluating architectural options:
 ```
 Apply the comparative-analysis pattern from RLM/prompts/patterns/comparative-analysis.md to compare:
@@ -229,7 +231,7 @@ Apply the comparative-analysis pattern from RLM/prompts/patterns/comparative-ana
 - Key dimensions: [performance, cost, maintainability, etc.]
 ```
 
-### Research Agent
+### Research Agent (`RLM/prompts/01-DISCOVER.md`)
 When researching alternatives:
 ```
 Use comparative-analysis to structure findings on:

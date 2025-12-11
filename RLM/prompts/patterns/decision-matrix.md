@@ -1,4 +1,6 @@
-# Decision Matrix Pattern
+# Decision Matrix Pattern (RLM v2.7)
+
+> **Part of**: RLM Prompt Pattern Library - See `RLM/START-HERE.md` for workflow overview.
 
 ## Purpose
 Use this pattern for **technology selection**, **architectural decisions**, and **feature prioritization**. It provides a weighted, objective framework for comparing multiple options against defined criteria.
@@ -143,7 +145,7 @@ Despite the steeper learning curve, Redux Toolkit scores highest due to its prov
 
 ## Integration with RLM Agents
 
-### Architect Agent
+### Architect Agent (`RLM/prompts/02-CREATE-SPECS.md`)
 When making technology decisions:
 ```
 Apply the decision-matrix pattern from RLM/prompts/patterns/decision-matrix.md to evaluate:
@@ -152,7 +154,7 @@ Apply the decision-matrix pattern from RLM/prompts/patterns/decision-matrix.md t
 - Key constraints: [budget, timeline, team skills, etc.]
 ```
 
-### Coder Agent
+### Coder Agent (`RLM/prompts/04-IMPLEMENT-TASK.md`)
 When choosing implementation approaches:
 ```
 Use decision-matrix to compare:
