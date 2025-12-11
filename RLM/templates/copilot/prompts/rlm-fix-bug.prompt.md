@@ -1,11 +1,15 @@
-# Fix Bug
+# Fix Bug (v2.7)
 
 Debug and fix the reported issue.
+
+## Reference
+
+See `RLM/prompts/patterns/root-cause-analysis.md` for structured debugging.
 
 ## Investigation Steps
 
 1. **Reproduce**: Create minimal reproduction case
-2. **Hypothesize**: Form theories about root cause
+2. **Hypothesize**: Form theories about root cause (5-Whys technique)
 3. **Eliminate**: Test and rule out theories
 4. **Fix**: Implement solution with test coverage
 5. **Verify**: Ensure fix doesn't break other tests

@@ -1,13 +1,15 @@
-# Prime Task Context
+# Prime Task Context (v2.7)
 
 Load context for working on a specific task.
 
 ## Instructions
 
-1. Read the task file at `RLM/tasks/active/{{TASK_ID}}.md`
-2. Read the parent feature spec
-3. Check task dependencies and their status
-4. List files to be modified
+1. Read `RLM/START-HERE.md` for workflow overview
+2. Read the task file at `RLM/tasks/active/{{TASK_ID}}.md`
+3. Read the parent feature spec
+4. Check task dependencies and their status
+5. Check `RLM/progress/status.json` for current state
+6. List files to be modified
 
 ## Context to Load
 

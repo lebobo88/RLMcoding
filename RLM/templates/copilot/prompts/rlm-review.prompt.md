@@ -1,14 +1,19 @@
-# Code Review
+# Code Review (v2.7)
 
 Review code changes for quality and standards compliance.
+
+## Reference
+
+Read `RLM/specs/constitution.md` for project standards.
 
 ## Review Focus
 
 1. **Correctness**: Does it meet requirements?
 2. **Quality**: Clean code, no duplication?
-3. **Testing**: Adequate test coverage?
+3. **Testing**: Adequate test coverage (80%+ target)?
 4. **Security**: Any vulnerabilities?
 5. **Standards**: Follows constitution.md?
+6. **Design**: Follows design system (UI projects)?
 
 ## Review Checklist
 

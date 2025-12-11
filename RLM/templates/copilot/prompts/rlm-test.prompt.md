@@ -1,6 +1,10 @@
-# Run Tests
+# Run Tests (v2.7)
 
 Execute and validate all tests for the project.
+
+## Before You Start
+
+Read `RLM/prompts/07-TEST.md` for the full workflow.
 
 ## Instructions
 

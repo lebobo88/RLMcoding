@@ -1,14 +1,20 @@
-# Create Implementation Tasks
+# Create Implementation Tasks (v2.7)
 
 Break feature specifications into fine-grained implementation tasks.
+
+## Before You Start
+
+Read `RLM/prompts/03-CREATE-TASKS.md` for the full workflow.
 
 ## Instructions
 
 1. Read feature specs from `RLM/specs/features/`
-2. Break each feature into atomic tasks (TASK-001, TASK-002, etc.)
-3. Define dependencies between tasks
-4. Set priority and estimated effort
-5. Create task files in `RLM/tasks/active/`
+2. Check `RLM/progress/checkpoint.json` for existing tasks
+3. Break each feature into atomic tasks (TASK-001, TASK-002, etc.)
+4. Define dependencies between tasks
+5. Set priority and estimated effort
+6. Create task files in `RLM/tasks/active/`
+7. Update `RLM/tasks/INDEX.md`
 
 ## Task Requirements
 - Each task should be completable in 1-4 hours

@@ -1,6 +1,10 @@
-# Create Feature Specifications
+# Create Feature Specifications (v2.7)
 
 Generate technical specifications from the PRD.
+
+## Before You Start
+
+Read `RLM/prompts/02-CREATE-SPECS.md` for the full workflow.
 
 ## Instructions
 
@@ -12,6 +16,7 @@ Generate technical specifications from the PRD.
 ## Input
 - `RLM/specs/PRD.md`
 - `RLM/specs/constitution.md`
+- `RLM/specs/design/` (for UI projects)
 
 ## Output
 - Feature specs in `RLM/specs/features/FTR-XXX/spec.md`

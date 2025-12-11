@@ -1,13 +1,17 @@
-# RLM Discovery
+# RLM Discovery (v2.7)
 
 Transform a product idea into a comprehensive Product Requirements Document (PRD).
 
+## Before You Start
+
+Read `RLM/START-HERE.md` for the complete workflow overview.
+
 ## Instructions
 
-1. Analyze the provided idea or concept
-2. Research similar products and competitors
-3. Identify target users and their needs
-4. Define core features and MVP scope
+1. Read `RLM/prompts/01-DISCOVER.md` for the full workflow
+2. Check `RLM/research/project/` for existing research
+3. Research the idea - analyze competitors, best practices
+4. Ask clarifying questions in 3-4 rounds
 5. Generate PRD at `RLM/specs/PRD.md`
 6. Generate constitution at `RLM/specs/constitution.md`
 
@@ -15,12 +19,28 @@ Transform a product idea into a comprehensive Product Requirements Document (PRD
 - `RLM/specs/PRD.md` - Product Requirements Document
 - `RLM/specs/constitution.md` - Project standards and conventions
 
-## Questions to Consider
+## Discovery Questions (3-4 Rounds)
+
+### Round 1: Business Goals
 - Who is the target user?
 - What problem does this solve?
 - What are the core features for MVP?
-- What technology stack is appropriate?
 - What are the key success metrics?
+
+### Round 2: Technical
+- What scale is expected?
+- What integrations are needed?
+- What technology constraints exist?
+
+### Round 3: Requirements
+- What authentication is needed?
+- What platforms (web, mobile, desktop)?
+- What compliance requirements?
+
+### Round 4: Design (UI Projects)
+- Design philosophy: CREATIVE or CONSISTENT?
+- Animation tier: MINIMAL, MODERATE, or RICH?
+- Framework preferences?
 
 ## PRD Structure
 

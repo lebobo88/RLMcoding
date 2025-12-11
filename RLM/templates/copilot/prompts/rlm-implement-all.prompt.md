@@ -1,14 +1,19 @@
-# Implement All Tasks
+# Implement All Tasks (v2.7)
 
 Implement all active tasks respecting dependencies.
+
+## Before You Start
+
+Read `RLM/prompts/05-IMPLEMENT-ALL.md` for the full workflow.
 
 ## Instructions
 
 1. Read all tasks in `RLM/tasks/active/`
-2. Build dependency graph
-3. Implement tasks in dependency order
-4. For each task, follow TDD methodology
-5. Move completed tasks to `RLM/tasks/completed/`
+2. Check `RLM/progress/checkpoint.json` for existing progress
+3. Build dependency graph
+4. Implement tasks in dependency order
+5. For each task, follow TDD 5-step process
+6. Move completed tasks to `RLM/tasks/completed/`
 
 ## Dependency Rules
 - Never implement a task before its dependencies are complete
@@ -17,6 +22,7 @@ Implement all active tasks respecting dependencies.
 
 ## Progress Tracking
 - Update `RLM/progress/status.json` after each task
+- Update `RLM/progress/checkpoint.json` incrementally
 - Log progress to `RLM/progress/logs/`
 
 ## Implementation Order Algorithm

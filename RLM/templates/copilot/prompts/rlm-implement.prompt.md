@@ -1,24 +1,24 @@
-# Implement Single Task
+# Implement Single Task (v2.7)
 
 Implement the specified task following RLM/TDD methodology.
 
-## Instructions
+## Before You Start
 
-1. Read the task file at `RLM/tasks/active/{{TASK_ID}}.md`
-2. Read the related feature spec
-3. Follow TDD: write tests first, then implementation
-4. Ensure all acceptance criteria are met
-5. Run tests and verify they pass
-6. Move task to `RLM/tasks/completed/` when done
+Read `RLM/prompts/04-IMPLEMENT-TASK.md` for the full workflow.
 
 ## Context Files to Read
 - `RLM/tasks/active/{{TASK_ID}}.md`
 - `RLM/specs/constitution.md`
 - Related feature spec from task file
 
-## TDD Workflow
+## TDD 5-Step Process
 
-### 1. RED: Write Failing Test
+### Step 1: Load Context (0-20%)
+- Read task spec, feature spec, constitution
+- Check dependencies are complete
+- Identify files to create/modify
+
+### Step 2: Write Tests (20-40%) - TDD Red
 ```typescript
 describe('[Component]', () => {
   it('should [expected behavior]', () => {
@@ -34,21 +34,20 @@ describe('[Component]', () => {
 });
 ```
 
-### 2. GREEN: Write Minimal Code
+### Step 3: Implement (40-70%) - TDD Green
 - Only enough code to make the test pass
 - Don't optimize yet
 - Don't add extra features
 
-### 3. REFACTOR: Clean Up
-- Remove duplication
-- Improve naming
-- Extract helpers if needed
-- Keep tests green throughout
+### Step 4: Verify (70-85%)
+- Run tests and fix failures
+- Check coverage (80%+ target)
+- Fix any linter errors
 
-### 4. VERIFY: Run All Tests
-```bash
-npm test
-```
+### Step 5: Review (85-100%)
+- Quality checks against constitution
+- Update `RLM/progress/status.json`
+- Move task to `RLM/tasks/completed/`
 
 ## Code Quality Standards
 
@@ -62,7 +61,8 @@ npm test
 ## Completion Checklist
 
 - [ ] All acceptance criteria met
-- [ ] Tests written and passing
+- [ ] Tests written and passing (80%+ coverage)
 - [ ] No linter errors
 - [ ] Code follows constitution standards
+- [ ] `RLM/progress/status.json` updated
 - [ ] Task file moved to `RLM/tasks/completed/`

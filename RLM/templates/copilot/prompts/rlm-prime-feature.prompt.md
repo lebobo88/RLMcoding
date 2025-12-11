@@ -1,13 +1,16 @@
-# Prime Feature Context
+# Prime Feature Context (v2.7)
 
 Load context for working on a specific feature.
 
 ## Instructions
 
-1. Read the feature spec at `RLM/specs/features/{{FEATURE_ID}}/`
-2. Read related architecture decisions
-3. List all tasks for this feature
-4. Summarize current implementation status
+1. Read `RLM/START-HERE.md` for workflow overview
+2. Read the feature spec at `RLM/specs/features/{{FEATURE_ID}}/`
+3. Read related architecture decisions
+4. Read design spec at `RLM/specs/design/` (UI features)
+5. List all tasks for this feature
+6. Check `RLM/progress/status.json` for current state
+7. Summarize current implementation status
 
 ## Context to Load
 
