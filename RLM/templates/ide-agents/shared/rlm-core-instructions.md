@@ -1,10 +1,10 @@
-# RLM Core Instructions for IDE Agents
+# RLM Core Instructions for IDE Agents (v2.7)
 
-This document provides shared instructions for all IDE coding agents (Cursor, Windsurf, Continue.dev, VS Code, etc.) implementing the RLM methodology.
+This document provides shared instructions for all IDE coding agents (Cursor, Windsurf, Continue.dev, VS Code + Copilot, Aider, etc.) implementing the RLM methodology.
 
 ## Overview
 
-RLM (Research-Lead-Manage) is a spec-driven development methodology that transforms ideas into production code through structured phases.
+RLM (Research-Lead-Manage) is a spec-driven development methodology that transforms ideas into production code through a structured 9-phase pipeline with native IDE configuration support.
 
 ## Core Workflow
 
@@ -23,21 +23,36 @@ RLM (Research-Lead-Manage) is a spec-driven development methodology that transfo
 ### Key File Locations
 
 ```
-RLM/
-├── specs/
-│   ├── PRD.md              # Product Requirements
-│   ├── constitution.md     # Project standards
-│   ├── features/FTR-XXX/   # Feature specifications
-│   └── design/             # Design system (if UI)
-├── tasks/
-│   ├── active/             # Tasks to implement
-│   ├── completed/          # Finished tasks
-│   └── blocked/            # Blocked tasks
-├── progress/
-│   ├── status.json         # Current state
-│   ├── checkpoint.json     # Incremental tracking
-│   └── cc-config.json      # Configuration
-└── prompts/                # Workflow prompts
+Project Root/
+├── AGENTS.md                 # Cross-platform AI instructions
+├── CLAUDE.md                 # Claude Code instructions
+├── .cursorrules              # Cursor legacy rules
+├── .aider.conf.yml           # Aider configuration
+├── .cursor/
+│   ├── commands/             # Cursor slash commands
+│   └── rules/                # Cursor project rules
+├── .github/
+│   ├── copilot-instructions.md  # Copilot instructions
+│   ├── prompts/              # Copilot prompt files
+│   └── instructions/         # Path-specific rules
+├── .claude/
+│   ├── commands/             # Claude Code commands
+│   └── agents/               # Sub-agent configs
+└── RLM/
+    ├── specs/
+    │   ├── PRD.md            # Product Requirements
+    │   ├── constitution.md   # Project standards
+    │   ├── features/FTR-XXX/ # Feature specifications
+    │   └── design/           # Design system (if UI)
+    ├── tasks/
+    │   ├── active/           # Tasks to implement
+    │   ├── completed/        # Finished tasks
+    │   └── blocked/          # Blocked tasks
+    ├── progress/
+    │   ├── status.json       # Current state
+    │   ├── checkpoint.json   # Incremental tracking
+    │   └── cc-config.json    # Configuration
+    └── prompts/              # Workflow prompts
 ```
 
 ## Implementation Standards
@@ -153,15 +168,44 @@ Always check `RLM/progress/checkpoint.json` before creating tasks:
 
 ## Commands Reference
 
+### Standard Commands (All IDEs)
+
 | Command | Purpose |
 |---------|---------|
-| `/discover` | Transform idea into PRD |
+| `/discover [idea]` | Transform idea into PRD |
 | `/create-specs` | Generate specs from PRD |
 | `/create-tasks` | Break features into tasks |
 | `/implement TASK-XXX` | Implement single task |
-| `/implement all` | Implement all tasks |
+| `/implement-all` | Implement all active tasks |
+| `/resume` | Resume interrupted session |
+| `/rlm-status` | Show project status |
+| `/rlm-test` | Run and fix tests |
+
+### Enhanced Commands (Claude Code)
+
+| Command | Purpose |
+|---------|---------|
+| `/cc-full [idea]` | Complete 9-phase automation |
+| `/cc-full --from-prd` | Start from existing PRD |
 | `/cc-debug` | Debug and reconcile state |
 | `/cc-verify FTR-XXX` | Verify feature with E2E |
+| `/cc-design system` | Generate design system |
+| `/cc-design qa` | Run 117-point design QA |
+| `/cc-review` | Code review |
+| `/cc-test` | Testing with coverage |
+
+## IDE Configuration Files
+
+| File/Directory | IDE | Purpose |
+|----------------|-----|---------|
+| `AGENTS.md` | All | Cross-platform instructions |
+| `CLAUDE.md` | Claude Code | Detailed instructions |
+| `.cursor/commands/` | Cursor | Native slash commands |
+| `.cursor/rules/` | Cursor | Project rules |
+| `.github/prompts/` | VS Code + Copilot | Prompt files |
+| `.github/instructions/` | VS Code + Copilot | Path-specific rules |
+| `.aider.conf.yml` | Aider | CLI configuration |
+| `.continue/config.json` | Continue.dev | Slash commands |
 
 ## Anti-Patterns to Avoid
 

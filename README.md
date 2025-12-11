@@ -136,13 +136,13 @@ The Research Agent will:
 
 ### 3. Universal IDE Compatibility
 
-Works with **any AI coding environment**:
-- **Claude Code** - Native slash commands (`/discover`, `/cc-full`, etc.)
-- **Cursor** - Copy prompts or tell AI to read them
-- **Windsurf** - Cascade integration
-- **VS Code + Copilot** - @workspace commands
-- **Aider** - CLI integration
-- **Any AI Agent** - Just read the prompts from `RLM/prompts/`
+Works with **any AI coding environment** with native configuration files:
+- **Claude Code** - Native slash commands (`/discover`, `/cc-full`, etc.) via `.claude/commands/`
+- **Cursor** - Native slash commands via `.cursor/commands/` and rules via `.cursor/rules/`
+- **VS Code + Copilot** - Prompt files via `.github/prompts/` and instructions via `.github/instructions/`
+- **Windsurf** - Cascade integration with `AGENTS.md`
+- **Aider** - CLI integration via `.aider.conf.yml`
+- **Any AI Agent** - Read prompts from `RLM/prompts/` or use `AGENTS.md`
 
 ### 4. Three Automation Modes
 
@@ -199,7 +199,37 @@ Phase 9: REPORT          → Complete project summary
 | `/cc-verify FTR-XXX` | 8 | E2E feature verification |
 | `/cc-debug` | - | Diagnose and fix state issues |
 
-### Using with Any AI (Cursor, Windsurf, VS Code, etc.)
+### Cursor Slash Commands
+
+Native slash commands available via `.cursor/commands/`:
+
+| Command | Purpose |
+|---------|---------|
+| `/discover [idea]` | Transform idea into PRD |
+| `/create-specs` | Generate specs from PRD |
+| `/create-tasks` | Break features into tasks |
+| `/implement [task]` | Implement single task with TDD |
+| `/implement-all` | Implement all active tasks |
+| `/resume` | Resume interrupted session |
+| `/rlm-status` | Show project status |
+| `/rlm-test` | Run and fix tests |
+
+### VS Code + Copilot Prompt Files
+
+Prompt files available via `.github/prompts/`:
+
+| Prompt | Purpose |
+|--------|---------|
+| `discover.prompt.md` | Transform idea into PRD |
+| `create-specs.prompt.md` | Generate specs from PRD |
+| `create-tasks.prompt.md` | Break features into tasks |
+| `implement.prompt.md` | Implement single task |
+| `implement-all.prompt.md` | Implement all tasks |
+| `resume.prompt.md` | Resume session |
+| `status.prompt.md` | Show project status |
+| `test.prompt.md` | Run and fix tests |
+
+### Using with Any AI (Manual Approach)
 
 Tell your AI to read the appropriate prompt:
 
@@ -218,6 +248,21 @@ Read RLM/prompts/06-RESUME.md and resume my previous session
 
 ```
 your-project/
+├── AGENTS.md                     # Cross-platform AI instructions
+├── CLAUDE.md                     # Claude Code specific instructions
+├── .cursorrules                  # Cursor legacy rules (deprecated)
+├── .aider.conf.yml               # Aider configuration
+├── .github/
+│   ├── copilot-instructions.md   # GitHub Copilot instructions
+│   ├── prompts/                  # Copilot slash commands
+│   └── instructions/             # Path-specific Copilot rules
+├── .cursor/
+│   ├── commands/                 # Cursor slash commands
+│   └── rules/                    # Cursor project rules
+├── .claude/
+│   ├── commands/                 # Claude Code slash commands
+│   ├── agents/                   # Sub-agent configurations
+│   └── hooks/                    # Lifecycle event handlers
 ├── RLM/                          # AI Agent System
 │   ├── START-HERE.md             # Entry point - read this first
 │   ├── prompts/                  # Workflow prompts (copy to any AI)
@@ -433,12 +478,32 @@ Built upon research and best practices from:
 
 ---
 
+## IDE Configuration Files
+
+| File/Directory | IDE | Purpose |
+|----------------|-----|---------|
+| `AGENTS.md` | All | Cross-platform AI instructions |
+| `CLAUDE.md` | Claude Code | Detailed Claude Code instructions |
+| `.cursorrules` | Cursor | Legacy rules (deprecated, use `.cursor/rules/`) |
+| `.cursor/rules/` | Cursor | Project rules with glob patterns |
+| `.cursor/commands/` | Cursor | Native slash commands |
+| `.github/copilot-instructions.md` | VS Code + Copilot | Repository-wide instructions |
+| `.github/prompts/` | VS Code + Copilot | Reusable prompt files |
+| `.github/instructions/` | VS Code + Copilot | Path-specific instructions |
+| `.aider.conf.yml` | Aider | CLI configuration |
+| `.continue/config.json` | Continue.dev | Slash commands and context |
+| `.claude/commands/` | Claude Code | Slash command definitions |
+| `.claude/agents/` | Claude Code | Sub-agent configurations |
+
+---
+
 ## Status
 
 - Core system implemented
 - Multi-agent orchestration
 - Comprehensive documentation
 - 9-phase pipeline with TDD
+- Native IDE configurations for Claude Code, Cursor, and Copilot
 
 ---
 

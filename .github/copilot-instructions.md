@@ -1,76 +1,83 @@
 # RLM Method - GitHub Copilot Instructions
+# RLM v2.7 - Prompt-based workflow
 
 This project uses the RLM (Research-Lead-Manage) method for AI-assisted development.
 
-## Project Structure
+## Quick Start
 
-```
-RLM/
-├── prompts/         # Workflow prompts (use these!)
-│   ├── 01-DISCOVER.md       # Idea → PRD
-│   ├── 02-CREATE-SPECS.md   # PRD → Specs
-│   ├── 03-CREATE-TASKS.md   # Specs → Tasks
-│   ├── 04-IMPLEMENT-TASK.md # Single task TDD
-│   ├── 05-IMPLEMENT-ALL.md  # All tasks
-│   ├── 06-RESUME.md         # Resume session
-│   └── patterns/            # Reusable reasoning patterns
-├── specs/           # Specifications
-│   ├── PRD.md               # Product Requirements Document
-│   ├── constitution.md      # Project standards
-│   ├── features/            # Feature specs (FTR-XXX)
-│   ├── architecture/        # Technical architecture
-│   └── design/              # Design system (UI projects)
-├── agents/          # Agent prompts
-│   ├── research-agent.md    # Discovery process
-│   ├── master-architect.md  # Architecture design
-│   ├── design-agent.md      # UI/UX design
-│   └── implementation-agent.md  # Coding standards
-├── templates/       # Document templates
-├── tasks/           # Task management
-│   ├── active/              # Tasks to implement
-│   ├── completed/           # Finished tasks
-│   └── blocked/             # Blocked tasks
-├── progress/        # Progress tracking
-│   ├── status.json          # Current state
-│   ├── checkpoint.json      # Incremental tracking
-│   └── cc-config.json       # Configuration
-├── research/        # Project research (auto-detected)
-└── docs/            # Documentation
-```
+Read `RLM/START-HERE.md` for the complete workflow overview.
+
+## Key Directories
+
+- `RLM/prompts/` - Workflow prompts (use these for each step)
+- `RLM/specs/` - All specifications (PRD, constitution, features, architecture)
+- `RLM/templates/` - Templates for spec documents
+- `RLM/tasks/` - Active, completed, and blocked tasks
+- `RLM/progress/` - Progress tracking (status.json, checkpoint.json)
+- `RLM/agents/` - Agent role definitions
+- `RLM/research/` - Project research (auto-detected during discovery)
+- `RLM/docs/` - Documentation
 
 ## Discovery Process
 
-When I ask you to "discover" or "research" an idea:
+When asked to "discover", "research", or start a new project/feature:
 
-1. Read `RLM/prompts/01-DISCOVER.md` for the detailed workflow
-2. Check for existing research in `RLM/research/project/`
-3. Research the idea:
-   - Identify the core problem
-   - Find existing solutions/competitors
-   - Note best practices
-4. Ask clarifying questions in 3-4 rounds:
-   - **Business** (Critical): What's the goal? Who are users? Timeline? Success metrics?
-   - **Technical** (High): Expected scale? Tech constraints? Integrations?
-   - **Data** (High): What data? Compliance needs? Privacy?
-   - **Security** (Medium): Auth method? Encryption? Audit logging?
-   - **UX** (Medium): Platforms? Accessibility? Key workflows?
-   - **Design** (UI projects): Design philosophy? Animation tier? Framework?
-5. Generate spec documents:
-   - `RLM/specs/PRD.md` - Product Requirements Document
-   - `RLM/specs/constitution.md` - Project standards
-   - `RLM/specs/features/FTR-XXX/spec.md` - Feature specifications
-   - `RLM/specs/architecture/overview.md` - Technical architecture
-   - `RLM/specs/epics/breakdown.md` - Sprint planning
+1. **Read** `RLM/prompts/01-DISCOVER.md` for the full workflow
+2. **Check** `RLM/research/project/` for existing research
+3. **Research** the idea - analyze competitors, best practices, existing solutions
+4. **Questions** - Ask clarifying questions in 3-4 rounds:
+   - Round 1: Business goals, target users, MVP scope, success metrics
+   - Round 2: Scale expectations, integrations, tech constraints, data requirements
+   - Round 3: Authentication, platforms, compliance, UX priorities
+   - Round 4 (UI projects): Design philosophy, animation tier, framework preferences
+5. **Draft** specs following templates in `RLM/templates/`
+6. **Save** to `RLM/specs/` (PRD.md, constitution.md, features/, architecture/)
 
-## Implementation
+## Creating Specs from PRD
+
+When asked to create specs from an existing PRD:
+
+1. **Read** `RLM/prompts/02-CREATE-SPECS.md`
+2. **Read** the PRD from `RLM/specs/PRD.md`
+3. **Generate** feature specs in `RLM/specs/features/FTR-XXX/`
+4. **Generate** architecture in `RLM/specs/architecture/overview.md`
+5. **Generate** epic breakdown in `RLM/specs/epics/breakdown.md`
+
+## Creating Tasks
+
+When asked to create tasks from specs:
+
+1. **Read** `RLM/prompts/03-CREATE-TASKS.md`
+2. **Check** `RLM/progress/checkpoint.json` for existing tasks
+3. **Create** fine-grained tasks (1-4 hours each) for NEW features only
+4. **Save** to `RLM/tasks/active/TASK-XXX.md`
+5. **Update** `RLM/tasks/INDEX.md` and `RLM/progress/checkpoint.json`
+
+## Implementation Process
 
 When implementing features:
 
-1. Read the relevant spec from `RLM/specs/features/`
-2. Follow TDD - write tests first
-3. Check `RLM/specs/constitution.md` for coding standards
-4. Reference `RLM/specs/architecture/` for technical decisions
-5. Update task status when complete
+1. **Read** `RLM/prompts/04-IMPLEMENT-TASK.md` for the workflow
+2. **Read** the task spec from `RLM/tasks/active/TASK-XXX.md`
+3. **Read** the feature spec from `RLM/specs/features/FTR-XXX/spec.md`
+4. **Follow TDD** - 5-step process:
+   - Step 1: Load specs and context (0-20%)
+   - Step 2: Write tests - TDD Red (20-40%)
+   - Step 3: Implement code - TDD Green (40-70%)
+   - Step 4: Run tests and fix (70-85%)
+   - Step 5: Quality checks and review (85-100%)
+5. **Check** constitution at `RLM/specs/constitution.md` for standards
+6. **Update** `RLM/progress/status.json` when complete
+7. **Move** completed task to `RLM/tasks/completed/`
+
+## Resuming Work
+
+When asked to resume or continue:
+
+1. **Read** `RLM/prompts/06-RESUME.md`
+2. **Check** `RLM/progress/status.json` for current state
+3. **Check** `RLM/progress/checkpoint.json` for progress
+4. **Continue** from the last checkpoint
 
 ## Code Standards
 
@@ -78,38 +85,27 @@ When implementing features:
 - 80%+ test coverage
 - Document public APIs
 - Follow existing patterns
-- Reference specs in commit messages (e.g., "Implements FTR-001")
+- Reference specs in commits (e.g., "Implements FTR-001")
 
-## Using RLM Prompts
-
-Tell me to read the appropriate prompt for each workflow step:
-
-```
-# Discovery (idea → PRD)
-Read RLM/prompts/01-DISCOVER.md and help me discover specs for: [your idea]
-
-# Create Specs (PRD → feature specs)
-Read RLM/prompts/02-CREATE-SPECS.md and generate specs from my PRD
-
-# Create Tasks (specs → tasks)
-Read RLM/prompts/03-CREATE-TASKS.md and break down features into tasks
-
-# Implement Single Task
-Read RLM/prompts/04-IMPLEMENT-TASK.md and implement TASK-001
-
-# Implement All Tasks
-Read RLM/prompts/05-IMPLEMENT-ALL.md and implement all active tasks
-
-# Resume Work
-Read RLM/prompts/06-RESUME.md and resume my previous session
-```
-
-## Key Files to Reference
+## Key Files
 
 | File | Purpose |
 |------|---------|
 | `RLM/START-HERE.md` | Entry point - read this first |
-| `RLM/specs/PRD.md` | Product requirements |
+| `RLM/specs/PRD.md` | Product Requirements Document |
 | `RLM/specs/constitution.md` | Project standards |
 | `RLM/progress/status.json` | Current state |
-| `RLM/docs/USER-GUIDE.md` | Complete guide |
+| `RLM/progress/checkpoint.json` | Incremental tracking |
+
+## Prompts Reference
+
+| Prompt | Purpose |
+|--------|---------|
+| `01-DISCOVER.md` | Transform idea into PRD |
+| `02-CREATE-SPECS.md` | Generate specs from PRD |
+| `03-CREATE-TASKS.md` | Break features into tasks |
+| `04-IMPLEMENT-TASK.md` | Implement single task (TDD) |
+| `05-IMPLEMENT-ALL.md` | Implement all active tasks |
+| `06-RESUME.md` | Resume interrupted work |
+| `07-TEST.md` | Run and fix tests |
+| `08-REPORT.md` | Generate progress report |

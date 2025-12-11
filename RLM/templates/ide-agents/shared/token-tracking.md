@@ -1,6 +1,6 @@
-# Token Tracking for IDE Agents
+# Token Tracking for IDE Agents (v2.7)
 
-Since IDE agents (Cursor, Windsurf, etc.) don't expose token counts directly, use estimation-based tracking.
+Since most IDE agents (Cursor, Windsurf, VS Code + Copilot, etc.) don't expose token counts directly, use estimation-based tracking. Claude Code is the exception with built-in token tracking.
 
 ## Estimation Model
 
@@ -89,22 +89,41 @@ Target: < 20,000 tokens per task
 
 ## IDE-Specific Notes
 
+### Claude Code
+- **Has built-in token tracking** - Use `/cc-tokens` command
+- Actual token counts available in real-time
+- Logs automatically to `RLM/progress/token-usage/`
+- No estimation needed
+
 ### Cursor
 - Token usage visible in sidebar (if available)
 - Use Cursor's built-in metrics when possible
 - Fall back to estimation otherwise
+- Native commands via `.cursor/commands/`
+
+### VS Code + Copilot
+- Check GitHub Copilot usage dashboard
+- Estimation most reliable for detailed tracking
+- Prompt files via `.github/prompts/`
 
 ### Windsurf
 - Check Windsurf dashboard for usage
 - Log from dashboard if accessible
 - Use estimation for detailed task tracking
 
+### Aider
+- Check model provider dashboard (Anthropic, OpenAI)
+- Aider logs token usage to console
+- Configuration via `.aider.conf.yml`
+
 ### Continue.dev
 - Check model provider dashboard
 - Estimation most reliable method
 - Log provider and model used
+- Configuration via `.continue/config.json`
 
 ### Generic IDE
 - Use estimation model
 - Offer manual entry at session end
 - Track character counts when possible
+- Use `AGENTS.md` for cross-platform instructions

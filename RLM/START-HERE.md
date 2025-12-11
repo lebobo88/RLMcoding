@@ -1,8 +1,8 @@
-# RLM - Research, Lead, Manage (v2.6)
+# RLM - Research, Lead, Manage (v2.7)
 
 ## AI-Powered Software Development Method
 
-RLM transforms raw ideas into production-ready code through a structured 9-phase pipeline that works with **any AI coding agent** in **any IDE**.
+RLM transforms raw ideas into production-ready code through a structured 9-phase pipeline that works with **any AI coding agent** in **any IDE** with native configuration support.
 
 ---
 
@@ -17,7 +17,7 @@ RLM transforms raw ideas into production-ready code through a structured 9-phase
 - **Context Management** - Automatic checkpointing at 50%, 75%, 90% thresholds
 - **Debug & Reconciliation** - Built-in state validation and repair (`/cc-debug`)
 - **Resume Capability** - Stop and continue anytime without losing progress
-- **IDE Parity** - Works with Claude Code, Cursor, Windsurf, VS Code, Aider, and more
+- **IDE Parity** - Native configurations for Claude Code, Cursor, VS Code + Copilot, Aider, and more
 
 ---
 
@@ -49,7 +49,7 @@ Or in Claude Code: `/create-specs` or `/cc-full --from-prd`
 
 ```
 +------------------------------------------------------------------------------+
-|                         RLM 9-PHASE PIPELINE (v2.6)                          |
+|                         RLM 9-PHASE PIPELINE (v2.7)                          |
 +------------------------------------------------------------------------------+
 |                                                                              |
 |  PATH 1: FROM ZERO                    PATH 2: FROM PRD                       |
@@ -142,23 +142,66 @@ Or in Claude Code: `/create-specs` or `/cc-full --from-prd`
 | `/rlm-full [idea]` | Standard prompt pipeline (non-Claude Code) |
 | `/rlm-full --from-prd` | Start standard pipeline from PRD |
 
-### Cursor, Windsurf, VS Code + Copilot, Aider, or Any Other AI
+### Cursor (Native Slash Commands)
 
-Copy the prompt content from `RLM/prompts/` into your AI chat:
+Native slash commands available via `.cursor/commands/`:
 
-1. **Discovery**: Copy `RLM/prompts/01-DISCOVER.md`
-2. **Specs from PRD**: Copy `RLM/prompts/02-CREATE-SPECS.md`
-3. **Task Creation**: Copy `RLM/prompts/03-CREATE-TASKS.md`
-4. **Implementation**: Copy `RLM/prompts/04-IMPLEMENT-TASK.md`
+| Command | Purpose |
+|---------|---------|
+| `/discover [idea]` | Transform idea into PRD |
+| `/create-specs` | Generate specs from PRD |
+| `/create-tasks` | Break features into tasks |
+| `/implement [task]` | Implement single task with TDD |
+| `/implement-all` | Implement all active tasks |
+| `/resume` | Resume interrupted session |
+| `/rlm-status` | Show project status |
+| `/rlm-test` | Run and fix tests |
 
-Or simply tell your AI:
+### VS Code + Copilot (Prompt Files)
+
+Prompt files available via `.github/prompts/`:
+
+| Prompt | Purpose |
+|--------|---------|
+| `discover.prompt.md` | Transform idea into PRD |
+| `create-specs.prompt.md` | Generate specs from PRD |
+| `create-tasks.prompt.md` | Break features into tasks |
+| `implement.prompt.md` | Implement single task |
+| `implement-all.prompt.md` | Implement all tasks |
+| `resume.prompt.md` | Resume session |
+
+### Windsurf, Aider, or Any Other AI
+
+Tell your AI to read the appropriate prompt:
 ```
 Read and follow RLM/prompts/[prompt-name].md
 ```
 
+Or use the cross-platform `AGENTS.md` file in the project root.
+
 ---
 
-## Real-Time Progress (v2.6)
+---
+
+## IDE Configuration Files
+
+| File/Directory | IDE | Purpose |
+|----------------|-----|---------|
+| `AGENTS.md` | All | Cross-platform AI instructions |
+| `CLAUDE.md` | Claude Code | Detailed instructions |
+| `.cursor/commands/` | Cursor | Native slash commands |
+| `.cursor/rules/` | Cursor | Project rules |
+| `.github/prompts/` | VS Code + Copilot | Prompt files |
+| `.github/instructions/` | VS Code + Copilot | Path-specific rules |
+| `.github/copilot-instructions.md` | VS Code + Copilot | Repository instructions |
+| `.aider.conf.yml` | Aider | CLI configuration |
+| `.continue/config.json` | Continue.dev | Slash commands |
+| `.claude/commands/` | Claude Code | Slash commands |
+| `.claude/agents/` | Claude Code | Sub-agent configs |
+
+---
+
+## Real-Time Progress
 
 During implementation, you'll see live progress updates:
 
@@ -238,7 +281,7 @@ Run diagnostics to detect and fix state issues:
 
 | Directory | Purpose |
 |-----------|---------|
-| `RLM/prompts/` | Copy-paste prompt templates for any AI |
+| `RLM/prompts/` | Workflow prompts (used by all IDEs) |
 | `RLM/templates/` | Document templates (PRD, specs, tasks, design) |
 | `RLM/specs/` | Generated specifications |
 | `RLM/specs/design/` | Design system, tokens, components |
@@ -248,6 +291,9 @@ Run diagnostics to detect and fix state issues:
 | `RLM/research/project/` | Auto-detected project research |
 | `RLM/agents/` | AI agent role definitions |
 | `RLM/docs/` | Full documentation |
+| `.cursor/` | Cursor IDE configuration |
+| `.github/` | GitHub Copilot configuration |
+| `.claude/` | Claude Code configuration |
 
 ---
 
