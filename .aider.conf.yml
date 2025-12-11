@@ -1,40 +1,61 @@
 # Aider Configuration for RLM Method
+# RLM v2.7 - Prompt-based workflow
 
 # Always read these files for context
 read:
+  - RLM/START-HERE.md
   - RLM/specs/constitution.md
-  - RLM/agents/research-agent.md
-  - RLM/agents/master-architect.md
-  - RLM/agents/implementation-agent.md
+  - RLM/prompts/01-DISCOVER.md
 
 # Auto-commit settings
 auto-commits: true
 commit-prompt: |
   Write a concise commit message for these changes.
   Reference RLM spec IDs if applicable (e.g., FTR-001, TASK-001).
+  Format: "type(scope): description" where type is feat/fix/docs/refactor/test
 
 # Architect mode prompt
 architect-prompt: |
   You are working on a project that uses the RLM (Research-Lead-Manage) method.
-
+  
   IMPORTANT:
+  - Read RLM/START-HERE.md for workflow overview
   - Read specs from RLM/specs/ before making architectural decisions
   - Check RLM/specs/constitution.md for project standards
   - Follow patterns established in the codebase
   - Use TDD - write tests first
-
+  
   When asked to "discover" or "research" an idea:
-  1. Follow the process in RLM/agents/research-agent.md
-  2. Generate clarifying questions
-  3. Create spec documents in RLM/specs/
+  1. Read RLM/prompts/01-DISCOVER.md for the complete workflow
+  2. Check RLM/research/project/ for existing research
+  3. Ask clarifying questions in 3-4 rounds
+  4. Generate PRD and spec documents in RLM/specs/
+  
+  When asked to create specs from a PRD:
+  1. Read RLM/prompts/02-CREATE-SPECS.md
+  2. Generate feature specs, architecture, and epic breakdown
+  
+  When asked to create tasks:
+  1. Read RLM/prompts/03-CREATE-TASKS.md
+  2. Break features into 1-4 hour tasks
+  3. Save to RLM/tasks/active/
 
 # Code prompt
 code-prompt: |
   Follow these RLM standards:
+  - Read RLM/prompts/04-IMPLEMENT-TASK.md for implementation workflow
   - Read the feature spec before implementing
   - Write tests first (TDD)
   - Follow coding standards in RLM/specs/constitution.md
-  - Update progress tracking when tasks complete
+  - Update RLM/progress/status.json when tasks complete
+  - Move completed tasks to RLM/tasks/completed/
+  
+  5-Step TDD Process:
+  1. Load Context (0-20%): Read task spec, feature spec, constitution
+  2. Write Tests (20-40%): TDD Red - write failing tests first
+  3. Implement (40-70%): TDD Green - write code to pass tests
+  4. Verify (70-85%): Run tests, fix any failures
+  5. Review (85-100%): Quality checks, update task status
 
 # Map specific patterns to file types
 map-whole-file:
@@ -47,6 +68,13 @@ map-whole-file:
 lint-cmd:
   typescript: "npx eslint --fix"
   javascript: "npx eslint --fix"
+  python: "ruff check --fix"
 
 # Test command
 test-cmd: "npm test"
+
+# Watch files for changes
+watch-files:
+  - RLM/specs/**/*.md
+  - RLM/tasks/active/*.md
+  - RLM/progress/*.json

@@ -4,25 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-RLM (Research-Lead-Manage) is an AI agent development system that transforms high-level product management into production-ready code through automated workflows. It consists of:
+RLM (Research-Lead-Manage) is an AI agent development system that transforms high-level product management into production-ready code through automated workflows.
 
-1. **RLM Framework** (`RLM/`) - Spec-driven development workflow with prompts, agents, and templates
-2. **RLM Web App** (`rlm-app/`) - Next.js 16 frontend for project management with React 19
+**RLM Framework** (`RLM/`) - Spec-driven development workflow with prompts, agents, and templates
 
-## Commands
-
-### RLM App (Next.js)
-
-```bash
-cd rlm-app
-npm run dev          # Start development server
-npm run build        # Production build
-npm run lint         # Run ESLint
-npm test             # Run Jest unit tests
-npm run test:e2e     # Run Playwright E2E tests
-```
-
-### RLM Slash Commands (IDE-Agnostic)
+## RLM Slash Commands (IDE-Agnostic)
 
 Use these Claude Code slash commands for the standard RLM workflow:
 
@@ -35,7 +21,7 @@ Use these Claude Code slash commands for the standard RLM workflow:
 | `/implement all` | Implement all active tasks |
 | `/implement resume` | Resume interrupted session |
 
-### Claude Code Enhanced Commands (v2.7)
+## Claude Code Enhanced Commands (v2.7)
 
 Complete 9-phase pipeline with full automation:
 
@@ -194,34 +180,6 @@ RLM/templates/ide-agents/shared/  # IDE parity
 ├── rlm-core-instructions.md      # Core workflow instructions
 └── token-tracking.md             # Token estimation for IDEs
 ```
-
-### RLM Web App Structure
-
-```
-rlm-app/
-├── app/                    # Next.js App Router pages
-│   └── projects/[id]/      # Project-specific pages
-│       ├── discovery/      # Discovery workflow
-│       ├── features/       # Feature management
-│       ├── tasks/          # Task tracking
-│       ├── agents/         # Agent orchestration
-│       └── progress/       # Progress dashboard
-├── components/
-│   ├── ui/                 # Radix UI primitives (button, card, input, etc.)
-│   ├── shared/             # Shared components (Sidebar, Header, etc.)
-│   ├── agents/             # Agent visualization components
-│   └── pm/                 # Product management components
-└── lib/                    # Utilities and providers
-```
-
-### Key Technologies
-
-- **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS 4, Radix UI
-- **State**: Zustand, TanStack Query
-- **Database**: better-sqlite3, mssql
-- **Real-time**: WebSockets (ws)
-- **GitHub**: Octokit REST API
-- **Testing**: Jest, Playwright
 
 ## RLM Workflow (9-Phase Pipeline)
 
