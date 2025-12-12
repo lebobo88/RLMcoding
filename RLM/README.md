@@ -83,6 +83,7 @@ Or use the cross-platform `AGENTS.md` file in the project root.
 - [User Guide](docs/USER-GUIDE.md) - Complete walkthrough
 - [Quick Reference](docs/QUICK-REFERENCE.md) - One-page cheat sheet
 - [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) - Sub-agent workflow
+- [Sub-Agent Reliability](docs/SUB-AGENT-RELIABILITY.md) - How sub-agent tracking works (v2.7.1)
 - [Template Reference](docs/TEMPLATE-REFERENCE.md) - How to use templates
 - [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues
 
@@ -96,6 +97,7 @@ Or use the cross-platform `AGENTS.md` file in the project root.
 - **3 Automation Levels**: AUTO, SUPERVISED, MANUAL
 - **Resume Capability**: Stop and continue anytime
 - **Progress Tracking**: Know where you are at all times
+- **Sub-Agent Reliability** (v2.7.1): Completion manifests, executable hooks, verified file writes
 
 ## License
 

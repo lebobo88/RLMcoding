@@ -288,12 +288,15 @@ Run diagnostics to detect and fix state issues:
 | `RLM/tasks/active/` | Tasks ready for implementation |
 | `RLM/tasks/completed/` | Finished tasks |
 | `RLM/progress/` | Progress tracking, checkpoints, logs |
+| `RLM/progress/manifests/` | Sub-agent completion manifests (v2.7.1) |
 | `RLM/research/project/` | Auto-detected project research |
 | `RLM/agents/` | AI agent role definitions |
 | `RLM/docs/` | Full documentation |
 | `.cursor/` | Cursor IDE configuration |
 | `.github/` | GitHub Copilot configuration |
 | `.claude/` | Claude Code configuration |
+| `.claude/scripts/` | Reliability scripts for state tracking (v2.7.1) |
+| `.claude/hooks/` | Executable hooks for automatic tracking (v2.7.1) |
 
 ---
 
@@ -385,6 +388,7 @@ Track token usage with efficiency ratings:
 - [User Guide](docs/USER-GUIDE.md) - Complete step-by-step guide
 - [Quick Reference](docs/QUICK-REFERENCE.md) - One-page cheat sheet
 - [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) - Sub-agent workflow guide
+- [Sub-Agent Reliability](docs/SUB-AGENT-RELIABILITY.md) - How sub-agent tracking works (v2.7.1)
 - [Template Reference](docs/TEMPLATE-REFERENCE.md) - How to use templates
 - [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions
 - [UI Framework Reference](docs/UI-FRAMEWORK-REFERENCE.md) - Design token implementation

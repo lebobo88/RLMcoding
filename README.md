@@ -166,6 +166,16 @@ Phase 8: VERIFICATION    → E2E tests per feature
 Phase 9: REPORT          → Complete project summary
 ```
 
+### 6. Sub-Agent Reliability (v2.7.1)
+
+Guaranteed tracking of sub-agent work:
+- **Executable Hooks**: Automatic state tracking via `.claude/hooks/hooks.json`
+- **Completion Manifests**: Sub-agents write proof-of-work to `RLM/progress/manifests/`
+- **Primary Verification**: Files verified to exist before marking tasks complete
+- **Session Tracking**: Full session logs with metrics
+
+See [Sub-Agent Reliability](RLM/docs/SUB-AGENT-RELIABILITY.md) for details.
+
 ---
 
 ## Core Commands
@@ -306,6 +316,7 @@ your-project/
 | [User Guide](RLM/docs/USER-GUIDE.md) | Complete step-by-step guide |
 | [Quick Reference](RLM/docs/QUICK-REFERENCE.md) | One-page command reference |
 | [Claude Code Guide](RLM/docs/CLAUDE-CODE-GUIDE.md) | Sub-agent workflow guide |
+| [Sub-Agent Reliability](RLM/docs/SUB-AGENT-RELIABILITY.md) | How sub-agent tracking works (v2.7.1) |
 | [Template Reference](RLM/docs/TEMPLATE-REFERENCE.md) | How to use templates |
 | [Troubleshooting](RLM/docs/TROUBLESHOOTING.md) | Common issues and solutions |
 | [UI Framework Reference](RLM/docs/UI-FRAMEWORK-REFERENCE.md) | Design token implementation |

@@ -1,36 +1,62 @@
 {
-  "hooks": [
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool_name": "Task"
-      },
-      "command": "powershell -ExecutionPolicy Bypass -File \"${WORKSPACE}/.claude/scripts/post-subagent.ps1\" -WorkspaceRoot \"${WORKSPACE}\" -ToolResult \"${TOOL_OUTPUT_FILE}\""
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": {
-        "tool_name": "Write"
-      },
-      "command": "powershell -ExecutionPolicy Bypass -File \"${WORKSPACE}/.claude/scripts/track-file-write.ps1\" -WorkspaceRoot \"${WORKSPACE}\" -FilePath \"${TOOL_INPUT_FILE}\""
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool_name": "Task"
-      },
-      "command": "powershell -ExecutionPolicy Bypass -File \"${WORKSPACE}/.claude/scripts/pre-subagent.ps1\" -WorkspaceRoot \"${WORKSPACE}\""
-    },
-    {
-      "event": "Notification",
-      "matcher": {
-        "type": "session_start"
-      },
-      "command": "powershell -ExecutionPolicy Bypass -File \"${WORKSPACE}/.claude/scripts/session-start.ps1\" -WorkspaceRoot \"${WORKSPACE}\""
-    },
-    {
-      "event": "Stop",
-      "command": "powershell -ExecutionPolicy Bypass -File \"${WORKSPACE}/.claude/scripts/session-end.ps1\" -WorkspaceRoot \"${WORKSPACE}\""
-    }
-  ]
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/pre-subagent.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/post-subagent.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/session-start.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/session-end.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/post-subagent.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
 }
