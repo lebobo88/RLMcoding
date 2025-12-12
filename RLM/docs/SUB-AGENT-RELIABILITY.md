@@ -84,6 +84,10 @@ Sub-agents must write completion manifests that primary agent verifies.
 | `.claude/scripts/track-file-write.ps1` | Log file writes |
 | `.claude/scripts/session-end.ps1` | Finalize session, generate summary |
 | `.claude/scripts/write-manifest.ps1` | Called by sub-agents to report completion |
+| `.claude/scripts/estimate-tokens.ps1` | Estimate tokens for file operations |
+| `.claude/scripts/pre-compact.ps1` | Log when context is about to be summarized |
+| `.claude/scripts/capture-session-cost.ps1` | Capture post-session /cost data |
+| `.claude/scripts/show-token-usage.ps1` | Display current token usage summary |
 
 ### Hook Events
 
@@ -91,7 +95,11 @@ Sub-agents must write completion manifests that primary agent verifies.
 |-------|---------|--------|
 | `SessionStart` | Claude Code session begins | `session-start.ps1` |
 | `PreToolUse` (Task) | Before sub-agent spawns | `pre-subagent.ps1` |
-| `PostToolUse` (Task) | After Task tool completes | `post-subagent.ps1` |
+| `PostToolUse` (Task) | After Task tool completes | `post-subagent.ps1`, `estimate-tokens.ps1` |
+| `PostToolUse` (Read) | After file read | `estimate-tokens.ps1` |
+| `PostToolUse` (Write) | After file write | `estimate-tokens.ps1` |
+| `PostToolUse` (Edit) | After file edit | `estimate-tokens.ps1` |
+| `PreCompact` (auto) | Before context summarization | `pre-compact.ps1` |
 | `SubagentStop` | When any sub-agent finishes | `post-subagent.ps1` |
 | `Stop` | Session ends | `session-end.ps1` |
 
@@ -224,6 +232,37 @@ RLM/progress/token-usage/current-session.json
 
 ---
 
+## Token Usage Tracking
+
+Token tracking uses a multi-layer approach since real-time counts aren't available to the AI:
+
+### Estimation (During Session)
+
+Hooks on PostToolUse events estimate tokens based on:
+- File read/write sizes (~0.25 tokens per char)
+- Subagent spawns (2,000-12,000 tokens by type)
+- Tool calls (~50 tokens base)
+
+### Post-Session Capture (Accurate)
+
+After session ends, capture `/cost` output:
+```bash
+powershell -ExecutionPolicy Bypass -File ".claude/scripts/capture-session-cost.ps1" -WorkspaceRoot "." -CostOutput "[paste /cost output]"
+```
+
+### Context Limit Detection
+
+`PreCompact` hook fires when context is about to be summarized, logging the event for analysis.
+
+### View Current Usage
+```bash
+powershell -ExecutionPolicy Bypass -File ".claude/scripts/show-token-usage.ps1" -WorkspaceRoot "." -Detailed -History
+```
+
+See [TOKEN-TRACKING.md](TOKEN-TRACKING.md) for complete documentation.
+
+---
+
 ## Testing the System
 
 1. Run a simple `/cc-implement TASK-XXX` command
@@ -231,3 +270,4 @@ RLM/progress/token-usage/current-session.json
 3. Check `RLM/progress/status.json` for task update
 4. Check `RLM/progress/logs/[date].md` for log entry
 5. Verify files mentioned in manifest exist
+6. Check `RLM/progress/token-usage/` for token estimates

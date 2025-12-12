@@ -1,4 +1,4 @@
-# RLM - Research, Lead, Manage (v2.7)
+# RLM - Research, Lead, Manage
 
 **AI-Powered Software Development Method**
 
@@ -80,24 +80,42 @@ Or use the cross-platform `AGENTS.md` file in the project root.
 
 ## Documentation
 
-- [User Guide](docs/USER-GUIDE.md) - Complete walkthrough
-- [Quick Reference](docs/QUICK-REFERENCE.md) - One-page cheat sheet
-- [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) - Sub-agent workflow
-- [Sub-Agent Reliability](docs/SUB-AGENT-RELIABILITY.md) - How sub-agent tracking works (v2.7.1)
-- [Template Reference](docs/TEMPLATE-REFERENCE.md) - How to use templates
-- [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues
+| Document | Purpose |
+|----------|---------|
+| [START-HERE.md](START-HERE.md) | Quick start guide |
+| [User Guide](docs/USER-GUIDE.md) | Complete walkthrough |
+| [Quick Reference](docs/QUICK-REFERENCE.md) | One-page cheat sheet |
+| [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) | Sub-agent workflow |
+| [Sub-Agent Reliability](docs/SUB-AGENT-RELIABILITY.md) | How sub-agent tracking works |
+| [Token Tracking](docs/TOKEN-TRACKING.md) | Token usage estimation |
+| [Template Reference](docs/TEMPLATE-REFERENCE.md) | How to use templates |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues |
+| [What's New](docs/WHATS-NEW.md) | Version history and changes |
 
 ## Features
 
-- **Universal**: Works with any AI in any IDE with native configs
+### Core Workflow
 - **9-Phase Pipeline**: Complete automation from idea to verified code
 - **TDD by Default**: Test-Driven Development built in
-- **7 Specialized Agents**: Research, Architect, Designer, Coder, Tester, Reviewer, Verifier
 - **Fine-Grained Tasks**: 1-4 hour tasks for predictable progress
 - **3 Automation Levels**: AUTO, SUPERVISED, MANUAL
 - **Resume Capability**: Stop and continue anytime
-- **Progress Tracking**: Know where you are at all times
-- **Sub-Agent Reliability** (v2.7.1): Completion manifests, executable hooks, verified file writes
+
+### Sub-Agent System
+- **7 Specialized Agents**: Research, Architect, Designer, Coder, Tester, Reviewer, Verifier
+- **Completion Manifests**: Every sub-agent writes what it accomplished
+- **Executable Hooks**: Automatic tracking of all sub-agent activity
+- **File Verification**: Primary agent verifies files actually exist
+
+### Token Tracking
+- **Real-Time Estimation**: Approximate tokens based on file operations
+- **Post-Session Capture**: Accurate data from `/cost` command
+- **Context Detection**: Know when context is being summarized
+
+### Universal Compatibility
+- Works with any AI in any IDE with native configs
+- Cross-platform support via AGENTS.md
+- Native configurations for Claude Code, Cursor, VS Code, Aider, Continue
 
 ## License
 

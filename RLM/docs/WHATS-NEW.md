@@ -2,6 +2,95 @@
 
 This document tracks all major version releases and changes to the RLM framework.
 
+**Note**: This is the only place version history is maintained. All other documentation describes the current state of RLM without version labels. See `RLM/docs/DOCUMENTATION-PRINCIPLES.md` for the rationale.
+
+---
+
+# v2.7.1 - Sub-Agent Reliability & Token Tracking
+
+**Release Date**: December 12, 2025
+
+This release ensures sub-agent work is tracked 100% of the time and implements realistic token usage tracking.
+
+## Summary of v2.7.1 Changes
+
+### Problem Solved
+
+Previously, sub-agent work was sometimes lost because:
+- Hooks were documentation, not executable code
+- No verification that files were actually written
+- Token tracking was "aspirational" - not actually possible as described
+
+### Solution: Two-Pronged Approach
+
+**1. Executable Hooks System**
+
+Created real PowerShell scripts that run on Claude Code events:
+
+| Script | Purpose |
+|--------|---------|
+| `session-start.ps1` | Initialize session tracking |
+| `pre-subagent.ps1` | Track before sub-agent spawns |
+| `post-subagent.ps1` | Process completion, move task files |
+| `write-manifest.ps1` | Called by sub-agents to report completion |
+| `pre-compact.ps1` | Log when context is being summarized |
+| `estimate-tokens.ps1` | Estimate tokens for file operations |
+| `capture-session-cost.ps1` | Capture post-session /cost data |
+| `show-token-usage.ps1` | Display token usage summary |
+
+**2. Completion Manifest Protocol**
+
+Every sub-agent must write a manifest before reporting completion:
+- Manifest written to `RLM/progress/manifests/`
+- Primary agent verifies files in manifest actually exist
+- Task only marked complete after verification
+
+### Token Tracking Reality
+
+**What's Actually Possible**:
+- Real-time token counts are NOT available to the AI during sessions
+- Estimation based on file operations (~0.25 tokens/char)
+- Post-session capture from `/cost` command for accurate data
+- PreCompact hook detects when context is being summarized
+
+### New Hook Events
+
+| Event | Trigger | Script |
+|-------|---------|--------|
+| `PreCompact` (auto) | Before context summarization | `pre-compact.ps1` |
+| `PostToolUse` (Read) | After file read | `estimate-tokens.ps1` |
+| `PostToolUse` (Write) | After file write | `estimate-tokens.ps1` |
+| `PostToolUse` (Edit) | After file edit | `estimate-tokens.ps1` |
+
+### Documentation Overhaul
+
+All documentation consolidated to present cohesive current state:
+- Removed version labels from features
+- Moved version history to this file
+- Created `DOCUMENTATION-PRINCIPLES.md` for methodology
+
+## Files Created (v2.7.1)
+
+| File | Purpose |
+|------|---------|
+| `.claude/scripts/pre-compact.ps1` | PreCompact hook handler |
+| `.claude/scripts/estimate-tokens.ps1` | Token estimation |
+| `.claude/scripts/capture-session-cost.ps1` | Post-session cost capture |
+| `.claude/scripts/show-token-usage.ps1` | Token usage display |
+| `RLM/docs/TOKEN-TRACKING.md` | Token tracking documentation |
+| `RLM/docs/DOCUMENTATION-PRINCIPLES.md` | Documentation methodology |
+
+## Files Updated (v2.7.1)
+
+| File | Changes |
+|------|---------|
+| `.claude/hooks/hooks.json` | Added PreCompact, Read/Write/Edit tracking |
+| `RLM/docs/SUB-AGENT-RELIABILITY.md` | Added token tracking section |
+| `.claude/commands/cc-tokens.md` | Updated for realistic tracking |
+| `CLAUDE.md` | Consolidated, removed version layers |
+| `RLM/README.md` | Consolidated, removed version layers |
+| `RLM/START-HERE.md` | Consolidated, removed version layers |
+
 ---
 
 # v2.7 - Research-Aligned Enhancements
@@ -512,6 +601,7 @@ This release significantly enhances the RLM framework with modern prompt enginee
 
 | Version | Date | Key Features |
 |---------|------|--------------|
+| v2.7.1 | Dec 2025 | Sub-agent reliability, token tracking, documentation consolidation |
 | v2.7 | Dec 2025 | Prompt patterns, behavioral economics, cognitive psychology, test mode |
 | v2.6 | Dec 2025 | Progress reporting, debugging, checkpoints, IDE parity |
 | v2.5 | Dec 2025 | 9-phase pipeline, verifier agent, quality phase |

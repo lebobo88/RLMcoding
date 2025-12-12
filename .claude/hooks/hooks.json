@@ -1,5 +1,17 @@
 {
   "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/pre-compact.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Task",
@@ -20,6 +32,41 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/post-subagent.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/estimate-tokens.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\" -Operation \"subagent\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/estimate-tokens.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\" -Operation \"write\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/estimate-tokens.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\" -Operation \"edit\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/estimate-tokens.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\" -Operation \"read\"",
+            "timeout": 10
           }
         ]
       }

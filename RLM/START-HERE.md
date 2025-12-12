@@ -1,4 +1,4 @@
-# RLM - Research, Lead, Manage (v2.7)
+# RLM - Research, Lead, Manage
 
 ## AI-Powered Software Development Method
 
@@ -15,6 +15,8 @@ RLM transforms raw ideas into production-ready code through a structured 9-phase
 - **TDD by Default** - Test-Driven Development with integrated review
 - **Design System Integration** - Full UI/UX engineering with tokens and accessibility
 - **Context Management** - Automatic checkpointing at 50%, 75%, 90% thresholds
+- **Sub-Agent Reliability** - Completion manifests, executable hooks, verified file writes
+- **Token Usage Tracking** - Estimation during sessions, accurate post-session capture
 - **Debug & Reconciliation** - Built-in state validation and repair (`/cc-debug`)
 - **Resume Capability** - Stop and continue anytime without losing progress
 - **IDE Parity** - Native configurations for Claude Code, Cursor, VS Code + Copilot, Aider, and more
@@ -49,7 +51,7 @@ Or in Claude Code: `/create-specs` or `/cc-full --from-prd`
 
 ```
 +------------------------------------------------------------------------------+
-|                         RLM 9-PHASE PIPELINE (v2.7)                          |
+|                           RLM 9-PHASE PIPELINE                               |
 +------------------------------------------------------------------------------+
 |                                                                              |
 |  PATH 1: FROM ZERO                    PATH 2: FROM PRD                       |
@@ -133,14 +135,12 @@ Or in Claude Code: `/create-specs` or `/cc-full --from-prd`
 | `/cc-tokens` | - | View token usage summary |
 | `/cc-config` | - | Configure workflow settings |
 
-**New Commands**:
+**Debug Commands**:
 | Command | Purpose |
 |---------|---------|
 | `/cc-debug` | Full diagnostic scan and reconciliation |
 | `/cc-debug quick` | Fast scan for common issues |
 | `/cc-debug --auto-fix` | Auto-fix safe issues |
-| `/rlm-full [idea]` | Standard prompt pipeline (non-Claude Code) |
-| `/rlm-full --from-prd` | Start standard pipeline from PRD |
 
 ### Cursor (Native Slash Commands)
 
@@ -181,8 +181,6 @@ Or use the cross-platform `AGENTS.md` file in the project root.
 
 ---
 
----
-
 ## IDE Configuration Files
 
 | File/Directory | IDE | Purpose |
@@ -198,6 +196,8 @@ Or use the cross-platform `AGENTS.md` file in the project root.
 | `.continue/config.json` | Continue.dev | Slash commands |
 | `.claude/commands/` | Claude Code | Slash commands |
 | `.claude/agents/` | Claude Code | Sub-agent configs |
+| `.claude/hooks/` | Claude Code | Executable hooks |
+| `.claude/scripts/` | Claude Code | Automation scripts |
 
 ---
 
@@ -257,23 +257,32 @@ Use `/implement resume` or read `RLM/prompts/06-RESUME.md` to continue.
 
 ---
 
-## Debug & Reconciliation
+## Sub-Agent Reliability
 
-Run diagnostics to detect and fix state issues:
+Every sub-agent call is tracked through:
+
+- **Completion Manifests**: Sub-agents write manifests to `RLM/progress/manifests/`
+- **Executable Hooks**: PowerShell scripts automatically track activity
+- **File Verification**: Primary agent verifies files actually exist
+- **Token Estimation**: Hooks estimate token usage during sessions
+
+See `RLM/docs/SUB-AGENT-RELIABILITY.md` for the complete protocol.
+
+---
+
+## Token Usage Tracking
+
+Token tracking uses estimation during sessions with accurate post-session capture:
 
 ```bash
-/cc-debug              # Full diagnostic scan
-/cc-debug quick        # Fast scan (common issues only)
-/cc-debug --auto-fix   # Auto-fix safe issues
+# View current estimates
+powershell -ExecutionPolicy Bypass -File ".claude/scripts/show-token-usage.ps1" -WorkspaceRoot "." -Detailed
+
+# After session, capture accurate data from /cost command
+powershell -ExecutionPolicy Bypass -File ".claude/scripts/capture-session-cost.ps1" -WorkspaceRoot "." -CostOutput "[/cost output]"
 ```
 
-**Issues Detected**:
-- Orphan tasks (no parent feature)
-- Missing tasks (incomplete feature coverage)
-- Status mismatches (file vs status.json)
-- Checkpoint drift
-- Broken dependencies
-- Duplicate IDs
+See `RLM/docs/TOKEN-TRACKING.md` for complete documentation.
 
 ---
 
@@ -288,15 +297,16 @@ Run diagnostics to detect and fix state issues:
 | `RLM/tasks/active/` | Tasks ready for implementation |
 | `RLM/tasks/completed/` | Finished tasks |
 | `RLM/progress/` | Progress tracking, checkpoints, logs |
-| `RLM/progress/manifests/` | Sub-agent completion manifests (v2.7.1) |
+| `RLM/progress/manifests/` | Sub-agent completion manifests |
+| `RLM/progress/token-usage/` | Token usage estimates and captures |
 | `RLM/research/project/` | Auto-detected project research |
 | `RLM/agents/` | AI agent role definitions |
 | `RLM/docs/` | Full documentation |
 | `.cursor/` | Cursor IDE configuration |
 | `.github/` | GitHub Copilot configuration |
 | `.claude/` | Claude Code configuration |
-| `.claude/scripts/` | Reliability scripts for state tracking (v2.7.1) |
-| `.claude/hooks/` | Executable hooks for automatic tracking (v2.7.1) |
+| `.claude/scripts/` | Reliability scripts for state tracking |
+| `.claude/hooks/` | Executable hooks for automatic tracking |
 
 ---
 
@@ -312,23 +322,6 @@ Run diagnostics to detect and fix state issues:
 | `RLM/progress/status.json` | Current state |
 | `RLM/progress/checkpoint.json` | Incremental tracking |
 | `RLM/progress/cc-config.json` | Configuration |
-
----
-
-## Project Research
-
-Place research documents in `RLM/research/project/` to auto-populate PRD sections:
-
-```
-RLM/research/project/
-+-- competitor-analysis.md
-+-- market-research.md
-+-- user-interviews.md
-+-- technical-research.md
-+-- requirements-notes.md
-```
-
-The discovery phase automatically detects and uses this research.
 
 ---
 
@@ -385,16 +378,16 @@ Track token usage with efficiency ratings:
 
 ## Documentation
 
-- [User Guide](docs/USER-GUIDE.md) - Complete step-by-step guide
-- [Quick Reference](docs/QUICK-REFERENCE.md) - One-page cheat sheet
-- [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) - Sub-agent workflow guide
-- [Sub-Agent Reliability](docs/SUB-AGENT-RELIABILITY.md) - How sub-agent tracking works (v2.7.1)
-- [Template Reference](docs/TEMPLATE-REFERENCE.md) - How to use templates
-- [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions
-- [UI Framework Reference](docs/UI-FRAMEWORK-REFERENCE.md) - Design token implementation
-- [Design Patterns Library](docs/DESIGN-PATTERNS-LIBRARY.md) - UI/UX pattern reference
-- [Accessibility Guide](docs/ACCESSIBILITY-GUIDE.md) - WCAG compliance guide
-- [What's New](docs/WHATS-NEW.md) - Version changelog
+| Document | Purpose |
+|----------|---------|
+| [User Guide](docs/USER-GUIDE.md) | Complete step-by-step guide |
+| [Quick Reference](docs/QUICK-REFERENCE.md) | One-page cheat sheet |
+| [Claude Code Guide](docs/CLAUDE-CODE-GUIDE.md) | Sub-agent workflow guide |
+| [Sub-Agent Reliability](docs/SUB-AGENT-RELIABILITY.md) | How sub-agent tracking works |
+| [Token Tracking](docs/TOKEN-TRACKING.md) | Token usage estimation and tracking |
+| [Template Reference](docs/TEMPLATE-REFERENCE.md) | How to use templates |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions |
+| [What's New](docs/WHATS-NEW.md) | Version changelog |
 
 ---
 
