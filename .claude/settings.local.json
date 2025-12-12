@@ -29,7 +29,10 @@
       "Bash(find:*)",
       "Bash(ls:*)",
       "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\research\\project\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\research\\project\")",
-      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\prompts\\patterns\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\prompts\\patterns\")"
+      "Bash(if not exist \"c:\\AiAppDeployments\\RLMcoding\\RLM\\prompts\\patterns\" mkdir \"c:\\AiAppDeployments\\RLMcoding\\RLM\\prompts\\patterns\")",
+      "Bash(npx shadcn@latest init:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npm run db:push:*)"
     ],
     "deny": [],
     "ask": []
