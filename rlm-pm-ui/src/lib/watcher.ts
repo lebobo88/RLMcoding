@@ -38,6 +38,7 @@ class FileWatcherService extends EventEmitter {
       path.join(rlmPath, "tasks", "**", "*.md"),
       path.join(rlmPath, "progress", "*.json"),
       path.join(rlmPath, "progress", "token-usage", "*.json"),
+      path.join(rlmPath, "progress", "manifests", "*.json"), // Sub-agent completion manifests
       path.join(rlmPath, "research", "**", "*"),
     ];
 

@@ -7,18 +7,15 @@ import {
   TrendingUp,
   CheckCircle,
   Activity,
+  Bot,
+  AlertTriangle,
+  FileInput,
+  FileOutput,
+  DollarSign,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { useProjectData } from "@/contexts/project-data-context";
-
-interface TokenUsage {
-  sessionId: string;
-  inputTokens: number;
-  outputTokens: number;
-  totalTokens: number;
-  agent?: string;
-  taskId?: string;
-}
+import { Badge } from "@/components/ui/badge";
+import { useProjectData, TokenUsage, SubAgentReliability } from "@/contexts/project-data-context";
 
 export default function AnalyticsPage() {
   const { projectData, loading } = useProjectData();
@@ -31,38 +28,54 @@ export default function AnalyticsPage() {
     );
   }
 
-  const tokenUsage = (projectData?.tokenUsage || []) as TokenUsage[];
+  const tokenUsage = projectData?.tokenUsage;
+  const subAgentReliability = projectData?.subAgentReliability;
   const totalTokens = projectData?.summary?.totalTokensUsed || 0;
 
-  // Group by agent
-  const tokensByAgent = tokenUsage.reduce(
-    (acc, t) => {
-      const agent = t.agent || "unknown";
-      acc[agent] = (acc[agent] || 0) + t.totalTokens;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
+  // Calculate tokens from new format
+  const inputTokens = tokenUsage?.estimates?.inputTokens || 0;
+  const outputTokens = tokenUsage?.estimates?.outputTokens || 0;
+  const estimatedCost = tokenUsage?.estimates?.estimatedCost || 0;
 
-  // Group by session (using sessionId as a pseudo-date grouping)
-  const tokensBySession = tokenUsage.reduce(
-    (acc, t) => {
-      const session = t.sessionId || "unknown";
-      acc[session] = (acc[session] || 0) + t.totalTokens;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
+  // Calculate total captured cost
+  const totalCapturedCost = tokenUsage?.captured?.reduce((sum, c) => sum + c.actualCost, 0) || 0;
 
-  // Calculate costs (approximate)
-  const inputTokens = tokenUsage.reduce((sum, t) => sum + t.inputTokens, 0);
-  const outputTokens = tokenUsage.reduce((sum, t) => sum + t.outputTokens, 0);
-  const estimatedCost = (inputTokens * 0.000003 + outputTokens * 0.000015).toFixed(2);
+  // Get operation counts
+  const operationCounts = tokenUsage?.estimates?.operationCounts || {
+    reads: 0, writes: 0, edits: 0, subagents: 0, tools: 0
+  };
+
+  // Daily summaries for chart
+  const dailySummaries = tokenUsage?.dailySummaries || [];
+
+  // Legacy token data for backwards compatibility
+  const legacyUsage = tokenUsage?.legacy || [];
+
+  // Get tokens by agent from sub-agent reliability data
+  const tokensByAgent = subAgentReliability?.byAgent || {};
+
+  // Get tokens by session from daily summaries and captured data
+  const tokensBySession: Record<string, number> = {};
+  for (const captured of tokenUsage?.captured || []) {
+    if (captured.estimatedTokensFromCost) {
+      tokensBySession[captured.sessionId] = captured.estimatedTokensFromCost;
+    }
+  }
+  for (const legacy of legacyUsage) {
+    tokensBySession[legacy.sessionId] = legacy.totalTokens;
+  }
 
   // Velocity metrics
   const completedTasks = projectData?.summary?.completedTasks || 0;
   const totalTasks = projectData?.summary?.totalTasks || 0;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  // Sub-agent reliability metrics
+  const reliabilityScore = subAgentReliability && (subAgentReliability.filesVerified + subAgentReliability.filesMissing) > 0
+    ? Math.round((subAgentReliability.filesVerified / (subAgentReliability.filesVerified + subAgentReliability.filesMissing)) * 100)
+    : 100;
+
+  const hasCompactWarning = tokenUsage?.currentSession?.contextCompactWarning || (tokenUsage?.compactEvents?.length || 0) > 0;
 
   return (
     <div className="space-y-6">
@@ -77,6 +90,21 @@ export default function AnalyticsPage() {
         </p>
       </div>
 
+      {/* Context Warning */}
+      {hasCompactWarning && (
+        <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex items-center gap-3">
+          <AlertTriangle className="h-5 w-5 text-amber-600" />
+          <div>
+            <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
+              Context Compaction Detected
+            </p>
+            <p className="text-xs text-amber-600 dark:text-amber-500">
+              Token estimates may be incomplete for sessions where context was summarized.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
@@ -86,10 +114,11 @@ export default function AnalyticsPage() {
           color="purple"
         />
         <StatCard
-          label="Est. Cost"
-          value={`$${estimatedCost}`}
-          icon={<TrendingUp className="h-5 w-5" />}
+          label="Captured Cost"
+          value={totalCapturedCost > 0 ? `$${totalCapturedCost.toFixed(2)}` : `~$${estimatedCost.toFixed(2)}`}
+          icon={<DollarSign className="h-5 w-5" />}
           color="green"
+          subtitle={totalCapturedCost > 0 ? "Actual" : "Estimated"}
         />
         <StatCard
           label="Completion Rate"
@@ -98,10 +127,11 @@ export default function AnalyticsPage() {
           color="blue"
         />
         <StatCard
-          label="Active Sessions"
-          value={Object.keys(tokensBySession).length}
-          icon={<Activity className="h-5 w-5" />}
+          label="Sub-Agent Reliability"
+          value={`${reliabilityScore}%`}
+          icon={<Bot className="h-5 w-5" />}
           color="amber"
+          subtitle={`${subAgentReliability?.totalManifests || 0} manifests`}
         />
       </div>
 
@@ -270,11 +300,13 @@ function StatCard({
   value,
   icon,
   color,
+  subtitle,
 }: {
   label: string;
   value: string | number;
   icon: React.ReactNode;
   color: "purple" | "green" | "blue" | "amber";
+  subtitle?: string;
 }) {
   const colorClasses = {
     purple: "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400",
@@ -296,6 +328,9 @@ function StatCard({
             {value}
           </p>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">{label}</p>
+          {subtitle && (
+            <p className="text-[10px] text-neutral-400 dark:text-neutral-500">{subtitle}</p>
+          )}
         </div>
       </div>
     </motion.div>

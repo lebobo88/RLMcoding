@@ -51,6 +51,95 @@ export interface ProjectSummary {
   researchSessions?: number;
 }
 
+// Token usage types (v2.7.1 enhanced format)
+export interface TokenEstimates {
+  sessionId: string;
+  startedAt: string;
+  lastUpdated: string;
+  totalEstimatedTokens: number;
+  inputTokens: number;
+  outputTokens: number;
+  estimatedCost: number;
+  operationCounts: {
+    reads: number;
+    writes: number;
+    edits: number;
+    subagents: number;
+    tools: number;
+  };
+}
+
+export interface TokenCaptured {
+  sessionId: string;
+  capturedAt: string;
+  actualCost: number;
+  apiDuration?: string;
+  wallDuration?: string;
+  linesAdded?: number;
+  linesRemoved?: number;
+  estimatedTokensFromCost?: number;
+}
+
+export interface TokenDaily {
+  date: string;
+  sessions: Array<{ sessionId: string; cost: number; duration?: string }>;
+  totalCost: number;
+  totalSessions: number;
+}
+
+export interface TokenUsageLegacy {
+  sessionId: string;
+  totalTokens: number;
+  inputTokens: number;
+  outputTokens: number;
+}
+
+export interface TokenUsage {
+  estimates?: TokenEstimates;
+  currentSession?: {
+    sessionId: string;
+    startedAt: string;
+    contextCompactWarning?: boolean;
+  };
+  captured: TokenCaptured[];
+  dailySummaries: TokenDaily[];
+  compactEvents: Array<{ timestamp: string; reason: string }>;
+  legacy: TokenUsageLegacy[];
+}
+
+// Sub-agent reliability types (v2.7.1)
+export interface SubAgentManifest {
+  manifestId: string;
+  agent: string;
+  taskId?: string;
+  featureId?: string;
+  timestamp: string;
+  action: string;
+  status: "complete" | "partial" | "failed";
+  filesWritten: string[];
+  filesModified: string[];
+  testResults?: {
+    passed: number;
+    failed: number;
+    skipped: number;
+    total: number;
+  };
+  duration?: string;
+}
+
+export interface SubAgentReliability {
+  manifests: SubAgentManifest[];
+  totalManifests: number;
+  byAgent: Record<string, number>;
+  byStatus: {
+    complete: number;
+    partial: number;
+    failed: number;
+  };
+  filesVerified: number;
+  filesMissing: number;
+}
+
 export interface ProjectData {
   prd?: string;
   constitution?: string;
@@ -62,12 +151,8 @@ export interface ProjectData {
   };
   summary: ProjectSummary;
   phases?: PhaseInfo[];
-  tokenUsage?: Array<{
-    sessionId: string;
-    totalTokens: number;
-    inputTokens: number;
-    outputTokens: number;
-  }>;
+  tokenUsage?: TokenUsage;
+  subAgentReliability?: SubAgentReliability;
 }
 
 export interface Project {

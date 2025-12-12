@@ -8,6 +8,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/pre-compact.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/send-event.ps1\" -EventType \"context_compact\" -ToolName \"compact\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 5
           }
         ]
       }
@@ -20,6 +25,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/pre-subagent.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/send-event.ps1\" -EventType \"subagent_start\" -ToolName \"Task\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 5
           }
         ]
       }
@@ -37,6 +47,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/estimate-tokens.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\" -Operation \"subagent\"",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/send-event.ps1\" -EventType \"subagent_end\" -ToolName \"Task\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 5
           }
         ]
       },
@@ -47,6 +62,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/estimate-tokens.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\" -Operation \"write\"",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/send-event.ps1\" -EventType \"file_write\" -ToolName \"Write\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 5
           }
         ]
       },
@@ -57,6 +77,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/estimate-tokens.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\" -Operation \"edit\"",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/send-event.ps1\" -EventType \"file_edit\" -ToolName \"Edit\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 5
           }
         ]
       },
@@ -67,6 +92,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/estimate-tokens.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\" -Operation \"read\"",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/send-event.ps1\" -EventType \"file_read\" -ToolName \"Read\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 5
           }
         ]
       }
@@ -79,6 +109,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/session-start.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/send-event.ps1\" -EventType \"session_start\" -ToolName \"session\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 5
           }
         ]
       }
@@ -90,6 +125,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/session-end.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/send-event.ps1\" -EventType \"session_end\" -ToolName \"session\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 5
           }
         ]
       }
@@ -101,6 +141,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/post-subagent.ps1\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/scripts/send-event.ps1\" -EventType \"subagent_complete\" -ToolName \"SubagentStop\" -WorkspaceRoot \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 5
           }
         ]
       }

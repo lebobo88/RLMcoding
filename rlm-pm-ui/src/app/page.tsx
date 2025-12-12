@@ -13,7 +13,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, FolderOpen, Zap, CheckCircle2, AlertCircle, Upload, X, FileText, ListTodo, Layers } from "lucide-react";
+import { Plus, FolderOpen, Zap, CheckCircle2, AlertCircle, Upload, X, FileText, ListTodo, Layers, Activity, Settings } from "lucide-react";
+import Link from "next/link";
+import { ActivityPulse } from "@/components/dashboard/activity-pulse";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -235,16 +237,24 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <ParticleButton
-                  variant="default"
-                  className="gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  New Project
-                </ParticleButton>
-              </DialogTrigger>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/settings/ai-providers"
+                className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
+                title="AI Settings"
+              >
+                <Settings className="h-5 w-5" />
+              </Link>
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <ParticleButton
+                    variant="default"
+                    className="gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    New Project
+                  </ParticleButton>
+                </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Add Project</DialogTitle>
@@ -339,7 +349,8 @@ export default function Dashboard() {
                   </TabsContent>
                 </Tabs>
               </DialogContent>
-            </Dialog>
+              </Dialog>
+            </div>
           </div>
         </div>
       </header>
@@ -432,6 +443,16 @@ export default function Dashboard() {
             icon={<CheckCircle2 className="h-5 w-5" />}
             color="green"
           />
+        </motion.div>
+
+        {/* Activity Pulse Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-8"
+        >
+          <ActivityPulse compact maxEvents={10} />
         </motion.div>
 
         {/* Error Message */}

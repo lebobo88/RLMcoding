@@ -62,13 +62,98 @@ export interface RLMProgress {
   };
 }
 
-export interface RLMTokenUsage {
+// Legacy token usage format (for backwards compatibility)
+export interface RLMTokenUsageLegacy {
   sessionId: string;
   date: string;
   totalTokens: number;
   inputTokens: number;
   outputTokens: number;
   tasksCompleted: number;
+}
+
+// Token operation tracked by hooks
+export interface RLMTokenOperation {
+  timestamp: string;
+  operation: "read" | "write" | "edit" | "subagent" | "tool";
+  file?: string;
+  estimatedTokens: number;
+  details?: string;
+}
+
+// Context compaction event
+export interface RLMCompactEvent {
+  timestamp: string;
+  contextPercentage?: number;
+  reason: string;
+  sessionId?: string;
+}
+
+// Estimated token data (from estimation hooks)
+export interface RLMTokenEstimates {
+  sessionId: string;
+  startedAt: string;
+  lastUpdated: string;
+  totalEstimatedTokens: number;
+  inputTokens: number;
+  outputTokens: number;
+  estimatedCost: number;
+  operations: RLMTokenOperation[];
+  operationCounts: {
+    reads: number;
+    writes: number;
+    edits: number;
+    subagents: number;
+    tools: number;
+  };
+}
+
+// Captured token data (from /cost command post-session)
+export interface RLMTokenCaptured {
+  sessionId: string;
+  capturedAt: string;
+  actualCost: number;
+  apiDuration?: string;
+  wallDuration?: string;
+  linesAdded?: number;
+  linesRemoved?: number;
+  estimatedTokensFromCost?: number;
+}
+
+// Daily summary of token usage
+export interface RLMTokenDaily {
+  date: string;
+  sessions: Array<{
+    sessionId: string;
+    cost: number;
+    duration?: string;
+  }>;
+  totalCost: number;
+  totalSessions: number;
+}
+
+// Current session metadata
+export interface RLMCurrentSession {
+  sessionId: string;
+  startedAt: string;
+  contextCompactWarning?: boolean;
+  lastActivity?: string;
+}
+
+// Enhanced token usage combining all sources
+export interface RLMTokenUsage {
+  // Current session estimates
+  estimates?: RLMTokenEstimates;
+  // Current session metadata
+  currentSession?: RLMCurrentSession;
+  // Captured post-session data
+  captured: RLMTokenCaptured[];
+  // Daily summaries
+  dailySummaries: RLMTokenDaily[];
+  // Compact events
+  compactEvents: RLMCompactEvent[];
+  // Legacy format for backwards compatibility
+  legacy: RLMTokenUsageLegacy[];
 }
 
 // Design System types
@@ -204,6 +289,43 @@ export interface RLMConfig {
   data?: Record<string, unknown>;
 }
 
+// Sub-agent completion manifest
+export interface RLMManifest {
+  manifestId: string;
+  agent: string;
+  taskId?: string;
+  featureId?: string;
+  timestamp: string;
+  action: string;
+  status: "complete" | "partial" | "failed";
+  filesWritten: string[];
+  filesModified: string[];
+  filesDeleted?: string[];
+  testResults?: {
+    passed: number;
+    failed: number;
+    skipped: number;
+    total: number;
+  };
+  duration?: string;
+  notes?: string;
+  filePath: string;
+}
+
+// Sub-agent reliability tracking
+export interface RLMSubAgentReliability {
+  manifests: RLMManifest[];
+  totalManifests: number;
+  byAgent: Record<string, number>;
+  byStatus: {
+    complete: number;
+    partial: number;
+    failed: number;
+  };
+  filesVerified: number;
+  filesMissing: number;
+}
+
 // Main project data interface - comprehensive
 export interface RLMProjectData {
   prd?: string;
@@ -215,7 +337,7 @@ export interface RLMProjectData {
     blocked: RLMTask[];
   };
   progress?: RLMProgress;
-  tokenUsage: RLMTokenUsage[];
+  tokenUsage: RLMTokenUsage;
   currentPhase?: string;
 
   // Comprehensive additions
@@ -230,6 +352,9 @@ export interface RLMProjectData {
   finalReport?: RLMFinalReport;
   e2eTests?: RLME2ETests;
   config?: RLMConfig;
+
+  // Sub-agent reliability (v2.7.1)
+  subAgentReliability?: RLMSubAgentReliability;
 }
 
 // Parse YAML frontmatter from content
@@ -496,39 +621,220 @@ export function readProgress(progressPath: string): RLMProgress | undefined {
   }
 }
 
-// Read token usage from session files
-export function readTokenUsage(tokenUsagePath: string): RLMTokenUsage[] {
+// Read token estimates (from estimation hooks)
+export function readTokenEstimates(tokenUsagePath: string): RLMTokenEstimates | undefined {
+  try {
+    const estimatesPath = path.join(tokenUsagePath, "token-estimates.json");
+    if (!existsSync(estimatesPath)) return undefined;
+
+    const content = readFileSync(estimatesPath, "utf-8");
+    const data = JSON.parse(content);
+
+    return {
+      sessionId: data.session_id || data.sessionId || "unknown",
+      startedAt: data.started_at || data.startedAt || "",
+      lastUpdated: data.last_updated || data.lastUpdated || "",
+      totalEstimatedTokens: data.total_estimated_tokens || data.totalEstimatedTokens || 0,
+      inputTokens: data.input_tokens || data.inputTokens || 0,
+      outputTokens: data.output_tokens || data.outputTokens || 0,
+      estimatedCost: data.estimated_cost || data.estimatedCost || 0,
+      operations: (data.operations || []).map((op: Record<string, unknown>) => ({
+        timestamp: op.timestamp as string || "",
+        operation: op.operation as string || "tool",
+        file: op.file as string,
+        estimatedTokens: op.estimated_tokens as number || op.estimatedTokens as number || 0,
+        details: op.details as string,
+      })),
+      operationCounts: {
+        reads: data.operation_counts?.reads || data.operationCounts?.reads || 0,
+        writes: data.operation_counts?.writes || data.operationCounts?.writes || 0,
+        edits: data.operation_counts?.edits || data.operationCounts?.edits || 0,
+        subagents: data.operation_counts?.subagents || data.operationCounts?.subagents || 0,
+        tools: data.operation_counts?.tools || data.operationCounts?.tools || 0,
+      },
+    };
+  } catch {
+    return undefined;
+  }
+}
+
+// Read current session metadata
+export function readCurrentSession(tokenUsagePath: string): RLMCurrentSession | undefined {
+  try {
+    const sessionPath = path.join(tokenUsagePath, "current-session.json");
+    if (!existsSync(sessionPath)) return undefined;
+
+    const content = readFileSync(sessionPath, "utf-8");
+    const data = JSON.parse(content);
+
+    return {
+      sessionId: data.session_id || data.sessionId || "unknown",
+      startedAt: data.started_at || data.startedAt || "",
+      contextCompactWarning: data.context_compact_warning || data.contextCompactWarning || false,
+      lastActivity: data.last_activity || data.lastActivity,
+    };
+  } catch {
+    return undefined;
+  }
+}
+
+// Read captured post-session cost data
+export function readCapturedCosts(tokenUsagePath: string): RLMTokenCaptured[] {
   try {
     if (!existsSync(tokenUsagePath)) return [];
 
     const files = readdirSync(tokenUsagePath).filter(
-      (f) => f.endsWith(".json") && f !== "session-template.json"
+      (f) => f.startsWith("cost-") && f.endsWith(".json")
     );
-    const usage: RLMTokenUsage[] = [];
+    const captured: RLMTokenCaptured[] = [];
 
     for (const file of files) {
       try {
         const content = readFileSync(path.join(tokenUsagePath, file), "utf-8");
         const data = JSON.parse(content);
 
-        usage.push({
-          sessionId: data.session_id || file.replace(".json", ""),
-          date: data.started_at || "",
-          totalTokens: data.summary?.total_tokens || 0,
-          inputTokens: data.summary?.input_tokens || 0,
-          outputTokens: data.summary?.output_tokens || 0,
-          tasksCompleted: data.tasks_completed?.length || 0,
+        captured.push({
+          sessionId: data.session_id || data.sessionId || file.replace(/^cost-|\.json$/g, ""),
+          capturedAt: data.captured_at || data.capturedAt || "",
+          actualCost: data.actual_cost || data.actualCost || data.cost || 0,
+          apiDuration: data.api_duration || data.apiDuration,
+          wallDuration: data.wall_duration || data.wallDuration,
+          linesAdded: data.lines_added || data.linesAdded,
+          linesRemoved: data.lines_removed || data.linesRemoved,
+          estimatedTokensFromCost: data.estimated_tokens_from_cost || data.estimatedTokensFromCost,
         });
       } catch {
         // Skip invalid files
       }
     }
 
-    return usage;
-  } catch (error) {
-    console.error(`Error reading token usage:`, error);
+    return captured;
+  } catch {
     return [];
   }
+}
+
+// Read daily token summaries
+export function readDailySummaries(tokenUsagePath: string): RLMTokenDaily[] {
+  try {
+    if (!existsSync(tokenUsagePath)) return [];
+
+    const files = readdirSync(tokenUsagePath).filter(
+      (f) => f.startsWith("daily-") && f.endsWith(".json")
+    );
+    const summaries: RLMTokenDaily[] = [];
+
+    for (const file of files) {
+      try {
+        const content = readFileSync(path.join(tokenUsagePath, file), "utf-8");
+        const data = JSON.parse(content);
+
+        summaries.push({
+          date: data.date || file.replace(/^daily-|\.json$/g, ""),
+          sessions: (data.sessions || []).map((s: Record<string, unknown>) => ({
+            sessionId: s.session_id as string || s.sessionId as string || "",
+            cost: s.cost as number || 0,
+            duration: s.duration as string,
+          })),
+          totalCost: data.total_cost || data.totalCost || 0,
+          totalSessions: data.total_sessions || data.totalSessions || (data.sessions?.length || 0),
+        });
+      } catch {
+        // Skip invalid files
+      }
+    }
+
+    // Sort by date descending
+    return summaries.sort((a, b) => b.date.localeCompare(a.date));
+  } catch {
+    return [];
+  }
+}
+
+// Read context compaction events
+export function readCompactEvents(tokenUsagePath: string): RLMCompactEvent[] {
+  try {
+    const compactPath = path.join(tokenUsagePath, "compact-events.json");
+    if (!existsSync(compactPath)) return [];
+
+    const content = readFileSync(compactPath, "utf-8");
+    const data = JSON.parse(content);
+
+    if (Array.isArray(data)) {
+      return data.map((event: Record<string, unknown>) => ({
+        timestamp: event.timestamp as string || "",
+        contextPercentage: event.context_percentage as number || event.contextPercentage as number,
+        reason: event.reason as string || "unknown",
+        sessionId: event.session_id as string || event.sessionId as string,
+      }));
+    } else if (data.events && Array.isArray(data.events)) {
+      return data.events.map((event: Record<string, unknown>) => ({
+        timestamp: event.timestamp as string || "",
+        contextPercentage: event.context_percentage as number || event.contextPercentage as number,
+        reason: event.reason as string || "unknown",
+        sessionId: event.session_id as string || event.sessionId as string,
+      }));
+    }
+
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+// Read legacy token usage format (for backwards compatibility)
+export function readLegacyTokenUsage(tokenUsagePath: string): RLMTokenUsageLegacy[] {
+  try {
+    if (!existsSync(tokenUsagePath)) return [];
+
+    const files = readdirSync(tokenUsagePath).filter(
+      (f) => f.endsWith(".json") &&
+        f !== "session-template.json" &&
+        !f.startsWith("token-") &&
+        !f.startsWith("current-") &&
+        !f.startsWith("daily-") &&
+        !f.startsWith("cost-") &&
+        !f.startsWith("compact-")
+    );
+    const usage: RLMTokenUsageLegacy[] = [];
+
+    for (const file of files) {
+      try {
+        const content = readFileSync(path.join(tokenUsagePath, file), "utf-8");
+        const data = JSON.parse(content);
+
+        // Only include if it looks like legacy format
+        if (data.summary?.total_tokens || data.tasks_completed) {
+          usage.push({
+            sessionId: data.session_id || file.replace(".json", ""),
+            date: data.started_at || "",
+            totalTokens: data.summary?.total_tokens || 0,
+            inputTokens: data.summary?.input_tokens || 0,
+            outputTokens: data.summary?.output_tokens || 0,
+            tasksCompleted: data.tasks_completed?.length || 0,
+          });
+        }
+      } catch {
+        // Skip invalid files
+      }
+    }
+
+    return usage;
+  } catch {
+    return [];
+  }
+}
+
+// Read all token usage data (combines all formats)
+export function readTokenUsage(tokenUsagePath: string): RLMTokenUsage {
+  return {
+    estimates: readTokenEstimates(tokenUsagePath),
+    currentSession: readCurrentSession(tokenUsagePath),
+    captured: readCapturedCosts(tokenUsagePath),
+    dailySummaries: readDailySummaries(tokenUsagePath),
+    compactEvents: readCompactEvents(tokenUsagePath),
+    legacy: readLegacyTokenUsage(tokenUsagePath),
+  };
 }
 
 // Read PRD content
@@ -987,6 +1293,109 @@ export function readConfig(progressPath: string): RLMConfig {
   }
 }
 
+// Read sub-agent completion manifests
+export function readManifests(progressPath: string): RLMManifest[] {
+  const manifestsPath = path.join(progressPath, "manifests");
+  if (!existsSync(manifestsPath)) {
+    return [];
+  }
+
+  try {
+    const files = readdirSync(manifestsPath).filter((f) => f.endsWith(".json"));
+    const manifests: RLMManifest[] = [];
+
+    for (const file of files) {
+      try {
+        const filePath = path.join(manifestsPath, file);
+        const content = readFileSync(filePath, "utf-8");
+        const data = JSON.parse(content);
+
+        manifests.push({
+          manifestId: data.manifest_id || data.manifestId || file.replace(".json", ""),
+          agent: data.agent || "unknown",
+          taskId: data.task_id || data.taskId,
+          featureId: data.feature_id || data.featureId,
+          timestamp: data.timestamp || "",
+          action: data.action || "",
+          status: (data.status === "complete" || data.status === "partial" || data.status === "failed")
+            ? data.status
+            : "complete",
+          filesWritten: Array.isArray(data.files_written || data.filesWritten)
+            ? (data.files_written || data.filesWritten)
+            : [],
+          filesModified: Array.isArray(data.files_modified || data.filesModified)
+            ? (data.files_modified || data.filesModified)
+            : [],
+          filesDeleted: Array.isArray(data.files_deleted || data.filesDeleted)
+            ? (data.files_deleted || data.filesDeleted)
+            : undefined,
+          testResults: data.test_results || data.testResults
+            ? {
+                passed: data.test_results?.passed || data.testResults?.passed || 0,
+                failed: data.test_results?.failed || data.testResults?.failed || 0,
+                skipped: data.test_results?.skipped || data.testResults?.skipped || 0,
+                total: data.test_results?.total || data.testResults?.total || 0,
+              }
+            : undefined,
+          duration: data.duration,
+          notes: data.notes,
+          filePath,
+        });
+      } catch {
+        // Skip invalid files
+      }
+    }
+
+    // Sort by timestamp descending (most recent first)
+    return manifests.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  } catch {
+    return [];
+  }
+}
+
+// Read sub-agent reliability data (aggregated from manifests)
+export function readSubAgentReliability(progressPath: string, projectPath: string): RLMSubAgentReliability {
+  const manifests = readManifests(progressPath);
+
+  // Count by agent
+  const byAgent: Record<string, number> = {};
+  for (const manifest of manifests) {
+    byAgent[manifest.agent] = (byAgent[manifest.agent] || 0) + 1;
+  }
+
+  // Count by status
+  const byStatus = {
+    complete: manifests.filter((m) => m.status === "complete").length,
+    partial: manifests.filter((m) => m.status === "partial").length,
+    failed: manifests.filter((m) => m.status === "failed").length,
+  };
+
+  // Verify files exist
+  let filesVerified = 0;
+  let filesMissing = 0;
+
+  for (const manifest of manifests) {
+    const allFiles = [...manifest.filesWritten, ...manifest.filesModified];
+    for (const file of allFiles) {
+      const fullPath = path.isAbsolute(file) ? file : path.join(projectPath, file);
+      if (existsSync(fullPath)) {
+        filesVerified++;
+      } else {
+        filesMissing++;
+      }
+    }
+  }
+
+  return {
+    manifests,
+    totalManifests: manifests.length,
+    byAgent,
+    byStatus,
+    filesVerified,
+    filesMissing,
+  };
+}
+
 // Check if feature has design spec
 export function checkFeatureDesignSpec(specsPath: string, featureId: string): { hasDesignSpec: boolean; designSpecPath?: string } {
   const designSpecPath = path.join(specsPath, "features", featureId, "design-spec.md");
@@ -1056,6 +1465,9 @@ export function readProjectData(projectPath: string): RLMProjectData {
 
     // Configuration
     config: readConfig(progressPath),
+
+    // Sub-agent reliability (v2.7.1)
+    subAgentReliability: readSubAgentReliability(progressPath, projectPath),
   };
 }
 

@@ -96,6 +96,27 @@ export async function GET(
 
     const activeTasks = allFeaturesVerified ? 0 : projectData.tasks.active.length - completedInActive;
 
+    // Calculate total tokens from various sources
+    const tokenUsage = projectData.tokenUsage;
+    let totalTokensUsed = 0;
+
+    // Add estimated tokens from current session
+    if (tokenUsage.estimates?.totalEstimatedTokens) {
+      totalTokensUsed += tokenUsage.estimates.totalEstimatedTokens;
+    }
+
+    // Add tokens from captured sessions
+    for (const captured of tokenUsage.captured) {
+      if (captured.estimatedTokensFromCost) {
+        totalTokensUsed += captured.estimatedTokensFromCost;
+      }
+    }
+
+    // Add legacy token counts for backwards compatibility
+    for (const legacy of tokenUsage.legacy) {
+      totalTokensUsed += legacy.totalTokens;
+    }
+
     // Build base summary
     const baseSummary = {
       totalFeatures: projectData.features.length,
@@ -105,10 +126,7 @@ export async function GET(
       blockedTasks: projectData.tasks.blocked.length,
       hasPRD: !!projectData.prd,
       hasConstitution: !!projectData.constitution,
-      totalTokensUsed: projectData.tokenUsage.reduce(
-        (sum, t) => sum + t.totalTokens,
-        0
-      ),
+      totalTokensUsed,
     };
 
     // Merge with checkpoint summary, but always use our calculated task counts
