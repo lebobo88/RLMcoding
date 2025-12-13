@@ -22,7 +22,10 @@ param(
 )
 
 # Configuration
-$ObservabilityServerUrl = "http://localhost:3001/api/events"
+$ObservabilityServerUrl = $env:RLM_OBSERVABILITY_URL
+if (-not $ObservabilityServerUrl) {
+    $ObservabilityServerUrl = "http://localhost:3000/api/events"
+}
 $FallbackEventsDir = Join-Path $WorkspaceRoot "RLM\progress\events"
 $TimeoutSeconds = 5
 

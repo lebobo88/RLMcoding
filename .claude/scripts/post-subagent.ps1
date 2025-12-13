@@ -41,12 +41,55 @@ foreach ($ManifestFile in $ManifestFiles) {
     try {
         $Manifest = Get-Content $ManifestFile.FullName -Raw | ConvertFrom-Json
 
+        # VERIFY FILES ACTUALLY EXIST
+        $FilesCreated = @($Manifest.files_created)
+        $FilesModified = @($Manifest.files_modified)
+        $MissingFiles = @()
+        $VerifiedFiles = @()
+
+        foreach ($File in ($FilesCreated + $FilesModified)) {
+            if ($File) {
+                $FullPath = if ([System.IO.Path]::IsPathRooted($File)) { $File } else { Join-Path $WorkspaceRoot $File }
+                if (Test-Path $FullPath) {
+                    $VerifiedFiles += $File
+                } else {
+                    $MissingFiles += $File
+                    Write-Host "WARNING: File claimed but NOT FOUND: $File" -ForegroundColor Yellow
+                }
+            }
+        }
+
+        # Update manifest with verification results
+        $Manifest | Add-Member -NotePropertyName "verified_files" -NotePropertyValue $VerifiedFiles -Force
+        $Manifest | Add-Member -NotePropertyName "missing_files" -NotePropertyValue $MissingFiles -Force
+        $Manifest | Add-Member -NotePropertyName "verification_passed" -NotePropertyValue ($MissingFiles.Count -eq 0) -Force
+
+        # If files are missing, mark as PARTIAL not completed
+        if ($MissingFiles.Count -gt 0 -and $Manifest.status -eq "completed") {
+            Write-Host "RELIABILITY ISSUE: Sub-agent claimed completion but $($MissingFiles.Count) files missing!" -ForegroundColor Red
+            Write-Host "Missing: $($MissingFiles -join ', ')" -ForegroundColor Red
+            $Manifest.status = "partial"
+
+            # Send alert event
+            $AlertDetails = @{
+                task_id = $Manifest.task_id
+                missing_files = $MissingFiles
+                verified_files = $VerifiedFiles
+            } | ConvertTo-Json -Compress
+
+            & powershell -ExecutionPolicy Bypass -File "$WorkspaceRoot/.claude/scripts/send-event.ps1" `
+                -EventType "subagent_incomplete" `
+                -ToolName "verification" `
+                -DetailsJson $AlertDetails `
+                -WorkspaceRoot $WorkspaceRoot 2>$null
+        }
+
         # Process task completion
         if ($Manifest.task_id) {
             $TaskId = $Manifest.task_id
 
-            # Update session
-            if ($Manifest.status -eq "completed") {
+            # Update session - only if fully verified
+            if ($Manifest.status -eq "completed" -and $Manifest.verification_passed) {
                 if (-not $Session.tasks_completed) { $Session.tasks_completed = @() }
                 $Session.tasks_completed += $TaskId
             }
@@ -79,8 +122,8 @@ foreach ($ManifestFile in $ManifestFiles) {
                 $Status | ConvertTo-Json -Depth 10 | Set-Content -Path $StatusFile -Encoding UTF8
             }
 
-            # Move task file if completed
-            if ($Manifest.status -eq "completed") {
+            # Move task file if completed AND verified
+            if ($Manifest.status -eq "completed" -and $Manifest.verification_passed) {
                 $ActiveTask = Join-Path $WorkspaceRoot "RLM/tasks/active/$TaskId.md"
                 $CompletedTask = Join-Path $WorkspaceRoot "RLM/tasks/completed/$TaskId.md"
 
@@ -88,18 +131,30 @@ foreach ($ManifestFile in $ManifestFiles) {
                     # Ensure completed directory exists
                     New-Item -ItemType Directory -Force -Path (Join-Path $WorkspaceRoot "RLM/tasks/completed") | Out-Null
                     Move-Item -Path $ActiveTask -Destination $CompletedTask -Force
-                    Write-Host "Task $TaskId moved to completed/"
+                    Write-Host "Task $TaskId VERIFIED and moved to completed/"
+                }
+            } elseif ($Manifest.status -eq "partial") {
+                # Move to blocked if verification failed
+                $ActiveTask = Join-Path $WorkspaceRoot "RLM/tasks/active/$TaskId.md"
+                $BlockedTask = Join-Path $WorkspaceRoot "RLM/tasks/blocked/$TaskId.md"
+
+                if (Test-Path $ActiveTask) {
+                    New-Item -ItemType Directory -Force -Path (Join-Path $WorkspaceRoot "RLM/tasks/blocked") | Out-Null
+                    Move-Item -Path $ActiveTask -Destination $BlockedTask -Force
+                    Write-Host "Task $TaskId moved to BLOCKED (verification failed)" -ForegroundColor Yellow
                 }
             }
 
-            # Log completion
+            # Log completion with verification status
             $LogFile = Join-Path $ProgressPath "logs/$(Get-Date -Format 'yyyy-MM-dd').md"
+            $VerifyIcon = if ($Manifest.verification_passed) { "✅" } else { "⚠️" }
             $LogEntry = @"
 
-## $(Get-Date -Format 'HH:mm') Task $($Manifest.status): $TaskId
+## $(Get-Date -Format 'HH:mm') Task $($Manifest.status): $TaskId $VerifyIcon
 
-**Files Created**: $($Manifest.files_created -join ', ')
-**Files Modified**: $($Manifest.files_modified -join ', ')
+**Verification**: $(if ($Manifest.verification_passed) { "PASSED" } else { "FAILED - $($MissingFiles.Count) files missing" })
+**Files Verified**: $($VerifiedFiles -join ', ')
+**Files Missing**: $(if ($MissingFiles.Count -gt 0) { $MissingFiles -join ', ' } else { "None" })
 **Tests Added**: $($Manifest.tests_added)
 
 ---

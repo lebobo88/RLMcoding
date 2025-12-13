@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "motion/react";
 import Link from "next/link";
@@ -12,14 +13,19 @@ import {
   ChevronRight,
   FileText,
   Workflow,
+  Download,
+  Loader2,
 } from "lucide-react";
 import { PipelineView } from "@/components/pipeline/pipeline-view";
 import { Progress } from "@/components/ui/progress";
 import { useProjectData } from "@/contexts/project-data-context";
+import ParticleButton from "@/components/kokonutui/particle-button";
+import { ActivityPulse } from "@/components/dashboard/activity-pulse";
 
 export default function ProjectOverview() {
   const params = useParams();
-  const { project, projectData: data, loading } = useProjectData();
+  const { project, projectData: data, loading, syncFramework, syncingFramework } = useProjectData();
+  const [syncMessage, setSyncMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   if (loading) {
     return (
@@ -36,8 +42,78 @@ export default function ProjectOverview() {
       )
     : 0;
 
+  const handleSyncFramework = async (overwrite = false) => {
+    setSyncMessage(null);
+    const result = await syncFramework(overwrite);
+    if (result.success) {
+      setSyncMessage({
+        type: "success",
+        text: overwrite
+          ? `${result.copied} files updated`
+          : `${result.copied} files copied, ${result.skipped} skipped (already exist)`,
+      });
+    } else {
+      setSyncMessage({ type: "error", text: result.message });
+    }
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => setSyncMessage(null), 5000);
+  };
+
   return (
     <div className="space-y-8">
+      {/* Sync Framework Section */}
+      <div className="p-4 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-blue-900 dark:text-blue-100">RLM Framework</h3>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Sync the latest prompts, templates, and commands to this project
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <ParticleButton
+              onClick={() => handleSyncFramework(false)}
+              disabled={syncingFramework}
+              variant="outline"
+              className="gap-2"
+            >
+              {syncingFramework ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {syncingFramework ? "Syncing..." : "Sync New"}
+            </ParticleButton>
+            <ParticleButton
+              onClick={() => handleSyncFramework(true)}
+              disabled={syncingFramework}
+              variant="default"
+              className="gap-2"
+            >
+              {syncingFramework ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              Update All
+            </ParticleButton>
+          </div>
+        </div>
+        {syncMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mt-3 p-2 rounded-lg text-sm ${
+              syncMessage.type === "success"
+                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+            }`}
+          >
+            {syncMessage.text}
+          </motion.div>
+        )}
+      </div>
+
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
@@ -184,6 +260,14 @@ export default function ProjectOverview() {
           </div>
         </div>
       </div>
+
+      {/* Activity Pulse - Compact View */}
+      {/* Note: projectId filter removed - events use folder name, not DB UUID */}
+      <ActivityPulse
+        maxEvents={20}
+        showFilters={false}
+        compact
+      />
 
       {/* Blocked Tasks Warning */}
       {(data?.summary?.blockedTasks ?? 0) > 0 && (

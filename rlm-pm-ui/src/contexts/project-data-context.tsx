@@ -176,6 +176,14 @@ interface RefreshResult {
   summary?: ProjectSummary;
 }
 
+interface SyncFrameworkResult {
+  success: boolean;
+  message: string;
+  copied?: number;
+  skipped?: number;
+  directories?: string[];
+}
+
 interface ProjectDataContextType {
   // Data
   project: Project | null;
@@ -186,6 +194,8 @@ interface ProjectDataContextType {
   // Actions
   refresh: () => Promise<RefreshResult>;
   refreshing: boolean;
+  syncFramework: (overwrite?: boolean) => Promise<SyncFrameworkResult>;
+  syncingFramework: boolean;
 
   // Helper to manually trigger a data fetch (without refresh API)
   fetchData: () => Promise<void>;
@@ -202,6 +212,7 @@ export function ProjectDataProvider({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [syncingFramework, setSyncingFramework] = useState(false);
 
   // Fetch both project info and project data
   const fetchData = useCallback(async () => {
@@ -299,6 +310,47 @@ export function ProjectDataProvider({ children }: { children: React.ReactNode })
     }
   }, [projectId, fetchData]);
 
+  // Sync framework files to project
+  const syncFramework = useCallback(async (overwrite = false): Promise<SyncFrameworkResult> => {
+    if (!projectId) {
+      return { success: false, message: "No project ID" };
+    }
+
+    setSyncingFramework(true);
+
+    try {
+      const res = await fetch(`/api/projects/${projectId}/sync-framework`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ overwrite }),
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        return {
+          success: false,
+          message: data.error.message,
+        };
+      }
+
+      return {
+        success: true,
+        message: data.data.message,
+        copied: data.data.copied,
+        skipped: data.data.skipped,
+        directories: data.data.directories,
+      };
+    } catch (err) {
+      console.error("Failed to sync framework:", err);
+      return {
+        success: false,
+        message: "Failed to sync framework. Check console for details.",
+      };
+    } finally {
+      setSyncingFramework(false);
+    }
+  }, [projectId]);
+
   return (
     <ProjectDataContext.Provider
       value={{
@@ -308,6 +360,8 @@ export function ProjectDataProvider({ children }: { children: React.ReactNode })
         error,
         refresh,
         refreshing,
+        syncFramework,
+        syncingFramework,
         fetchData,
       }}
     >

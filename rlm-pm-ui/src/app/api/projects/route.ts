@@ -2,8 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, projects, NewProject } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { existsSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync, cpSync, writeFileSync, readdirSync, statSync } from "fs";
 import path from "path";
+
+// Get the RLM framework source directory (where the app is running from)
+const getRLMSourcePath = () => {
+  // In development, we're in rlm-pm-ui, RLM framework is in parent
+  // This assumes rlm-pm-ui is inside RLMcoding
+  const possiblePaths = [
+    path.join(process.cwd(), ".."), // Parent of rlm-pm-ui
+    path.join(process.cwd(), "../.."), // Two levels up
+    "c:\\AiAppDeployments\\RLMcoding", // Hardcoded fallback for Windows
+    "/home/user/RLMcoding", // Linux fallback
+  ];
+
+  for (const p of possiblePaths) {
+    if (existsSync(path.join(p, "RLM", "prompts")) && existsSync(path.join(p, ".claude", "commands"))) {
+      return p;
+    }
+  }
+
+  return null;
+};
 
 // GET /api/projects - List all projects
 export async function GET() {
@@ -92,37 +112,60 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data: created }, { status: 201 });
   } catch (error) {
     console.error("Error creating project:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: { code: "DB_ERROR", message: "Failed to create project" } },
+      { error: { code: "DB_ERROR", message: `Failed to create project: ${errorMessage}` } },
       { status: 500 }
     );
   }
 }
 
-// Helper function to create RLM folder structure
+// Helper function to copy directory recursively, excluding certain patterns
+function copyDirRecursive(src: string, dest: string, excludePatterns: string[] = []) {
+  if (!existsSync(src)) return;
+
+  mkdirSync(dest, { recursive: true });
+
+  const entries = readdirSync(src);
+  for (const entry of entries) {
+    // Skip excluded patterns
+    if (excludePatterns.some(pattern => entry.includes(pattern))) continue;
+
+    const srcPath = path.join(src, entry);
+    const destPath = path.join(dest, entry);
+
+    const stat = statSync(srcPath);
+    if (stat.isDirectory()) {
+      copyDirRecursive(srcPath, destPath, excludePatterns);
+    } else {
+      cpSync(srcPath, destPath);
+    }
+  }
+}
+
+// Helper function to create RLM folder structure and copy framework files
 function createRLMStructure(basePath: string) {
+  const sourcePath = getRLMSourcePath();
+
+  // Create base directories that might not be copied
   const rlmDirs = [
-    "RLM",
     "RLM/specs",
     "RLM/specs/features",
     "RLM/specs/architecture",
     "RLM/specs/design",
     "RLM/specs/design/tokens",
     "RLM/specs/epics",
-    "RLM/tasks",
+    "RLM/specs/research",
     "RLM/tasks/active",
     "RLM/tasks/completed",
     "RLM/tasks/blocked",
-    "RLM/progress",
     "RLM/progress/logs",
     "RLM/progress/token-usage",
     "RLM/progress/bundles",
-    "RLM/research",
+    "RLM/progress/manifests",
+    "RLM/progress/events",
     "RLM/research/project",
     "RLM/research/sessions",
-    "RLM/templates",
-    "RLM/agents",
-    "RLM/prompts",
   ];
 
   for (const dir of rlmDirs) {
@@ -132,7 +175,48 @@ function createRLMStructure(basePath: string) {
     }
   }
 
-  // Create initial files
+  // If we found the RLM source, copy the framework files
+  if (sourcePath) {
+    console.log(`Copying RLM framework from ${sourcePath} to ${basePath}`);
+
+    // Copy RLM framework directories (prompts, templates, agents, config, docs)
+    const rlmDirsToCopy = ["prompts", "templates", "agents", "config", "docs"];
+    for (const dir of rlmDirsToCopy) {
+      const srcDir = path.join(sourcePath, "RLM", dir);
+      const destDir = path.join(basePath, "RLM", dir);
+      if (existsSync(srcDir)) {
+        copyDirRecursive(srcDir, destDir, [".db", ".db-shm", ".db-wal"]);
+      }
+    }
+
+    // Copy .claude directory (commands, agents, hooks, scripts)
+    const claudeSrcDir = path.join(sourcePath, ".claude");
+    const claudeDestDir = path.join(basePath, ".claude");
+    if (existsSync(claudeSrcDir)) {
+      copyDirRecursive(claudeSrcDir, claudeDestDir, ["settings.local.json"]);
+    }
+
+    // Copy CLAUDE.md
+    const claudeMdSrc = path.join(sourcePath, "CLAUDE.md");
+    const claudeMdDest = path.join(basePath, "CLAUDE.md");
+    if (existsSync(claudeMdSrc) && !existsSync(claudeMdDest)) {
+      cpSync(claudeMdSrc, claudeMdDest);
+    }
+
+    // Copy RLM root files
+    const rlmRootFiles = ["START-HERE.md", "README.md"];
+    for (const file of rlmRootFiles) {
+      const srcFile = path.join(sourcePath, "RLM", file);
+      const destFile = path.join(basePath, "RLM", file);
+      if (existsSync(srcFile) && !existsSync(destFile)) {
+        cpSync(srcFile, destFile);
+      }
+    }
+  } else {
+    console.warn("RLM source path not found, creating minimal structure only");
+  }
+
+  // Create initial progress tracking files
   const initialFiles = [
     {
       path: "RLM/progress/status.json",
@@ -169,13 +253,28 @@ function createRLMStructure(basePath: string) {
         2
       ),
     },
+    {
+      path: "RLM/progress/cc-config.json",
+      content: JSON.stringify(
+        {
+          parallel: { limit: 10 },
+          automation: { level: "auto" },
+          reporting: { mode: "both" },
+          context_management: {
+            auto_checkpoint: { enabled: true },
+            smart_truncation: { enabled: true },
+          },
+        },
+        null,
+        2
+      ),
+    },
   ];
 
-  const fs = require("fs");
   for (const file of initialFiles) {
     const fullPath = path.join(basePath, file.path);
     if (!existsSync(fullPath)) {
-      fs.writeFileSync(fullPath, file.content, "utf-8");
+      writeFileSync(fullPath, file.content, "utf-8");
     }
   }
 }

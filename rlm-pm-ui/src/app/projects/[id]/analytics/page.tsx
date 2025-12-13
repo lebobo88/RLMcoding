@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { motion } from "motion/react";
 import {
   BarChart3,
@@ -16,8 +17,11 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useProjectData, TokenUsage, SubAgentReliability } from "@/contexts/project-data-context";
+import { ActivityPulse } from "@/components/dashboard/activity-pulse";
 
 export default function AnalyticsPage() {
+  const params = useParams();
+  const projectId = params.id as string;
   const { projectData, loading } = useProjectData();
 
   if (loading) {
@@ -89,6 +93,10 @@ export default function AnalyticsPage() {
           Token usage and project velocity metrics
         </p>
       </div>
+
+      {/* Activity Pulse - Real-time events */}
+      {/* Note: projectId filter removed - events use folder name, not DB UUID */}
+      <ActivityPulse maxEvents={100} showFilters />
 
       {/* Context Warning */}
       {hasCompactWarning && (

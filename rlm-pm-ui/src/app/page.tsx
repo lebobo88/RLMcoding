@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, FolderOpen, Zap, CheckCircle2, AlertCircle, Upload, X, FileText, ListTodo, Layers, Activity, Settings } from "lucide-react";
+import { Plus, FolderOpen, Zap, CheckCircle2, AlertCircle, Upload, X, FileText, ListTodo, Layers, Settings } from "lucide-react";
 import Link from "next/link";
 import { ActivityPulse } from "@/components/dashboard/activity-pulse";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -245,7 +245,10 @@ export default function Dashboard() {
               >
                 <Settings className="h-5 w-5" />
               </Link>
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <Dialog open={dialogOpen} onOpenChange={(open) => {
+                setDialogOpen(open);
+                if (open) setError(null); // Clear error when opening dialog
+              }}>
                 <DialogTrigger asChild>
                   <ParticleButton
                     variant="default"
@@ -272,6 +275,11 @@ export default function Dashboard() {
                   </TabsList>
                   <TabsContent value="create">
                     <form onSubmit={handleCreateProject} className="space-y-4 mt-4">
+                      {error && (
+                        <div className="p-3 text-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400">
+                          {error}
+                        </div>
+                      )}
                       <div className="space-y-2">
                         <Label htmlFor="name">Project Name</Label>
                         <Input
@@ -320,6 +328,11 @@ export default function Dashboard() {
                   </TabsContent>
                   <TabsContent value="import">
                     <form onSubmit={handleImportProject} className="space-y-4 mt-4">
+                      {error && (
+                        <div className="p-3 text-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400">
+                          {error}
+                        </div>
+                      )}
                       <div className="space-y-2">
                         <Label htmlFor="import-path">Project Path</Label>
                         <Input
